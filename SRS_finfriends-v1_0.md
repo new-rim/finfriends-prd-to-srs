@@ -12,6 +12,8 @@
 
 **입력 문서:** `finfriends-prd-v1_0.md` (핀프렌즈 PRD v1.0 · 2026-08-24)
 
+**파생 문서:** `DESIGN_finfriends-v1_0.md` (DESIGN-FINFRIENDS-MVP-001 · 기술 설계 명세 — 유스케이스 30건 · 시퀀스 12건 · ERD · 클래스 · 인과 루프 · 논리 흐름)
+
 ---
 
 ## 1. 서론
@@ -75,6 +77,41 @@
 
 ---
 
+### 1.4 시스템 한눈에 보기 — 배경지식 없이 읽는 다섯 단계
+
+> 아래 다섯 단계가 본 시스템의 전부다. **각 단계가 어느 요구사항에 대응하는지**를 함께 표시했으므로, §4를 읽기 전에 이 그림으로 전체 위치를 잡을 수 있다.
+
+```mermaid
+flowchart LR
+    S1["① 보호자가 동의한다<br/><small>REQ-FUNC-007 · REQ-NF-008</small>"]
+    S2["② 아이가 배운다<br/><small>REQ-FUNC-003 · 006</small>"]
+    S3["③ 아이가 실천한다<br/>미션 · 회고 · 위시리스트<br/><small>REQ-FUNC-002 · 008 · 012</small>"]
+    S4["④ ⭐가 쌓이고 나무가 자란다<br/><small>REQ-FUNC-004 · 001 · 005</small>"]
+    S5["⑤ 보호자가 변화를 읽는다<br/><small>REQ-FUNC-009 · 013</small>"]
+
+    S1 ==> S2 ==> S3 ==> S4 ==> S5
+    S5 -. "승인 · 미션 등록으로<br/>다시 ③을 부른다" .-> S3
+
+    S1 -.->|"동의 미완이면<br/>②부터가 열리지 않는다"| GATE["규제 게이트"]
+    S3 -.->|"실천 0건이면<br/>④가 멈춘다"| STOP["ADR-006"]
+    S5 -.->|"3일 이상 멈추면<br/>보호자에게 알린다"| NOTI["REQ-FUNC-011"]
+
+    style S1 fill:#ffe0e0,stroke:#c00,stroke-width:2px
+    style S3 fill:#e6f4e6,stroke:#2d8a2d,stroke-width:2px
+    style GATE fill:#f7f7f7,stroke:#888
+    style STOP fill:#f7f7f7,stroke:#888
+    style NOTI fill:#f7f7f7,stroke:#888
+```
+
+**이 그림에서 기억할 것 두 가지**
+
+1. **①이 열리지 않으면 아무것도 열리지 않는다** — 법정대리인 동의는 기능이 아니라 **진입 순서 자체가 규제 요건**이다(§12.2 CON-REG-01).
+2. **③이 0이면 ④가 멈춘다** — 학습을 아무리 많이 해도 실천이 0건이면 나무는 자라지 않는다(ADR-006). 이것이 대체재와 갈리는 지점이며, 동시에 *"초기 화면이 오래 비어 보인다"* 는 대가를 낳는다(ACE-1.1).
+
+> **설계 상세는 별도 문서에 있다** — 유스케이스 30건 · 시퀀스 12건 · ERD · 클래스 · 인과 루프는 `DESIGN_finfriends-v1_0.md`(DESIGN-FINFRIENDS-MVP-001)에 있다. 본 SRS는 *무엇을 만들어야 하는가*, 설계 문서는 *어떻게 만드는가*를 담당한다.
+
+---
+
 ## 2. 이해관계자
 
 | 역할 | 이름 / 부서 | 책임 |
@@ -93,6 +130,54 @@
 ---
 
 ## 3. 시스템 맥락 및 인터페이스
+
+> **먼저 그림으로** — 아래가 시스템의 경계다. **돈이 실제로 움직이는 부분은 전부 오른쪽(제휴사)에 있다** — 이 한 가지가 §4.2의 여러 제약과 §12.3의 아키텍처 제약을 낳는다.
+
+```mermaid
+flowchart LR
+    subgraph C["클라이언트 — 동일 앱 내 분리"]
+        PUI["보호자 화면<br/>나무 · 숲 · 승인 · 소비 · 온보딩"]
+        CUI["아동 화면<br/>학습 · 아바타 · 계획 · 회고 · 위시리스트"]
+    end
+
+    GATE{"법정대리인 동의<br/>완료?"}
+
+    subgraph S["내부 서비스 — 우리가 만드는 것"]
+        direction TB
+        LS["Learning"]
+        PS["Practice"]
+        SL["Star Ledger"]
+        GS["Growth"]
+        PSP["Plan & Spending"]
+        NS["Notification"]
+        EC["Event Collector"]
+    end
+
+    subgraph X["외부 시스템 — 우리가 정하지 못하는 것"]
+        PARTNER["제휴사 (선불업 등록 보유)<br/>선불수단 발행 · 충전금 별도관리<br/>카드 발행 · 가맹점망 · 결제 원장<br/>이용한도 · 업종 제한"]
+        IDV["본인인증"]
+        PUSH["푸시 알림 인프라"]
+    end
+
+    PUI --> S
+    CUI --> GATE
+    GATE -- "예" --> S
+    GATE -- "아니오" --> BLOCK["진입 차단<br/>consent_gate_blocked"]
+
+    S <--> PARTNER
+    S --> IDV
+    S --> PUSH
+
+    NOLOC["위치정보 수집"]
+    S -.-x NOLOC
+
+    style GATE fill:#ffe0e0,stroke:#c00,stroke-width:2px
+    style X fill:#fff4d6,stroke:#e69500
+    style PARTNER fill:#ffe9d6,stroke:#c06000
+    style NOLOC fill:#f2f2f2,stroke:#888,stroke-dasharray: 4 3
+```
+
+> 점선으로 끊긴 「위치정보 수집」은 **막아 둔 기능이 아니라 존재하지 않는 경로**다(§12.2 CON-REG-03). 컴포넌트 내부 구조와 각 서비스의 책임 경계는 `DESIGN_finfriends-v1_0.md` §2.2~§2.3에 있다.
 
 - **클라이언트 애플리케이션**
     1. **보호자 화면** — 성장 나무 · 월간 숲 · 승인 대기 · 소비 내역 · 온보딩·동의
@@ -118,6 +203,62 @@
 ## 4. 구체적 요구사항
 
 ### 4.1 기능 요구사항
+
+> **요구사항 지도** — 17건이 누구의 어떤 필요에서 나왔는지를 먼저 보인다. 표를 읽기 전에 이 그림으로 각 요구사항의 자리를 잡을 수 있다.
+
+```mermaid
+flowchart TB
+    D1(["선언 ① — 아이에게 성장이 일어난다"])
+    D2(["선언 ② — 그 성장이 보호자에게 보인다"])
+
+    subgraph GATEG["진입 · 규제"]
+        R7["FUNC-007 보호자 온보딩·동의"]
+        R15["FUNC-015 카드 없는 체험 (Could)"]
+    end
+    subgraph LEARNG["학습"]
+        R3["FUNC-003 커리큘럼·퀴즈"]
+        R6["FUNC-006 아동 온보딩"]
+    end
+    subgraph PRACG["실천 — WPA 분자 3경로"]
+        R2["FUNC-002 미션 루프"]
+        R8["FUNC-008 계획 카드·업종 대조"]
+        R12["FUNC-012 위시리스트"]
+        R14["FUNC-014 예적금 (Could · R2)"]
+    end
+    subgraph REWARDG["보상"]
+        R4["FUNC-004 별 지급 엔진"]
+        R5["FUNC-005 아바타·옷장"]
+        R16["FUNC-016 옷장 외 목적지 (Could)"]
+    end
+    subgraph SHOWG["전달"]
+        R1["FUNC-001 성장 나무·정체 원인"]
+        R9["FUNC-009 월간 숲·전월 대비"]
+        R13["FUNC-013 소비 내역"]
+    end
+    subgraph KEEPG["끊김 방지"]
+        R10["FUNC-010 ⭐ 소급 지급"]
+        R11["FUNC-011 3일 미접속 알림"]
+        R17["FUNC-017 기록 이전 (Won't)"]
+    end
+
+    R7 ==> LEARNG
+    R7 ==> PRACG
+    LEARNG --> REWARDG
+    PRACG ==> REWARDG
+    REWARDG --> SHOWG
+    SHOWG ==> D2
+    PRACG ==> D1
+    SHOWG -. "승인·미션 등록" .-> PRACG
+    KEEPG -. "끊긴 자리를 메운다" .-> PRACG
+    KEEPG -. "오독을 막는다" .-> SHOWG
+
+    style GATEG fill:#ffe0e0,stroke:#c00
+    style PRACG fill:#e6f4e6,stroke:#2d8a2d
+    style D1 fill:#e6f4e6,stroke:#2d8a2d,stroke-width:2px
+    style D2 fill:#eef4ff,stroke:#4a7ac7,stroke-width:2px
+```
+
+> **굵은 화살표만 따라가면 Must 8건이 나온다.** 「끊김 방지」 군(FUNC-010·011)은 새 가치를 만들지 않고 **다른 요구사항이 끊기는 자리를 메우는** 역할이라, 중요도가 아니라 성격 때문에 Should로 배분됐다. 액터별 유스케이스 30건과 상세 명세는 `DESIGN_finfriends-v1_0.md` §1에 있다.
 
 | ID | 제목 | 출처 | 우선순위 | 유형 | 검증 방식 | 인수 기준 | 상태 | 담당자 |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -483,6 +624,34 @@ flowchart LR
 
 ### 6.4 데이터베이스 스키마 개요
 
+> **먼저 관계로** — 아래는 칼럼을 뺀 **관계 개요**다. 전체 ERD(칼럼·키·제약 포함)는 `DESIGN_finfriends-v1_0.md` §3.1에 있다.
+
+```mermaid
+erDiagram
+    guardian_accounts ||--o{ child_accounts : "1 · N"
+    child_accounts ||--o{ learning_progress : "4영역 진도"
+    child_accounts ||--o{ practice_credits : "실천 원장"
+    practice_credits ||--|| star_ledger : "이중 기입"
+    child_accounts ||--o{ star_ledger : "별 증감"
+    child_accounts ||--o{ tree_states : "영역별 4행"
+    child_accounts ||--o{ forest_snapshots : "월 1행 · 누적"
+    child_accounts ||--o{ plan_cards : "결제 전 계획"
+    plan_cards ||--o{ spending_records : "1계획 · N결제"
+    child_accounts ||--o{ wishlists : "저축 목표"
+    child_accounts ||--o{ app_events : "인앱 이벤트"
+    guardian_accounts ||--o{ app_events : "인앱 이벤트"
+```
+
+**이 관계도에서 먼저 볼 것**
+
+| 지점 | 왜 중요한가 |
+| --- | --- |
+| `practice_credits` | **WPA(북극성 지표)의 원천 테이블.** 화면이 아니라 이 표가 「실천했다」의 정의다 |
+| `star_ledger` | **현금 전환 칼럼이 없다.** 없는 것이 설계이며, 있으면 규제 검증이 성립하지 않는다(§12.2 CON-REG-05) |
+| `practice_credits ↔ star_ledger` **1:1** | 실천 1건에 기입 1건 — 이 대응이 깨지면 정합성 오류율 0%(REQ-NF-006)가 무너진다 |
+| `plan_cards → spending_records` **1:N** | 한 계획에 결제가 여럿 붙을 수 있어 **합계로 판정**한다(ACE-4.1) |
+| `forest_snapshots` | 월 1행이며 **초기화되지 않고 누적**된다 — 전월 대비 델타의 기준이 여기서 나온다 |
+
 ```sql
 -- 핵심 테이블 요약
 guardian_accounts        -- 보호자 계정 · 법정대리인 동의 상태/일시 · 알림 시간대
@@ -681,6 +850,32 @@ app_events               -- 인앱 이벤트 10종 (대용량 · 주차 파티�
 > **이 절이 실험 설계를 두지 않는 이유** — MVP 개발 단계에서 검증 실험의 설계·표본·회차를 미리 고정하면, 아직 관측되지 않은 조건에 판정 절차를 먼저 묶는 결과가 된다. 구현의 선행 조건은 실험 설계가 아니라 **KPI를 만드는 사용자 행동을 무엇으로 세는가**이다. 따라서 본 절은 **카운트 규칙만** 정의한다.
 > 판정선(PASS·HOLD·FAIL)은 §9.1, 기능 단위 수용 기준은 §9.2~§9.3, 릴리스 통과 조건은 §9.5가 담당한다. 회차성 검증(인터뷰·경쟁사 재점검·종단 관찰)은 §9.4.7에 분리해 둔다.
 
+> **계측 경로를 먼저 그림으로** — 아래 다섯 칸 중 하나라도 끊기면 그 뒤의 지표는 존재하지 않는다. 본 절은 두 번째·세 번째 칸의 **규칙**을 정의한다.
+
+```mermaid
+flowchart LR
+    A["① 사용자 행동<br/>실천 · 열람 · 회고 · 온보딩"]
+    B["② 인앱 이벤트 적재<br/>idempotency_key · client_ts"]
+    C["③ 배치 집계<br/>분자 ÷ 분모 · 중복·제외 규칙"]
+    D["④ KPI 값<br/>25건"]
+    E["⑤ 3구간 판정<br/>PASS · HOLD · FAIL"]
+
+    A --> B --> C --> D --> E
+    E --> F["릴리스 게이트 · 로드맵 결정"]
+
+    H["계측 건강성 점검<br/>유실률 · 중복률 · 시각 역행 · 결측"]
+    H -.->|"먼저 켜져 있어야 한다"| B
+    H -.->|"이것을 모르면 ④의 하락이<br/>행동 감소인지 유실인지 구분 불가"| D
+
+    G1["§9.4.1 계측 원칙 M1~M6"] -.-> B
+    G2["§9.4.2~9.4.3 카운트 규칙"] -.-> C
+    G3["§9.1 판정 규칙"] -.-> E
+
+    style A fill:#eef4ff,stroke:#4a7ac7
+    style D fill:#e6f4e6,stroke:#2d8a2d
+    style H fill:#fff4d6,stroke:#e69500,stroke-width:2px
+```
+
 #### 9.4.1 계측 원칙
 
 | # | 원칙 | 이유 |
@@ -864,6 +1059,62 @@ WPA(주차 w) = 분자 ÷ 분모
 
 ### 10.3 요구사항 간 선행 의존성
 
+> **임계 경로를 그림으로** — 표의 같은 내용이지만, **무엇이 무엇을 막고 있는지**는 그림이 빠르다. 굵은 선이 임계 경로다.
+
+```mermaid
+flowchart LR
+    D1{{"D1 제휴사<br/>카드 발급 · 결제내역 API<br/>업종 코드 상세도"}}
+    D2{{"D2 법률 검토<br/>중개업 해당 여부"}}
+    D3{{"D3 학습 콘텐츠 원고"}}
+    D4{{"D4 3D 에셋 사양"}}
+    SEP{{"현금 분리선 재검토"}}
+
+    R7["FUNC-007<br/>온보딩·동의"]
+    R4["FUNC-004<br/>별 지급 엔진"]
+    R3["FUNC-003 학습"]
+    R1["FUNC-001 성장 나무"]
+    R2["FUNC-002 미션"]
+    R8["FUNC-008 계획·대조"]
+    R5["FUNC-005 아바타"]
+    R9["FUNC-009 월간 숲"]
+    R10["FUNC-010 소급"]
+    R11["FUNC-011 알림"]
+    R12["FUNC-012 위시리스트"]
+    R13["FUNC-013 소비 내역"]
+    R14["FUNC-014 예적금"]
+    R16["FUNC-016 옷장 외"]
+
+    D1 --> R7
+    D3 --> R3
+    D4 --> R5
+    D1 --> R8
+    D2 ==> R14
+    SEP ==> R16
+
+    R7 ==> R4
+    R4 ==> R1
+    R4 ==> R2
+    R4 ==> R8
+    R3 --> R1
+    R2 --> R10
+    R4 --> R10
+    R4 --> R5
+    R4 --> R12
+    R7 --> R11
+    R8 --> R13
+    R1 --> R9
+    R8 --> R9
+    R4 --> R9
+
+    style R7 fill:#ffe0e0,stroke:#c00,stroke-width:2px
+    style R4 fill:#ffe0e0,stroke:#c00,stroke-width:2px
+    style D1 fill:#ffe9d6,stroke:#c06000,stroke-width:2px
+    style D2 fill:#f2f2f2,stroke:#888
+    style SEP fill:#f2f2f2,stroke:#888
+```
+
+> **붉은 두 칸이 임계 경로의 병목이다** — `REQ-FUNC-007 → REQ-FUNC-004`가 지연되면 그 뒤의 Must 6건이 함께 밀린다. 주황색 D1은 **외부 계약**이라 우리가 앞당길 수 없고, 회색 D2·SEP는 통과하지 못하면 해당 요구사항의 **착수 자체가 열리지 않는다**(§13.2).
+
 | 요구사항 | 선행 요구사항 |
 | --- | --- |
 | REQ-FUNC-001 | REQ-FUNC-003(학습 이수) · REQ-FUNC-004(실천 판정 결과) |
@@ -923,6 +1174,34 @@ WPA(주차 w) = 분자 ÷ 분모
 ### 12.1 제약의 우선순위
 
 아동 대상 금융 서비스의 1순위 비기능 요구는 성능이 아니라 **규제**다. 계층이 충돌할 때 상위가 하위를 잘라낸다.
+
+```mermaid
+flowchart TB
+    L1["① 규제·법령 CON-REG<br/>허용 오차 0 · 협상 불가"]
+    L2["② 정합성·보안<br/>허용 오차 0 · 불변"]
+    L3["③ 아키텍처·데이터 CON-ARC<br/>구조적 — 회피 불가"]
+    L4["④ 플랫폼·기기 CON-DEV"]
+    L5["⑤ 자원·원가 CON-RES<br/>착수 게이트"]
+    L6["⑥ 표현·인용 CON-DOC<br/>사실 아닌 서술 금지"]
+
+    L1 ==>|"하위의 목표를 포기시킨다"| L2
+    L2 ==> L3 ==> L4 ==> L5 ==> L6
+
+    EX1["예 — 예적금 기능은<br/>법률 검토 전 착수 불가"]
+    EX2["예 — 별 원장 정합성을 위해<br/>성능·비용 목표를 희생한다"]
+    EX3["예 — 업종 코드 상세도가 낮으면<br/>금액 단독 판정으로 범위를 줄인다"]
+    EX4["예 — 3D 에셋은 사양 확정 전<br/>제작에 착수하지 않는다"]
+
+    L1 -.-> EX1
+    L2 -.-> EX2
+    L3 -.-> EX3
+    L5 -.-> EX4
+
+    style L1 fill:#ffe0e0,stroke:#c00,stroke-width:2px
+    style L2 fill:#ffe0e0,stroke:#c00
+    style L3 fill:#fff4d6,stroke:#e69500
+    style L6 fill:#eef4ff,stroke:#4a7ac7
+```
 
 | 순위 | 제약 계층 | 허용 오차 | 충돌 시 처리 |
 | --- | --- | --- | --- |
