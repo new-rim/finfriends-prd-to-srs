@@ -1092,29 +1092,95 @@ flowchart LR
 ## 6. 시퀀스 다이어그램
 
 > **근거** — SRS §9.2 정상 경로 수용 기준 30건 · SRS §9.3 예외 경로 19건.
-> 수용 기준이 *"무엇이 참이어야 하는가"* 를 말한다면, 시퀀스는 *"그것이 참이 되려면 누가 누구를 어떤 순서로 부르는가"* 를 말한다. 각 다이어그램 끝에 검증 대상 AC를 붙였다.
+> 수용 기준이 *"무엇이 참이어야 하는가"* 를 말한다면, 시퀀스는 *"그것이 참이 되려면 누가 누구를 어떤 순서로 부르는가"* 를 말한다.
+
+**읽는 법 세 줄**
+
+1. **한 흐름을 여러 조각으로 썰었다.** 각 SD는 `①②③④` 단계로 나뉘고 **조각마다 등장인물을 다시 선언**하므로, 조각 하나만 봐도 그 구간이 이해된다. SD 머리의 「단계 지도」가 전체 순서를 먼저 보여준다.
+2. **화살표마다 붙은 숫자가 실행 순서다.** 번호는 **조각 안에서 1부터** 다시 시작한다 — 조각을 따로 읽고 따로 인용하기 위한 선택이다.
+3. **지점 표기는 `SD-03 ②-4`** — *SD-03의 ② 단계, 4번 스텝*. 검수·QA에서 *"SD-03 ②-4에서 실패"* 처럼 지점을 특정하는 데 쓴다.
+
+| 기호 | 뜻 |
+| --- | --- |
+| 실선 화살표 | 요청 · 호출 |
+| 점선 화살표 | 응답 · 반환 |
+| 끝이 ✕ 인 화살표 | 실패 · 차단 (호출이 거절됨) |
+| `alt` / `else` | 조건 분기 — **둘 중 하나만** 실행된다 |
+| `opt` | 선택 — 조건이 맞을 때만 실행된다 |
+| `loop` | 반복 |
+
+**SD 지도 — 12개 흐름이 각각 답하는 질문**
+
+| SD | 흐름 | 답하는 질문 | 조각 |
+| --- | --- | --- | :-: |
+| **SD-01** | 보호자 온보딩·동의 | 아동 화면은 어떻게 열리는가 | 3 |
+| **SD-02** | 동의 미완 진입 차단 | 동의가 없으면 무슨 일이 일어나는가 | 2 |
+| **SD-03** | 미션 승인 → ⭐ → 나무 | 실천 1건이 성장으로 기록되는 경로 | 4 |
+| **SD-04** | 승인 지연 → 소급 지급 | 보호자가 늦었을 때 아이의 기록은 어떻게 지켜지는가 | 3 |
+| **SD-05** | 계획 카드 → 결제 → 회고 | 「적고 · 쓰고 · 맞춰보는」 한 바퀴 | 4 |
+| **SD-06** | 오프라인 → 재연결 | 네트워크가 없을 때 ⭐가 중복되지 않는 이유 | 2 |
+| **SD-07** | 3일 미접속 알림 | 아이가 멈춘 것을 보호자가 아는 경로 | 3 |
+| **SD-08** | 나무 열람·정체 원인 | 「왜 멈췄는지」가 화면에 나오는 과정 | 3 |
+| **SD-09** | 월간 숲 스냅샷 | 전월 대비 변화가 만들어지는 과정 | 3 |
+| **SD-10** | 정산·WPA 산출 | 사람이 안 눌러도 도는 두 개의 검산 | 2 |
+| **SD-11** | 아이템 교환 | ⭐가 빠져나가는 유일한 경로 | 2 |
+| **SD-12** | 해지·환불 | 그만둘 때 무엇이 돌아오고 무엇이 안 돌아오는가 | 1 |
+
+---
 
 ### 6.1 SD-01 · 보호자 온보딩과 법정대리인 동의
 
+**한 줄 요약** — 계정을 만들고 **동의를 받아 아동 화면을 여는** 흐름. 이 흐름이 끝나지 않으면 아동은 아무것도 할 수 없다.
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 계정·본인인증 | 보호자 정보를 받고 실명을 확인한다 | 없음 — 다만 호출 횟수가 원가 임계에 걸린다 |
+| **②** 법정대리인 동의 | 동의를 기록한다. **캐시하지 않는다** | 없음 — 규제 게이트 |
+| **③** 아동 등록·카드 신청 | 아동을 등록하고 카드를 신청한다 | 외부 API **성공 / 실패** |
+
+#### SD-01 ① 계정 생성과 본인인증
+
 ```mermaid
 sequenceDiagram
+    autonumber
     actor G as 보호자
     participant APP as 앱
     participant CA as Consent & Account
     participant IDV as 본인인증
-    participant PG as Partner Gateway
     participant EC as Event Collector
 
     G->>APP: 온보딩 시작
-    APP->>CA: 1단계 — 보호자 정보
+    APP->>CA: 1단계 — 보호자 정보 입력
     CA->>EC: onboarding_step(step=1, state=entered)
     CA->>IDV: 실명 확인 요청
     IDV-->>CA: 확인 결과
-    Note over CA,IDV: 호출 ≤ 1.2회/건 — 초과 시 알림 (CON-RES-03)
+    Note over CA,IDV: 호출 ≤ 1.2회/온보딩 건<br/>초과 시 알림 (CON-RES-03)
+```
 
-    APP->>CA: 3단계 — 법정대리인 동의
+#### SD-01 ② 법정대리인 동의 — 규제 게이트
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant APP as 앱
+    participant CA as Consent & Account
+    participant EC as Event Collector
+
+    APP->>CA: 3단계 — 법정대리인 동의 화면
     CA->>CA: 동의 기록 저장 (캐시하지 않음)
     CA->>EC: onboarding_step(step=3, state=completed)
+    Note over CA: 이 단계가 끝나야 ③으로 갈 수 있다.<br/>세션이 만료되면 이 단계만 다시 받는다.
+```
+
+#### SD-01 ③ 아동 등록과 카드 신청 — 실패해도 입력값을 잃지 않는다
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor G as 보호자
+    participant APP as 앱
+    participant CA as Consent & Account
+    participant PG as Partner Gateway
 
     APP->>CA: 4단계 — 아동 정보 등록
     APP->>PG: 5단계 — 카드 발급 신청
@@ -1123,70 +1189,128 @@ sequenceDiagram
         PG-->>APP: 신청 접수 · CardState=REQUESTED
         CA->>CA: consent_state=COMPLETED → 아동 계정 활성
     else 외부 API 실패
-        PG--xAPP: 오류
+        PG--xAPP: 오류 반환
         APP->>CA: 입력값 24시간 보존
         APP-->>G: 사용자 언어로 오류 사유 표시
     end
 
-    Note over G,CA: 중단 후 재진입 시 직전 단계에서 재개 · 재입력 0건<br/>단, 세션 만료 시 동의 단계는 재확인
+    Note over G,CA: 중단 후 재진입 시 직전 단계에서 재개 · 재입력 0건<br/>단, 세션 만료 시 ② 동의 단계는 재확인
 ```
 
-**검증 대상** — AC-8.1(재개) · AC-8.3(총 소요 ≤ 10분) · ACE-8.1(API 실패 보존) · ACE-8.2(동의 재확인)
+**검증 대상** — AC-8.1(재개) · AC-8.3(총 소요 ≤ 10분 · 3단계 이탈률 ≤ 30%) · ACE-8.1(API 실패 보존) · ACE-8.2(동의 재확인)
+
+---
 
 ### 6.2 SD-02 · 동의 미완 상태의 아동 영역 진입 차단
 
+**한 줄 요약** — 동의가 없으면 **아동 화면이 열리지 않는다.** 차단은 오류가 아니라 정상 동작이며, 발생량은 규제 신호로 센다.
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 게이트 판정 | 단일 판정 지점이 동의 상태를 조회한다 | **완료 / 미완**으로 갈린다 |
+| **②** 차단과 알림 | 차단하고 즉시 규제 알림을 보낸다 | 없음 |
+
+#### SD-02 ① 게이트 판정 — 판정 지점은 하나뿐
+
 ```mermaid
 sequenceDiagram
+    autonumber
     actor C as 아동
     participant APP as 앱
     participant CA as ConsentGateService
     participant DS as 도메인 서비스
-    participant EC as Event Collector
-    participant OC as 개발 온콜 · 정책 담당
 
     C->>APP: 아동 화면 진입 시도
     APP->>CA: assertPassable(guardianId, session)
     CA->>CA: 동의 상태 조회 (캐시 미사용)
 
-    alt 동의 완료
+    opt 동의 완료
         CA-->>APP: 통과
         APP->>DS: 학습 · 실천 요청
-    else 동의 미완 또는 세션 만료
-        CA->>EC: consent_gate_blocked(attempted_at)
-        CA->>OC: 즉시 규제 알림 — 30분 내 확인
-        CA--xAPP: 차단
-        APP-->>C: 보호자 동의 안내 화면
     end
 
     Note over CA,DS: 도메인 서비스는 동의를 스스로 판단하지 않는다.<br/>판정 지점이 하나여야 100% 차단을 검증할 수 있다.
 ```
 
-**검증 대상** — REQ-NF-008(100% 차단) · KPI-23(차단 건수) · CON-REG-01
-
-### 6.3 SD-03 · 미션 완료 → 승인 → ⭐ 지급 → 나무 갱신
+#### SD-02 ② 차단과 규제 알림
 
 ```mermaid
 sequenceDiagram
+    autonumber
+    actor C as 아동
+    participant APP as 앱
+    participant CA as ConsentGateService
+    participant EC as Event Collector
+    participant OC as 개발 온콜 · 정책 담당
+
+    Note over CA: ①에서 「동의 미완 또는 세션 만료」로 판정된 경우
+    CA->>EC: consent_gate_blocked(attempted_at)
+    CA->>OC: 즉시 규제 알림 — 30분 내 확인
+    CA--xAPP: 차단
+    APP-->>C: 보호자 동의 안내 화면
+```
+
+**검증 대상** — REQ-NF-008(100% 차단) · KPI-23(차단 건수) · CON-REG-01
+
+---
+
+### 6.3 SD-03 · 미션 완료 → 승인 → ⭐ 지급 → 나무 갱신
+
+**한 줄 요약** — 실천 1건이 **원장에 기입되고 나무 조건까지 반영되는** 전 경로. 제품에서 가장 자주 도는 흐름이다.
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 완료 보고 | 아동이 완료를 보고하고 `PENDING`이 된다 | 없음 |
+| **②** 승인·주기 해석 | 보호자가 승인하고 **완료 시점의 주기**를 확정한다 | 주기가 **열림**(여기) / **종료**(→ SD-04) |
+| **③** 별 기입 | 멱등 키로 중복을 막고 이중 기입한다 | **최초 / 중복** |
+| **④** 실천 인정·나무 | 실천으로 계상하고 나무 조건을 갱신한다 | 없음 |
+
+#### SD-03 ① 아동의 완료 보고와 「승인 대기 N건」
+
+```mermaid
+sequenceDiagram
+    autonumber
     actor C as 아동
     actor G as 보호자
     participant PS as Practice Service
-    participant CAR as CycleAttributionResolver
-    participant TD as TriggerDispatcher
-    participant SL as StarLedgerEngine
-    participant IG as IdempotencyGuard
-    participant GS as Growth Service
     participant EC as Event Collector
 
     C->>PS: 미션 완료 보고
     PS->>PS: MissionApproval(state=PENDING, earned_at=now)
     PS->>EC: approval_state_changed(PENDING)
     PS-->>G: 「승인 대기 N건」 표시
+    Note over PS,G: 아동 화면에서는 「대기 중」을 「미실천」과<br/>시각적으로 구별해 보여준다 (AC-6.3)
+```
+
+#### SD-03 ② 보호자 승인과 주기 해석
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor G as 보호자
+    participant PS as Practice Service
+    participant CAR as CycleAttributionResolver
+    participant TD as TriggerDispatcher
 
     G->>PS: 승인
     PS->>CAR: resolve(earned_at) → cycleId
-    CAR-->>PS: 완료 시점 주기 (열림)
+    CAR-->>PS: 완료 시점 주기 = 열려 있음
     PS->>PS: state=APPROVED
     PS->>TD: dispatch(MISSION_APPROVED, missionId)
+
+    Note over CAR: 주기가 이미 종료됐으면 여기서 SD-04(소급)로 갈라진다.
+```
+
+#### SD-03 ③ 별 기입과 멱등 방어
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant TD as TriggerDispatcher
+    participant SL as StarLedgerEngine
+    participant IG as IdempotencyGuard
+    participant EC as Event Collector
+
     TD->>SL: grant(delta=+1, key=trigger:mission:child)
     SL->>IG: seen(key)?
 
@@ -1195,33 +1319,53 @@ sequenceDiagram
         SL->>SL: 이중 기입 + balance_after 기록
         SL->>EC: star_ledger_entry
         SL-->>TD: 지급 완료
-        TD->>PS: PracticeCredit 생성 (earned_at 승계)
-        PS->>EC: practice_credited — WPA 분자 원천
-        PS->>GS: 실천 조건 +1
-        GS->>GS: canPromote() 판정
-        GS->>EC: tree_state_changed
-    else 중복 요청 (2회 이상 승인)
+    else 중복 요청 (동일 미션 2회 이상 승인)
         IG-->>SL: 이미 수신
         SL-->>TD: 무시 — ⭐는 1회만
     end
-
-    Note over SL,GS: 지급 확정 → 화면 반영 p95 ≤ 800ms (REQ-NF-002)
 ```
 
-**검증 대상** — AC-2.1(동일 세션 반영) · ACE-2.2(중복 승인 1회 지급) · AC-6.2(대기 N건)
-
-### 6.4 SD-04 · 승인 지연 시 소급 지급 *(완료 시점 주기가 이미 종료된 경우)*
+#### SD-03 ④ 실천 인정과 나무 조건 갱신
 
 ```mermaid
 sequenceDiagram
+    autonumber
+    participant TD as TriggerDispatcher
+    participant PS as Practice Service
+    participant GS as Growth Service
+    participant EC as Event Collector
+
+    TD->>PS: PracticeCredit 생성 (earned_at 승계)
+    PS->>EC: practice_credited — WPA 분자의 원천
+    PS->>GS: 실천 조건 +1
+    GS->>GS: canPromote() — 학습·퀴즈·실천 세 조건 판정
+    GS->>EC: tree_state_changed
+
+    Note over PS,GS: 지급 확정 → 화면 반영 p95 ≤ 800ms (REQ-NF-002)
+```
+
+**검증 대상** — AC-2.1(동일 세션 반영) · AC-6.2(대기 N건) · AC-6.3(대기/미실천 구별) · ACE-2.2(중복 승인 1회 지급)
+
+---
+
+### 6.4 SD-04 · 승인 지연 시 소급 지급
+
+**한 줄 요약** — 보호자가 늦어도 **아동의 완료 시점을 기준으로** ⭐를 준다. 단, **나무는 옮기지 않는다** — 이 분리가 핵심이다.
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 주기 종료 판정 | 완료 시점 주기가 이미 닫혔음을 확인한다 | 일괄 승인이어도 **건별** 처리 |
+| **②** ⭐ 지급 | 완료 시점 기준으로 지급한다 — 성공률 100% | 없음 (불변) |
+| **③** 귀속·재계산 | 나무는 옛 주기에, 숲·WPA는 갱신 | 없음 |
+
+#### SD-04 ① 지연 상황과 주기 종료 판정
+
+```mermaid
+sequenceDiagram
+    autonumber
     actor G as 보호자
     participant PS as MissionApprovalService
     participant CAR as CycleAttributionResolver
-    participant BG as BackfillGrantService
-    participant SL as StarLedgerEngine
-    participant GS as Growth Service
-    participant FS as MonthlyForestSnapshot
-    participant EC as Event Collector
 
     Note over G,PS: 아동 완료 후 48시간 이상 미승인
     G->>PS: 지금 승인 (또는 5건 이상 일괄 승인)
@@ -1231,38 +1375,88 @@ sequenceDiagram
         CAR->>CAR: isClosed(cycleId, now)?
         CAR-->>PS: 완료 시점 주기 = 종료됨
         PS->>PS: state=BACKFILLED
-        PS->>BG: backfill(approval)
-        BG->>SL: grant(delta=+1) — 완료 시점 기준
-        SL-->>BG: 지급 완료 · 성공률 100% 요구
-        BG->>GS: 나무 조건을 주기 N에 귀속
-        GS->>GS: 다음 주기 N+1에는 가산하지 않음
-        BG->>FS: 해당 월 스냅샷에 반영
-        BG->>EC: approval_state_changed(BACKFILLED, delay_hours, cycle_id)
     end
-
-    PS-->>G: "지난 달 실천으로 인정됐어요"
-
-    Note over BG,EC: 마감된 주차의 WPA는 재계산하고<br/>갱신 이력을 남긴다 (SRS §9.4.2 · 계측 건강성 H5)
 ```
 
-**검증 대상** — AC-6.1(성공률 100%) · ACE-6.2(주기 귀속) · ACE-6.3(일괄 개별 소급) · REQ-NF-007
-
-### 6.5 SD-05 · 계획 카드 → 결제 → 매칭 → 두 갈래 회고
+#### SD-04 ② 완료 시점 기준 ⭐ 지급
 
 ```mermaid
 sequenceDiagram
+    autonumber
+    participant PS as MissionApprovalService
+    participant BG as BackfillGrantService
+    participant SL as StarLedgerEngine
+    participant EC as Event Collector
+
+    PS->>BG: backfill(approval)
+    BG->>SL: grant(delta=+1) — awarded_at이 아니라 earned_at 기준
+    SL-->>BG: 지급 완료
+    BG->>EC: approval_state_changed(BACKFILLED, delay_hours, cycle_id)
+
+    Note over BG,SL: 소급 지급 성공률 100% — 불변 (REQ-NF-007)<br/>보호자의 지연이 아동의 실패로 기록되지 않게 한다
+```
+
+#### SD-04 ③ 나무·숲 귀속과 지표 재계산
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor G as 보호자
+    participant BG as BackfillGrantService
+    participant GS as Growth Service
+    participant FS as MonthlyForestSnapshot
+    participant WC as WpaCalculator
+
+    BG->>GS: 나무 조건을 완료 시점 주기 N에 귀속
+    GS->>GS: 다음 주기 N+1에는 가산하지 않음
+    BG->>FS: 해당 월 스냅샷에 반영
+    BG->>WC: 마감된 주차 WPA 재계산 요청
+    WC->>WC: recalculate(weekStart) + 갱신 이력 보존
+    BG-->>G: "지난 달 실천으로 인정됐어요"
+
+    Note over GS: ⭐는 주지만 나무는 옮기지 않는다.<br/>둘을 같이 옮기면 지연 승인이 다음 달 「변화」를 부풀린다.
+```
+
+**검증 대상** — AC-6.1(성공률 100%) · ACE-6.2(주기 귀속) · ACE-6.3(일괄 개별 소급) · REQ-NF-007 · SRS §9.4.2 · 계측 건강성 H5
+
+---
+
+### 6.5 SD-05 · 계획 카드 → 결제 → 매칭 → 두 갈래 회고
+
+**한 줄 요약** — **적고(전) · 쓰고 · 맞춰보는(후)** 한 바퀴. ⭐ 판정은 **금액 단독**이며 업종은 회고 문장만 바꾼다.
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 계획 작성 | 어디서·업종·얼마까지를 받는다 | 작성자 **아동 / 보호자** |
+| **②** 결제 수신·매칭 | 결제를 계획 카드에 붙인다 | **계획 있음 / 없음** |
+| **③** 갈래 A — 준수 | ⭐1 지급 | 업종 **일치 / 불일치** |
+| **④** 갈래 B — 초과 | 회고만 · ⭐ 미지급 · **차감 없음** | 문장 풀 잔여 경고 |
+
+#### SD-05 ① 계획 카드 작성 — 결제 「전」
+
+```mermaid
+sequenceDiagram
+    autonumber
     actor C as 아동 또는 보호자
     participant PC as PlanCardService
-    participant PSP as 제휴사
-    participant PM as PaymentMatcher
-    participant RB as RetroBrancher
-    participant POOL as RetroSentencePool
-    participant TD as TriggerDispatcher
     participant EC as Event Collector
 
     C->>PC: 계획 카드 작성 (어디서 · 업종 · 얼마까지)
     PC->>PC: category_code를 제휴사 업종 코드와 대조 가능한 값으로 저장
-    PC->>EC: plan_card_created ※ 추가 필요 (§3.5)
+    PC->>EC: plan_card_created ※ 추가 필요 (§3.5 · OP-1)
+
+    Note over C,PC: 보호자 기기에서도 작성할 수 있어야 한다 —<br/>아동 전용 스마트폰을 전제하지 않는다 (CON-DEV-01)
+```
+
+#### SD-05 ② 결제 수신과 매칭
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant PSP as 제휴사
+    participant PM as PaymentMatcher
+    participant RB as RetroBrancher
+    actor C as 아동
 
     PSP-->>PM: 결제 확정 내역 (시각 · 금액 · 가맹점 분류)
     PM->>PM: match(spending) — 정확도 ≥ 90% 요구
@@ -1270,123 +1464,219 @@ sequenceDiagram
     alt 계획 카드 없음
         PM->>RB: NO_PLAN
         RB-->>C: 대조 화면 대신 작성 유도만 노출 · ⭐ 미지급
-    else 계획 카드 있음 — 여러 건 매칭 시 합계로 판정
-        PM->>RB: branch(spending)
-        alt 실제 ≤ 계획 (갈래 A)
-            RB->>POOL: pickSentence(MET) — 비복원 추출
-            RB->>TD: dispatch(SPENDING_RETRO)
-            TD-->>RB: ⭐1 지급 · plan_met=true
-            opt 업종 불일치
-                RB->>POOL: pickSentence(CATEGORY_MISMATCH)
-                RB->>RB: category_met=false — ⭐는 차단하지 않음
-            end
-        else 실제 > 계획 (갈래 B)
-            RB->>POOL: pickSentence(EXCEEDED)
-            RB->>RB: ⭐ 미지급 · 보유 별 차감 없음
-            Note over RB: TriggerDispatcher를 호출하지 않는다
-        end
-        RB->>EC: retro_viewed(dwell_ms, plan_met, star_granted, category_met)
+    else 계획 카드 있음
+        PM->>PM: 여러 건 매칭 시 합계로 판정 (ACE-4.1)
+        PM->>RB: branch(spending) → ③ 또는 ④
     end
+```
+
+#### SD-05 ③ 갈래 A — 계획을 지킨 날
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant RB as RetroBrancher
+    participant POOL as RetroSentencePool
+    participant TD as TriggerDispatcher
+    participant EC as Event Collector
+
+    Note over RB: 실제 결제액 ≤ 계획 금액
+    RB->>POOL: pickSentence(MET) — 비복원 추출
+    RB->>TD: dispatch(SPENDING_RETRO)
+    TD-->>RB: ⭐1 지급 · plan_met=true
+
+    opt 계획한 업종과 다른 곳에서 결제
+        RB->>POOL: pickSentence(CATEGORY_MISMATCH)
+        RB->>RB: category_met=false — ⭐는 차단하지 않는다
+    end
+
+    RB->>EC: retro_viewed(dwell_ms, plan_met, star_granted, category_met)
+```
+
+#### SD-05 ④ 갈래 B — 계획을 넘긴 날
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant RB as RetroBrancher
+    participant POOL as RetroSentencePool
+    participant EC as Event Collector
+
+    Note over RB: 실제 결제액 > 계획 금액
+    RB->>POOL: pickSentence(EXCEEDED)
+    RB->>RB: ⭐ 미지급 · 보유 별 차감 없음
+    RB->>EC: retro_viewed(plan_met=false, star_granted=false)
 
     opt 문장 풀 잔여 20% 이하
         POOL->>EC: 운영 알림 — 재사용 전 풀 확장 요구
     end
+
+    Note over RB: TriggerDispatcher를 호출하지 않는다.<br/>「미지급」과 「차감」은 다르다 — 모은 것을 빼앗지 않는다.
 ```
 
 **검증 대상** — AC-4.1~4.3 · AC-5.1~5.6 · ACE-4.1(합계 판정) · ACE-4.2(업종 불일치) · ACE-5.1(문장 풀)
 
-### 6.6 SD-06 · 오프라인 실천 후 재연결 *(멱등 방어)*
+---
+
+### 6.6 SD-06 · 오프라인 실천 후 재연결
+
+**한 줄 요약** — 네트워크가 없어도 실천이 기록되고, 재전송이 겹쳐도 **⭐가 두 번 지급되지 않는다.**
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 오프라인 적재 | 로컬 큐에 담고 화면은 먼저 반영한다 | 없음 |
+| **②** 재연결·멱등 판정 | 키를 보고 신규만 기입한다 | **신규 / 중복** |
+
+#### SD-06 ① 오프라인 적재
 
 ```mermaid
 sequenceDiagram
+    autonumber
     actor C as 아동
     participant APP as 앱 (오프라인)
     participant Q as 로컬 큐
+
+    C->>APP: 실천 완료 (네트워크 없음)
+    APP->>Q: 이벤트 적재 (client_ts · idempotency_key 부여)
+    APP-->>C: 낙관적 UI 반영
+
+    Note over APP,Q: 이때 부여한 client_ts가<br/>나중에 주차 귀속의 기준이 된다
+```
+
+#### SD-06 ② 재연결과 멱등 판정
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant APP as 앱
     participant EC as OfflineReplayHandler
     participant IG as IdempotencyGuard
     participant SL as StarLedgerEngine
 
-    C->>APP: 실천 완료 (네트워크 없음)
-    APP->>Q: 이벤트 적재 (client_ts, idempotency_key 부여)
-    APP-->>C: 낙관적 UI 반영
-
-    Note over APP,Q: 재연결 대기
-
     APP->>EC: 큐 일괄 전송 (재시도 포함)
+
     loop 각 이벤트
         EC->>IG: seen(idempotency_key)?
-        alt 미수신
-            IG-->>EC: 신규
+        alt 신규
+            IG-->>EC: 미수신
             EC->>SL: 기입 요청
             EC->>EC: 주차 귀속 = client_ts 기준
-        else 이미 수신 (재시도로 중복 도달)
-            IG-->>EC: 중복
-            EC->>EC: 무시 — 오류로 처리하지 않음
+        else 중복 (재시도로 두 번 도달)
+            IG-->>EC: 이미 수신
+            EC->>EC: 무시 — 오류로 처리하지 않는다
         end
     end
-    EC-->>APP: 반영 완료 (재연결 → 반영 ≤ 60초)
 
-    Note over EC,SL: ⭐ 중복 지급 0건 · 주차는 발생 시각에 귀속<br/>server_ts는 유실·지연 진단에만 사용
+    EC-->>APP: 반영 완료 (재연결 → 반영 ≤ 60초)
+    Note over EC,SL: server_ts는 유실·지연 진단에만 쓴다 (계측 원칙 M3)
 ```
 
 **검증 대상** — ACE-2.1(중복 0건 · ≤60초 · client_ts) · REQ-NF-003 · 계측 원칙 M2·M3
 
+---
+
 ### 6.7 SD-07 · 3일 미접속 판정과 채널 폴백
+
+**한 줄 요약** — 72시간 멈추면 보호자에게 알린다. **오탐은 0건**이어야 하고, 푸시가 막혀 있어도 전달되어야 한다.
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 72시간 판정 | 대상을 뽑고 오탐을 걸러낸다 | **재접속 확인 / 미접속 확정** |
+| **②** 멈춘 지점 첨부 | 어느 영역·어느 조건에서 멈췄는지 붙인다 | 없음 |
+| **③** 채널 선택·발송 | 푸시 → 배너 → 문자로 내려간다 | **푸시 허용 / 차단**, 앱 삭제 |
+
+#### SD-07 ① 72시간 판정과 오탐 방지
 
 ```mermaid
 sequenceDiagram
+    autonumber
     participant SCH as 스케줄러
     participant ID as InactivityDetector
-    participant GS as Growth Service
-    participant CFR as ChannelFallbackRouter
-    participant PUSH as 푸시 인프라
-    participant EC as Event Collector
-    actor G as 보호자
 
     SCH->>ID: 배치 실행
     ID->>ID: last_session_at + 72h 경과 대상 조회
 
     loop 대상 아동
         ID->>ID: isFalsePositive(child, now)?
-        alt 판정 시점에 재접속 확인 (예: 71시간 시점 접속)
-            ID->>ID: 발송하지 않음 — 오탐 0건
-        else 미접속 확정
-            ID->>GS: 아동이 멈춘 지점 (영역 · 미충족 조건) 조회
-            GS-->>ID: 정체 영역 + 남은 조건
-            ID->>CFR: route(guardian)
-            alt 푸시 허용
-                CFR->>PUSH: PUSH 발송
-            else 푸시 차단
-                CFR->>CFR: IN_APP_BANNER
-                opt 문자 수신 동의
-                    CFR->>CFR: SMS 추가 발송
-                end
-                CFR->>EC: 차단 상태 별도 집계
-            end
-            opt 앱 삭제 감지
-                CFR->>CFR: 문구를 「재설치 안내」로 분기 · 다른 이벤트 코드
-            end
-            CFR->>EC: inactivity_notified(last_session_at, sent_at)
-            CFR-->>G: 설정 시간대에 발송
+        opt 판정 시점에 재접속 확인 (예: 71시간 시점 접속)
+            ID->>ID: 발송하지 않음 — 오탐 발송 0건
         end
     end
 
-    G->>EC: 알림 열람 → opened_at 기록
-    Note over EC: 정지→인지 일수 = (opened_at − last_session_at) ÷ 24h<br/>미열람 건은 중위 산출 제외 + 미열람 비율 병기 (KPI-14)
+    Note over ID: 발송하지 않는 것이 정상 동작이다.<br/>이 건은 발송률 분모에서도 제외한다 (KPI-15)
 ```
 
-**검증 대상** — AC-7.1~7.3 · ACE-7.1~7.3 · KPI-14·15
-
-### 6.8 SD-08 · 성장 나무 열람과 정체 원인 산출
+#### SD-07 ② 멈춘 지점 조회
 
 ```mermaid
 sequenceDiagram
+    autonumber
+    participant ID as InactivityDetector
+    participant GS as Growth Service
+    participant CFR as ChannelFallbackRouter
+
+    Note over ID: ①에서 「미접속 확정」된 건만
+    ID->>GS: 아동이 멈춘 지점 조회 (영역 · 미충족 조건)
+    GS-->>ID: 정체 영역 + 남은 조건
+    ID->>CFR: route(guardian) — 멈춘 지점을 함께 전달
+
+    Note over ID,CFR: 「접속이 없습니다」가 아니라<br/>「어디서 멈췄습니다」를 보내는 것이 요건이다 (AC-7.2)
+```
+
+#### SD-07 ③ 채널 폴백과 열람 기록
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant CFR as ChannelFallbackRouter
+    participant PUSH as 푸시 인프라
+    participant EC as Event Collector
+    actor G as 보호자
+
+    alt 푸시 허용
+        CFR->>PUSH: PUSH 발송
+    else 푸시 차단
+        CFR->>CFR: IN_APP_BANNER
+        opt 문자 수신 동의
+            CFR->>CFR: SMS 추가 발송
+        end
+        CFR->>EC: 차단 상태 별도 집계
+    end
+
+    opt 앱 삭제 감지
+        CFR->>CFR: 문구를 「재설치 안내」로 분기 · 다른 이벤트 코드
+    end
+
+    CFR->>EC: inactivity_notified(last_session_at, sent_at)
+    CFR-->>G: 설정 시간대에 발송
+    G->>EC: 알림 열람 → opened_at 기록
+
+    Note over EC: 정지→인지 일수 = (opened_at − last_session_at) ÷ 24h<br/>미열람 건은 중위 산출 제외 + 미열람 비율 병기 (KPI-14)
+```
+
+**검증 대상** — AC-7.1~7.3 · ACE-7.1~7.3 · KPI-14 · KPI-15
+
+---
+
+### 6.8 SD-08 · 성장 나무 열람과 정체 원인 산출
+
+**한 줄 요약** — 보호자가 나무를 열면 **실천 근거가 기본으로** 보이고, 멈춰 있으면 **왜 멈췄는지가 조건 단위로** 나온다.
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 데이터 수집 | 단계·조건·실천 근거·승인 대기를 모은다 | 없음 |
+| **②** 정체 원인 산출 | 영역별로 정체인지 판정하고 조건을 정렬한다 | **14일 경과 / 초기화 직후** |
+| **③** 렌더·계측 | 화면을 만들고 열람 여부를 적재한다 | **실천 0건 / 1건 이상** |
+
+#### SD-08 ① 데이터 수집
+
+```mermaid
+sequenceDiagram
+    autonumber
     actor G as 보호자
     participant GTR as GrowthTreeRenderer
     participant TS as TreeState · TreeCondition
-    participant SRR as StallReasonResolver
     participant PS as Practice Service
-    participant EC as Event Collector
 
     G->>GTR: 나무 진입
     GTR->>TS: 4영역 단계 · 조건 충족 조회
@@ -1394,6 +1684,15 @@ sequenceDiagram
     PS-->>GTR: 실천 내역 — 기본 노출용
     GTR->>PS: 승인 대기 건수 조회
     PS-->>GTR: N건
+```
+
+#### SD-08 ② 정체 원인 산출 — 오탐을 만들지 않는 조건
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant GTR as GrowthTreeRenderer
+    participant SRR as StallReasonResolver
 
     loop 4영역
         GTR->>SRR: resolve(treeState, now)
@@ -1405,6 +1704,16 @@ sequenceDiagram
             SRR-->>GTR: 정체로 표시하지 않음 — 오탐 0건
         end
     end
+```
+
+#### SD-08 ③ 화면 렌더와 계측
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant GTR as GrowthTreeRenderer
+    actor G as 보호자
+    participant EC as Event Collector
 
     alt 이번 달 실천 0건
         GTR-->>G: "아직 기록이 없어요 + 첫 실천 안내"
@@ -1413,80 +1722,136 @@ sequenceDiagram
     end
 
     GTR->>EC: tree_view_opened(dwell_ms, evidence_expanded, stall_reason_shown)
-    Note over GTR,G: 진입~첫 페인트 p95 ≤ 1,250ms — 5초 회상 테스트 오염 방지
+
+    Note over GTR,G: 진입~첫 페인트 p95 ≤ 1,250ms —<br/>5초 회상 테스트를 오염시키지 않는 상한 (REQ-NF-001)
 ```
 
-**검증 대상** — AC-1.1·1.2 · AC-3.1 · ACE-1.1 · ACE-3.1·3.2 · REQ-NF-001 · KPI-06·07
+**검증 대상** — AC-1.1 · AC-1.2 · AC-3.1 · ACE-1.1 · ACE-3.1 · ACE-3.2 · REQ-NF-001 · KPI-06 · KPI-07
+
+---
 
 ### 6.9 SD-09 · 월간 숲 스냅샷 생성과 전월 대비 델타
 
+**한 줄 요약** — 월초 배치가 스냅샷을 만들고, **전월이 없으면 델타를 0으로 그리지 않는다.**
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 배치 수집 | 나무·별·소비를 월 단위로 모은다 | 없음 |
+| **②** 델타 산출 | 전월과 비교해 변화 항목을 만든다 | **전월 있음 / 첫 달** |
+| **③** 열람·소급 갱신 | 보호자에게 보이고, 소급분이 오면 갱신한다 | 대체 문구 여부 |
+
+#### SD-09 ① 월초 배치 수집
+
 ```mermaid
 sequenceDiagram
+    autonumber
     participant SCH as 스케줄러
     participant MFS as MonthlyForestSnapshot
-    participant DC as DeltaCalculator
     participant TS as TreeState
     participant SL as StarLedger
     participant SP as SpendingRecords
-    participant EC as Event Collector
-    actor G as 보호자
 
     SCH->>MFS: 월초 배치 (전월 마감)
     MFS->>TS: 4영역 최종 단계
     MFS->>SL: 이번 달 획득 별 합계
     MFS->>SP: 업종별 소비 집계
+```
+
+#### SD-09 ② 델타 산출 — 첫 달에는 0을 그리지 않는다
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant MFS as MonthlyForestSnapshot
+    participant DC as DeltaCalculator
+
     MFS->>DC: hasPrevious(childId, yearMonth)?
 
     alt 전월 데이터 존재
-        DC->>DC: delta(current, previous) — 항목 7개 이상
+        DC->>DC: delta(current, previous) — 변화 항목 7개 이상
         DC-->>MFS: 델타 맵
         MFS->>MFS: 스냅샷 저장 (누적 · 초기화 없음)
     else 가입 첫 달 — 전월 없음
         DC-->>MFS: prev_month_exists=false
         MFS->>MFS: 델타 0으로 렌더하지 않음
     end
-
-    G->>MFS: 월간 숲 진입
-    alt prev_month_exists = true
-        MFS-->>G: 변화 항목 7개 이상 + 이번 달 획득 별 (스크롤 없이 노출)
-    else
-        MFS-->>G: "다음 달부터 비교할 수 있어요"
-    end
-    MFS->>EC: forest_view_opened(year_month, delta_items_rendered, dwell_ms)
-
-    Note over MFS,EC: 소급 귀속분(BACKFILLED)이 도착하면<br/>해당 월 스냅샷을 갱신하고 갱신 이력을 남긴다
 ```
 
-**검증 대상** — AC-1.3·1.4 · ACE-1.2 · REQ-FUNC-009 · KPI-08·09·10
-
-### 6.10 SD-10 · 별 원장 일일 정산과 WPA 주간 산출
+#### SD-09 ③ 보호자 열람과 소급 갱신
 
 ```mermaid
 sequenceDiagram
+    autonumber
+    actor G as 보호자
+    participant MFS as MonthlyForestSnapshot
+    participant EC as Event Collector
+
+    G->>MFS: 월간 숲 진입
+
+    alt prev_month_exists = true
+        MFS-->>G: 변화 항목 7개 이상 + 이번 달 획득 별 (스크롤 없이 노출)
+    else prev_month_exists = false
+        MFS-->>G: "다음 달부터 비교할 수 있어요"
+    end
+
+    MFS->>EC: forest_view_opened(year_month, delta_items_rendered, dwell_ms)
+
+    opt 소급 귀속분(BACKFILLED) 도착
+        MFS->>MFS: 해당 월 스냅샷 갱신 + 갱신 이력 보존
+    end
+```
+
+**검증 대상** — AC-1.3 · AC-1.4 · ACE-1.2 · REQ-FUNC-009 · KPI-08 · KPI-09 · KPI-10
+
+---
+
+### 6.10 SD-10 · 별 원장 일일 정산과 WPA 주간 산출
+
+**한 줄 요약** — 사람이 누르지 않아도 도는 **두 개의 검산**. 앞은 원장을 지키고, 뒤는 북극성 지표를 만든다.
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 일일 정산 | 합계와 잔액 스냅샷을 대조한다 | **일치 / 불일치**(즉시 알림) |
+| **②** WPA 주간 산출 | 분자·분모를 세어 북극성 지표를 만든다 | 소급 도착 · 전주 대비 하락 |
+
+#### SD-10 ① 별 원장 일일 정산 — 허용 오차 0
+
+```mermaid
+sequenceDiagram
+    autonumber
     participant SCH as 스케줄러
     participant LRB as LedgerReconciliationBatch
     participant SL as star_ledger
-    participant WC as WpaCalculator
-    participant PC as practice_credits
-    participant CH as child_accounts
     participant AR as AlertRouter
     participant OC as 개발 온콜
 
-    Note over SCH,LRB: ① 일일 정산 — 매일
     SCH->>LRB: reconcile(date)
     LRB->>SL: SUM(delta) vs 최종 balance_after 대조
+
     alt 불일치 0건
         LRB-->>SCH: 정상
     else 불일치 1건 이상
         LRB->>AR: 즉시 알림
         AR->>OC: 30분 내 확인 · 1시간 내 원인 특정
-        Note over AR,OC: 4시간 미해결 → 팀 전체 에스컬레이션
     end
 
-    Note over SCH,WC: ② WPA 주간 산출 — ISO 주 마감 후 D+1
-    SCH->>WC: calculate(weekStart)
+    Note over AR,OC: 4시간 미해결 → 팀 전체 에스컬레이션<br/>비율 평균으로 덮지 않는다 — 건수 0이 기준이다
+```
+
+#### SD-10 ② WPA 주간 산출
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant SCH as 스케줄러
+    participant WC as WpaCalculator
+    participant CH as child_accounts
+    participant PC as practice_credits
+    participant AR as AlertRouter
+
+    SCH->>WC: calculate(weekStart) — ISO 주 마감 후 D+1
     WC->>CH: 분모 — 주차 시작 시점 스냅샷<br/>동의 완료 & 계정 7일 경과 & 28일 내 세션
-    WC->>PC: 분자 — 실천 트리거 3종의 distinct child_id<br/>학습 경로 트리거 제외 · earned_at 기준 귀속
+    WC->>PC: 분자 — 실천 트리거 3종의 distinct child_id<br/>학습 경로 제외 · earned_at 기준 귀속
     WC->>WC: 한 아동의 복수 실천은 1로 계산
     WC-->>SCH: WPA(주차 w)
 
@@ -1501,33 +1866,60 @@ sequenceDiagram
 
 **검증 대상** — REQ-NF-006(정합성 0%) · KPI-22 · SRS §9.4.2 WPA 카운트 규칙 · 계측 건강성 H5
 
+---
+
 ### 6.11 SD-11 · 아바타 아이템 교환 *(별 차감)*
+
+**한 줄 요약** — ⭐가 빠져나가는 **유일한 경로**. 사양이 확정되지 않은 아이템은 코드가 먼저 막는다.
+
+| 단계 | 무엇이 일어나는가 | 갈라지는 지점 |
+| --- | --- | --- |
+| **①** 카탈로그 게이트 | 제작 여부를 먼저 본다 | **미제작 / 제작 완료** |
+| **②** 차감 기입 | 잔액을 확인하고 차감한다 | **충분 / 부족** |
+
+#### SD-11 ① 카탈로그 게이트 — 사양 확정 전 제작 금지
 
 ```mermaid
 sequenceDiagram
+    autonumber
     actor C as 아동
     participant AWS as AvatarWardrobeService
     participant CAT as AvatarItemCatalog
-    participant SL as StarLedgerEngine
-    participant EC as Event Collector
 
     C->>AWS: 아이템 교환 요청
     AWS->>CAT: 아이템 조회
+
     alt asset_state = SPEC_PENDING
         CAT-->>AWS: 미제작 — 노출 대상 아님
-        AWS-->>C: 교환 불가 (사양 확정 전 제작 금지 · CON-RES-02)
+        AWS-->>C: 교환 불가
     else asset_state = PRODUCED
-        AWS->>SL: deduct(delta=−star_price, key=exchange:item:child)
-        alt 잔액 충분
-            SL->>SL: 차감 기입 + balance_after
-            SL->>EC: star_ledger_entry(delta<0)
-            SL-->>AWS: 완료
-            AWS->>AWS: AvatarItemsOwned 생성 (star_ledger_id 참조)
-            AWS-->>C: 아이템 획득
-        else 잔액 부족
-            SL--xAWS: 거절
-            AWS-->>C: 남은 별 안내
-        end
+        CAT-->>AWS: 교환 가능 → ②로
+    end
+
+    Note over CAT: 3D 에셋은 선불 일회성 지출이라 사후 조정이 불가능하다.<br/>사양 미확정을 데이터로 표현해 제작 착수를 막는다 (CON-RES-02)
+```
+
+#### SD-11 ② 차감 기입과 잔액 분기
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor C as 아동
+    participant AWS as AvatarWardrobeService
+    participant SL as StarLedgerEngine
+    participant EC as Event Collector
+
+    AWS->>SL: deduct(delta=−star_price, key=exchange:item:child)
+
+    alt 잔액 충분
+        SL->>SL: 차감 기입 + balance_after
+        SL->>EC: star_ledger_entry(delta<0)
+        SL-->>AWS: 완료
+        AWS->>AWS: AvatarItemsOwned 생성 (star_ledger_id 참조)
+        AWS-->>C: 아이템 획득
+    else 잔액 부족
+        SL--xAWS: 거절
+        AWS-->>C: 남은 별 안내
     end
 
     Note over SL,EC: 이 차감은 practice_credited가 아니다 —<br/>WPA 분자에 들어가지 않는다 (계측 원칙 M1)
@@ -1535,10 +1927,15 @@ sequenceDiagram
 
 **검증 대상** — REQ-FUNC-005 · REQ-NF-006 · SRS §9.4.2 경계 규칙
 
+---
+
 ### 6.12 SD-12 · 해지와 전액 환불
+
+**한 줄 요약** — 그만둘 때 **충전 잔액은 전액 돌아오고, ⭐는 환불 대상이 아니다** — 현금이 아니기 때문이다.
 
 ```mermaid
 sequenceDiagram
+    autonumber
     actor G as 보호자
     participant APP as 앱
     participant RS as RefundService
@@ -1551,9 +1948,9 @@ sequenceDiagram
     PSP-->>RS: 환불 결과 (잔액 전액)
     RS->>RS: PartnerCard.state = TERMINATED
     RS-->>G: 전액 환불 완료 안내
-
     RS--xSL: 별은 환불 대상이 아니다
-    Note over RS,SL: 별은 현금이 아니므로 환불 경로가 없다.<br/>부분 환불·잔액 소멸 분기를 두지 않는다 (CON-REG-07)
+
+    Note over RS,SL: 부분 환불·잔액 소멸 분기를 두지 않는다 (CON-REG-07)
 ```
 
 **검증 대상** — REQ-NF-013 · CON-REG-07
