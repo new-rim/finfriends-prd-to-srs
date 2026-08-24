@@ -234,86 +234,235 @@
 
 ### 6.2 데이터 모델 정의
 
-```java
-// 학습·나무·실천이 공유하는 고정 4영역
-public enum LearningTopic {
-    EARN("벌기", "노동·미션을 통한 획득"),
-    SPEND("잘 쓰기", "계획과 실제의 대조"),
-    SAVE("모으기", "목표 기반 저축"),
-    GROW("불리기", "예적금 비교·선택");   // MVP는 학습만 개통, 실천 경로는 닫힘
-}
+> 값의 **정의**는 표로, 값 사이의 **관계 · 상태 전이 · 판정 순서**는 다이어그램으로 제시한다.
+> 열거형 상수명은 구현 식별자이며, 괄호 안 한글은 화면 표기가 아니라 의미 설명이다.
 
-// ⭐ 지급 트리거 8종 — 경로 구분이 WPA 산출의 기준
-public enum StarTrigger {
-    ONBOARDING_LEARN(1, TriggerPath.LEARNING,  "온보딩 학습"),
-    ATTENDANCE      (2, TriggerPath.LEARNING,  "출석체크"),
-    QUIZ_CORRECT    (3, TriggerPath.LEARNING,  "퀴즈 정답"),
-    MISSION_APPROVED(4, TriggerPath.PRACTICE,  "미션 승인"),
-    SPENDING_RETRO  (5, TriggerPath.PRACTICE,  "소비 회고 — 계획 준수 시에만"),
-    WISHLIST_REACHED(6, TriggerPath.PRACTICE,  "위시리스트 30·70·100% 도달"),
-    SAVINGS_JOINED  (7, TriggerPath.PRACTICE,  "예적금 가입 — WPA-v2부터"),
-    SAVINGS_DONE    (8, TriggerPath.PRACTICE,  "예적금 완주 — WPA-v2부터");
+#### 6.2.1 학습 영역 — `LearningTopic`
 
-    private final int code;
-    private final TriggerPath path;
-    private final String description;
-}
+학습 · 나무 · 실천이 공유하는 **고정 4영역**이다. 영역을 늘리거나 줄이면 세 곳이 함께 바뀐다.
 
-// 학습 경로는 WPA 분자에서 제외된다 — 접속만으로 실천 지표가 오르는 퇴화를 차단
-public enum TriggerPath { LEARNING, PRACTICE; }
+```mermaid
+flowchart LR
+    ROOT["LearningTopic<br/>고정 4영역"]
+    ROOT --> EARN["EARN · 벌기"]
+    ROOT --> SPEND["SPEND · 잘 쓰기"]
+    ROOT --> SAVE["SAVE · 모으기"]
+    ROOT --> GROW["GROW · 불리기"]
 
-// 나무 승급 조건 — 셋을 모두 충족해야 승급하며, 실천 0건이면 승급하지 않는다
-public enum TreeCondition {
-    LEARN_COMPLETED("학습 이수"),
-    QUIZ_PASSED("퀴즈 정답 수"),
-    PRACTICE_CREDITED("실천 인정 횟수");   // 이 조건이 0이면 다른 둘을 초과 충족해도 승급 불가
-}
+    EARN --> EO["학습 개통 · 실천 개통"]
+    SPEND --> SO["학습 개통 · 실천 개통"]
+    SAVE --> VO["학습 개통 · 실천 개통"]
+    GROW --> GO["학습 개통 · 실천 미개통<br/>화면에 '곧 열려요' 표시 필수"]
 
-// 미션 승인 상태 — BACKFILLED는 완료 시점 주기에 귀속된다
-public enum ApprovalState {
-    PENDING("승인 대기"),
-    APPROVED("승인"),
-    REJECTED("거절 — ⭐ 미지급 · 사유 표시 · 「미실천」과 구별"),
-    BACKFILLED("소급 지급 — ⭐는 지급, 나무 조건은 완료 시점 주기 귀속");
-}
-
-// 계획↔실제 대조 결과 — ⭐ 판정은 금액 기준 단독
-public enum PlanMatchResult {
-    MET     (true,  "계획 준수 — ⭐1 지급"),
-    EXCEEDED(false, "계획 초과 — 회고만 제시 · ⭐ 미지급 · 보유 별 차감 없음");
-
-    private final boolean starGranted;
-    private final String description;
-}
-
-// 업종 일치는 관측 항목이며 ⭐ 지급 조건이 아니다
-public enum CategoryMatch {
-    MATCHED("계획 업종과 일치"),
-    MISMATCHED("계획 업종과 불일치 — 회고 문장 분기 대상, ⭐는 차단하지 않음");
-}
-
-// 인앱 이벤트 10종
-public enum EventType {
-    PRACTICE_CREDITED, STAR_LEDGER_ENTRY, TREE_STATE_CHANGED,
-    TREE_VIEW_OPENED, FOREST_VIEW_OPENED, RETRO_VIEWED,
-    APPROVAL_STATE_CHANGED, INACTIVITY_NOTIFIED,
-    ONBOARDING_STEP, CONSENT_GATE_BLOCKED;
-}
-
-// 알림 채널 — 푸시 차단 시 분기하며, 차단 계정은 지표에서 별도 집계
-public enum NotificationChannel {
-    PUSH("푸시"),
-    IN_APP_BANNER("앱 내 배너"),
-    SMS("문자 — 동의 시에만");
-}
-
-// 모든 지표·수용 기준의 3구간 판정
-public enum Verdict {
-    PASS("통과선 이상 — 다음 게이트 진행"),
-    HOLD("통과선 미달~실패선 초과 — 표본 +4 후 재판정, 2회 연속 시 FAIL 간주"),
-    FAIL("실패선 이하 — 지정된 재설계 실행");
-}
+    style GO fill:#fff4d6,stroke:#e69500,stroke-width:2px
 ```
+
+| 상수 | 의미 | 실천 경로 | 근거 |
+| --- | --- | :-: | --- |
+| `EARN` | 노동 · 미션을 통한 획득 | 개통 | REQ-FUNC-002 |
+| `SPEND` | 계획과 실제의 대조 | 개통 | REQ-FUNC-008 |
+| `SAVE` | 목표 기반 저축 | 개통 | REQ-FUNC-012 |
+| `GROW` | 예적금 비교 · 선택 | **미개통** | REQ-FUNC-014가 Could Have이며 법률 검토 대기 |
+
+#### 6.2.2 ⭐ 지급 트리거 — `StarTrigger` · `TriggerPath`
+
+경로 구분이 **북극성 지표 산출의 기준**이다. 학습 경로를 분자에 넣으면 *접속만으로 실천 지표가 오르는* 활동량 지표로 퇴화한다.
+
+```mermaid
+flowchart TD
+    ACT["아동 활동 발생"]
+
+    subgraph LP["TriggerPath.LEARNING"]
+        T1["1 · ONBOARDING_LEARN<br/>온보딩 학습"]
+        T2["2 · ATTENDANCE<br/>출석체크"]
+        T3["3 · QUIZ_CORRECT<br/>퀴즈 정답"]
+    end
+
+    subgraph PP["TriggerPath.PRACTICE"]
+        subgraph V1["WPA-v1 · MVP 범위"]
+            T4["4 · MISSION_APPROVED<br/>미션 승인"]
+            T5["5 · SPENDING_RETRO<br/>소비 회고 · 계획 준수 시에만"]
+            T6["6 · WISHLIST_REACHED<br/>위시리스트 30·70·100% 도달"]
+        end
+        subgraph V2["WPA-v2 · 개통 후 추가"]
+            T7["7 · SAVINGS_JOINED<br/>예적금 가입"]
+            T8["8 · SAVINGS_DONE<br/>예적금 완주"]
+        end
+    end
+
+    ACT --> LP
+    ACT --> PP
+
+    LP --> STAR["⭐ 지급<br/>star_ledger_entry"]
+    PP --> STAR
+    PP ==> NUM["WPA 분자 산입<br/>practice_credited"]
+    LP -. "분자 제외" .-> EXC["활동량 지표로의<br/>퇴화 차단"]
+
+    style NUM fill:#e6f4e6,stroke:#2d8a2d,stroke-width:2px
+    style EXC fill:#f2f2f2,stroke:#888,stroke-dasharray: 4 3
+    style V2 fill:#fff4d6,stroke:#e69500
+```
+
+| 코드 | 상수 | 경로 | 의미 | WPA 분자 |
+| :-: | --- | :-: | --- | :-: |
+| 1 | `ONBOARDING_LEARN` | LEARNING | 온보딩 학습 | 제외 |
+| 2 | `ATTENDANCE` | LEARNING | 출석체크 | 제외 |
+| 3 | `QUIZ_CORRECT` | LEARNING | 퀴즈 정답 | 제외 |
+| 4 | `MISSION_APPROVED` | PRACTICE | 미션 승인 | **v1 산입** |
+| 5 | `SPENDING_RETRO` | PRACTICE | 소비 회고 — **계획 준수 시에만** | **v1 산입** |
+| 6 | `WISHLIST_REACHED` | PRACTICE | 위시리스트 30 · 70 · 100% 도달 | **v1 산입** |
+| 7 | `SAVINGS_JOINED` | PRACTICE | 예적금 가입 | v2 산입 |
+| 8 | `SAVINGS_DONE` | PRACTICE | 예적금 완주 | v2 산입 |
+
+> **v1 → v2 전환 시** 시계열을 단절 표기하고 전환 후 4주간 두 값을 병기한다(§7.1).
+
+#### 6.2.3 나무 승급 조건 — `TreeCondition`
+
+세 조건의 **논리곱**이며, 실천 조건이 0이면 나머지 둘을 초과 충족해도 승급하지 않는다.
+
+```mermaid
+flowchart LR
+    L["LEARN_COMPLETED<br/>학습 이수"] --> AND{"세 조건<br/>모두 충족?"}
+    Q["QUIZ_PASSED<br/>퀴즈 정답 수"] --> AND
+    P["PRACTICE_CREDITED<br/>실천 인정 횟수"] --> AND
+
+    AND -- "충족" --> UP["나무 단계 상승<br/>tree_state_changed"]
+    AND -- "미충족" --> STAY["미승급<br/>남은 조건을 조건별로 각각 표시"]
+
+    P -. "이 값이 0이면" .-> BLOCK["학습·퀴즈를 초과 충족해도<br/>승급 불가"]
+    BLOCK --> STAY
+
+    style BLOCK fill:#ffe0e0,stroke:#c00,stroke-width:2px
+    style UP fill:#e6f4e6,stroke:#2d8a2d
+```
+
+> 이 구조가 ADR-006의 구현체다. 실천을 **가중치가 아니라 필수 조건**으로 둔 이유는, 가중치로 두면 학습량으로 상쇄돼 「실천 0건 최고 단계」가 가능해지기 때문이다.
+
+#### 6.2.4 미션 승인 상태 — `ApprovalState`
+
+`BACKFILLED`는 **⭐는 지급하되 나무 조건은 완료 시점 주기에 귀속**되는 상태다 — 이 분기가 없으면 지연 승인이 다음 주기 나무를 부풀린다.
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING : 아동이 미션 완료
+
+    PENDING --> APPROVED : 완료 시점 주기 내 승인
+    PENDING --> BACKFILLED : 완료 시점 주기 종료 후 승인
+    PENDING --> REJECTED : 보호자 거절
+
+    APPROVED --> [*]
+    BACKFILLED --> [*]
+    REJECTED --> [*]
+
+    note right of PENDING
+        보호자 화면에 「승인 대기 N건」 표시
+        아동 화면에서 「미실천」과 시각적으로 구별
+    end note
+
+    note right of BACKFILLED
+        ⭐ 지급 · 소급 성공률 100%
+        나무 조건은 완료 시점 주기 N에 귀속
+        다음 주기 N+1에 가산하지 않음
+        월간 숲 스냅샷에 반영
+    end note
+
+    note right of REJECTED
+        ⭐ 미지급 · 사유 표시
+        실천 카운트 미가산
+        「미실천」과 시각적으로 구별
+    end note
+```
+
+#### 6.2.5 계획↔실제 대조 — `PlanMatchResult` · `CategoryMatch`
+
+⭐ 판정은 **금액 단독**이다. 업종 일치는 회고 문장을 분기하는 관측 항목이며 ⭐를 차단하지 않는다(ADR-008).
+
+```mermaid
+flowchart TD
+    PAY["카드 결제 발생<br/>payment_settled"] --> HAS{"계획 카드<br/>존재?"}
+
+    HAS -- "없음" --> NONE["⭐ 미지급<br/>'다음엔 가기 전에 적어볼까요' 유도"]
+    HAS -- "있음" --> AMT{"실제 결제액<br/>≤ 계획 금액?"}
+
+    AMT -- "예" --> MET["PlanMatchResult.MET<br/>⭐1 지급 · plan_met=true"]
+    AMT -- "아니오" --> EXC["PlanMatchResult.EXCEEDED<br/>회고만 제시 · ⭐ 미지급<br/>보유 별 차감 없음"]
+
+    MET --> CAT{"계획 업종과<br/>일치?"}
+    CAT -- "일치" --> M1["CategoryMatch.MATCHED<br/>기본 회고 문장"]
+    CAT -- "불일치" --> M2["CategoryMatch.MISMATCHED<br/>'업종 다름' 갈래 회고<br/>category_met=false"]
+
+    EXC --> WATCH["갈래 B 이탈 감시<br/>회고 열람률 ≥ 70%"]
+
+    style MET fill:#e6f4e6,stroke:#2d8a2d
+    style EXC fill:#fff4d6,stroke:#e69500
+    style NONE fill:#f2f2f2,stroke:#888
+    style M2 fill:#fff4d6,stroke:#e69500
+```
+
+| 열거형 | 상수 | ⭐ 지급 | 의미 |
+| --- | --- | :-: | --- |
+| `PlanMatchResult` | `MET` | **지급** | 계획 준수 — `plan_met=true` |
+| `PlanMatchResult` | `EXCEEDED` | 미지급 | 계획 초과 — 회고만 제시, **보유 별 차감 없음** |
+| `CategoryMatch` | `MATCHED` | *(무관)* | 계획 업종과 일치 |
+| `CategoryMatch` | `MISMATCHED` | *(무관)* | 계획 업종과 불일치 — 회고 분기 대상, **⭐를 차단하지 않음** |
+
+#### 6.2.6 알림 채널 — `NotificationChannel`
+
+푸시 차단 시 폴백하며, **차단 계정은 탐지 지표 산출에서 별도 집계**한다.
+
+```mermaid
+flowchart LR
+    DET["최종 접속 후 72시간 경과<br/>배치 판정"] --> RE{"판정 시점에<br/>재접속?"}
+    RE -- "예" --> SKIP["발송하지 않음<br/>오탐 0건"]
+    RE -- "아니오" --> PUSH{"푸시 권한<br/>허용?"}
+
+    PUSH -- "허용" --> C1["PUSH"]
+    PUSH -- "차단" --> C2["IN_APP_BANNER"]
+    C2 --> SMS{"문자 수신<br/>동의?"}
+    SMS -- "동의" --> C3["SMS"]
+    SMS -- "미동의" --> ONLY["배너 단독"]
+
+    C2 -.-> SEP["차단 상태 계측<br/>탐지 지표에서 별도 집계"]
+    C3 -.-> SEP
+
+    style SKIP fill:#f2f2f2,stroke:#888
+    style SEP fill:#fff4d6,stroke:#e69500
+```
+
+#### 6.2.7 판정 구간 — `Verdict`
+
+모든 지표 · 수용 기준 · 실험에 공통 적용한다. 판정 임계치는 §9.1에 있다.
+
+```mermaid
+flowchart LR
+    M["지표 측정값"] --> C1{"통과선<br/>이상?"}
+    C1 -- "예" --> PASS["PASS<br/>다음 게이트로 진행"]
+    C1 -- "아니오" --> C2{"실패선<br/>초과?"}
+    C2 -- "예" --> HOLD["HOLD<br/>표본 +4 후 재판정<br/>그 사이 로드맵 변경 없음"]
+    C2 -- "아니오" --> FAIL["FAIL<br/>지정된 재설계 실행"]
+    HOLD -- "2회 연속 HOLD" --> FAIL
+
+    style PASS fill:#e6f4e6,stroke:#2d8a2d
+    style HOLD fill:#fff4d6,stroke:#e69500
+    style FAIL fill:#ffe0e0,stroke:#c00
+```
+
+#### 6.2.8 인앱 이벤트 — `EventType`
+
+값 사이에 관계나 전이가 없는 **평면 열거형**이므로 표로 정의한다. 각 이벤트의 필드와 산출 지표는 §6.1에 있다.
+
+| 상수 | 생산 서비스 | 주 용도 |
+| --- | --- | --- |
+| `PRACTICE_CREDITED` | Practice Service | **WPA 분자** · 첫 실천 인정률 |
+| `STAR_LEDGER_ENTRY` | Star Ledger Service | 정합성 감사 · 멱등 검증 |
+| `TREE_STATE_CHANGED` | Growth Service | 승급 이력 · 정체 일수 |
+| `TREE_VIEW_OPENED` | Growth Service | 실천 근거 · 정체 원인 열람률 |
+| `FOREST_VIEW_OPENED` | Growth Service | 보호자 확인 시간 · 델타 항목 수 |
+| `RETRO_VIEWED` | Plan & Spending Service | 회고 체류 · 갈래별 열람률 · 업종 일치 분포 |
+| `APPROVAL_STATE_CHANGED` | Practice Service | 소급 성공률 · 승인 지연 분포 |
+| `INACTIVITY_NOTIFIED` | Notification Service | 탐지 일수 · 채널별 발송·열람률 |
+| `ONBOARDING_STEP` | Consent & Account | 온보딩 퍼널 · 단계 이탈률 |
+| `CONSENT_GATE_BLOCKED` | Consent & Account | **규제 알림 — 1건 이상 시 즉시** |
 
 ### 6.3 `비즈니스` 규칙 요약
 
