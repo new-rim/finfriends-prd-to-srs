@@ -1,0 +1,2460 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SRS 읽는 PM · 핀프렌즈 SRS v1.0 학습 해설서</title>
+<meta name="description" content="프로그래밍 배경지식 없이 SRS 문서를 완전히 소화하기 위한 PM용 지식 해설서. 용어 해설집 → 핵심 개념 → 실전 운영.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* ══════════════════ 토큰 ══════════════════ */
+:root{
+  --bg:#F2F4F6; --surface:#FFFFFF; --surface-2:#F9FAFB; --surface-3:#EEF1F4;
+  --text:#191F28; --text-2:#4E5968; --text-3:#8B95A1;
+  --border:#E5E8EB; --border-strong:#D5DAE0;
+  --accent:#3182F6; --accent-text:#1B64DA; --accent-weak:#E8F3FF;
+  --good:#0F8A4D; --good-text:#0B6E3D; --good-weak:#E4F6EC;
+  --warn:#B4690E; --warn-text:#8F5209; --warn-weak:#FDF2E0;
+  --bad:#E0384A;  --bad-text:#C22133;  --bad-weak:#FDEEF0;
+  --violet:#7C4DDA; --violet-text:#6237BC; --violet-weak:#F0EAFD;
+  --shadow:0 1px 2px rgba(25,31,40,.04), 0 6px 22px rgba(25,31,40,.06);
+  --shadow-lg:0 2px 6px rgba(25,31,40,.06), 0 18px 50px rgba(25,31,40,.12);
+  --radius:16px;
+  --hue:var(--accent); --hue-text:var(--accent-text); --hue-weak:var(--accent-weak);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1116; --surface:#171C23; --surface-2:#1D232B; --surface-3:#232A33;
+    --text:#EDF0F3; --text-2:#AEB7C2; --text-3:#7E8996;
+    --border:#282F38; --border-strong:#39424E;
+    --accent:#5C9DFF; --accent-text:#9CC3FF; --accent-weak:#15263D;
+    --good:#3ECC85; --good-text:#7FE3B0; --good-weak:#10291D;
+    --warn:#E9A94A; --warn-text:#F3C782; --warn-weak:#2E2415;
+    --bad:#FF7480;  --bad-text:#FFA3AC;  --bad-weak:#361E22;
+    --violet:#A98BF0; --violet-text:#C4AEF7; --violet-weak:#221A38;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 24px rgba(0,0,0,.3);
+    --shadow-lg:0 2px 8px rgba(0,0,0,.4), 0 20px 56px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1116; --surface:#171C23; --surface-2:#1D232B; --surface-3:#232A33;
+  --text:#EDF0F3; --text-2:#AEB7C2; --text-3:#7E8996;
+  --border:#282F38; --border-strong:#39424E;
+  --accent:#5C9DFF; --accent-text:#9CC3FF; --accent-weak:#15263D;
+  --good:#3ECC85; --good-text:#7FE3B0; --good-weak:#10291D;
+  --warn:#E9A94A; --warn-text:#F3C782; --warn-weak:#2E2415;
+  --bad:#FF7480;  --bad-text:#FFA3AC;  --bad-weak:#361E22;
+  --violet:#A98BF0; --violet-text:#C4AEF7; --violet-weak:#221A38;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 2px 8px rgba(0,0,0,.4), 0 20px 56px rgba(0,0,0,.45);
+}
+
+/* 파트별 색 */
+.page[data-p="0"]{--hue:var(--text-2); --hue-text:var(--text-2); --hue-weak:var(--surface-3)}
+.page[data-p="1"]{--hue:var(--accent); --hue-text:var(--accent-text); --hue-weak:var(--accent-weak)}
+.page[data-p="2"]{--hue:var(--good);   --hue-text:var(--good-text);   --hue-weak:var(--good-weak)}
+.page[data-p="3"]{--hue:var(--warn);   --hue-text:var(--warn-text);   --hue-weak:var(--warn-weak)}
+.page[data-p="4"]{--hue:var(--bad);    --hue-text:var(--bad-text);    --hue-weak:var(--bad-weak)}
+.page[data-p="5"]{--hue:var(--violet); --hue-text:var(--violet-text); --hue-weak:var(--violet-weak)}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow:hidden;
+}
+.mono,code{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+code{font-size:.9em; background:var(--surface-3); padding:1px 6px; border-radius:5px; color:var(--text-2)}
+b,strong{font-weight:600; color:var(--text)}
+em{font-style:normal; font-weight:600; color:var(--hue-text); background:var(--hue-weak); padding:1px 6px; border-radius:5px}
+
+/* ══════════════════ 상단바 ══════════════════ */
+.top{
+  position:fixed; inset:0 0 auto 0; z-index:60; height:56px;
+  display:flex; align-items:center; gap:14px; padding:0 18px;
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter:saturate(1.6) blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.brand{display:flex; align-items:baseline; gap:9px; flex-shrink:0}
+.brand b{font-size:15px; font-weight:700; letter-spacing:-.03em}
+.brand span{font-size:10.5px; color:var(--text-3); letter-spacing:.08em; font-family:"IBM Plex Mono",monospace}
+.crumb{
+  flex:1; min-width:0; display:flex; align-items:center; gap:9px;
+  font-size:12.5px; color:var(--text-3); overflow:hidden; white-space:nowrap;
+}
+.crumb .pill{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.06em;
+  padding:3px 9px; border-radius:20px; background:var(--surface-3); color:var(--text-2); flex-shrink:0;
+}
+.crumb .ttl{color:var(--text-2); font-weight:500; overflow:hidden; text-overflow:ellipsis}
+.tools{display:flex; align-items:center; gap:6px; flex-shrink:0}
+.tbtn{
+  height:33px; min-width:33px; padding:0 10px; display:inline-flex; align-items:center; gap:6px;
+  justify-content:center; border:1px solid var(--border); background:var(--surface);
+  color:var(--text-2); border-radius:9px; cursor:pointer; font-family:inherit; font-size:12px; font-weight:500;
+  transition:background .15s, border-color .15s, color .15s;
+}
+.tbtn:hover{background:var(--surface-3); color:var(--text); border-color:var(--border-strong)}
+.tbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.tbtn kbd{font-size:10px; color:var(--text-3); background:var(--surface-3); border-radius:4px; padding:1px 5px}
+.counter{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--text-3); font-variant-numeric:tabular-nums; padding:0 4px}
+.counter b{color:var(--text); font-weight:600}
+@media(max-width:760px){ .brand span,.tbtn .lbl,.tbtn kbd{display:none} }
+
+/* 진행 바 */
+.prog{position:fixed; top:56px; left:0; right:0; height:2px; background:var(--border); z-index:60}
+.prog i{display:block; height:100%; background:var(--accent); width:0; transition:width .3s cubic-bezier(.2,.8,.2,1)}
+
+/* ══════════════════ 덱 ══════════════════ */
+.deck{position:fixed; inset:58px 0 62px 0; overflow:hidden}
+.page{
+  position:absolute; inset:0; overflow-y:auto; overflow-x:hidden;
+  padding:38px 24px 40px; opacity:0; visibility:hidden;
+  transform:translateX(var(--enter,26px));
+  transition:opacity .28s ease, transform .34s cubic-bezier(.2,.8,.2,1), visibility 0s .34s;
+  -webkit-overflow-scrolling:touch;
+}
+.page.on{opacity:1; visibility:visible; transform:none; transition:opacity .3s ease, transform .38s cubic-bezier(.2,.8,.2,1), visibility 0s}
+@media(prefers-reduced-motion:reduce){ .page{transition:opacity .01s; transform:none !important} }
+.page-in{max-width:1000px; margin:0 auto}
+.page:focus{outline:none}
+
+/* 페이지 헤더 */
+.ph{margin-bottom:26px}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--hue-text); margin:0 0 12px; display:flex; align-items:center; gap:9px;
+}
+.eyebrow::before{content:""; width:22px; height:2px; background:var(--hue); border-radius:2px; flex-shrink:0}
+.ph h2{margin:0 0 12px; font-size:clamp(24px,3.6vw,34px); font-weight:700; letter-spacing:-.035em; line-height:1.28; text-wrap:balance}
+.ph .dek{margin:0; font-size:15.5px; color:var(--text-2); line-height:1.72; max-width:74ch}
+.ph .dek b{color:var(--text)}
+
+/* 출처 */
+.src{
+  margin-top:30px; padding-top:14px; border-top:1px dashed var(--border-strong);
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--text-3); letter-spacing:.01em;
+}
+.src b{color:var(--text-2); font-weight:500}
+
+/* ══════════════════ 블록 ══════════════════ */
+.stack{display:flex; flex-direction:column; gap:16px}
+.grid{display:grid; gap:13px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:19px 20px; box-shadow:var(--shadow);
+}
+.card h3{margin:0 0 9px; font-size:15.5px; font-weight:700; letter-spacing:-.02em; line-height:1.4}
+.card h3 .n{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--hue-text);
+  background:var(--hue-weak); padding:2px 7px; border-radius:6px; margin-right:8px; vertical-align:2px;
+}
+.card p{margin:0 0 9px; font-size:14px; color:var(--text-2); line-height:1.72}
+.card p:last-child{margin-bottom:0}
+.card .tag{
+  display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.05em;
+  color:var(--text-3); margin-bottom:8px;
+}
+
+/* 콜아웃 */
+.co{border-radius:14px; padding:17px 19px 17px 20px; border:1px solid; position:relative; font-size:14.2px; line-height:1.75}
+.co .lb{display:block; font-size:11px; font-family:"IBM Plex Mono",monospace; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600}
+.co p{margin:0 0 8px} .co p:last-child{margin-bottom:0}
+.co.key{background:var(--accent-weak); border-color:color-mix(in srgb,var(--accent) 30%,transparent); color:var(--text)}
+.co.key .lb{color:var(--accent-text)}
+.co.ok{background:var(--good-weak); border-color:color-mix(in srgb,var(--good) 32%,transparent)}
+.co.ok .lb{color:var(--good-text)}
+.co.wr{background:var(--warn-weak); border-color:color-mix(in srgb,var(--warn) 34%,transparent)}
+.co.wr .lb{color:var(--warn-text)}
+.co.bd{background:var(--bad-weak); border-color:color-mix(in srgb,var(--bad) 32%,transparent)}
+.co.bd .lb{color:var(--bad-text)}
+.co.qt{background:var(--surface-2); border-color:var(--border); color:var(--text-2); font-size:14px}
+.co.qt .lb{color:var(--text-3)}
+
+/* 용어 카드 */
+.terms{display:grid; gap:11px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.term{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 17px;
+  box-shadow:var(--shadow); display:flex; flex-direction:column; gap:7px;
+}
+.term .t{font-size:15px; font-weight:700; letter-spacing:-.02em; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap}
+.term .t .en{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500; color:var(--text-3); letter-spacing:.01em}
+.term .d{font-size:13.8px; color:var(--text-2); line-height:1.7; margin:0}
+.term .pm{
+  font-size:13px; line-height:1.7; color:var(--text-2); margin:2px 0 0;
+  padding:10px 12px; background:var(--hue-weak); border-radius:9px;
+  border-left:3px solid var(--hue);
+}
+.term .pm b{color:var(--hue-text)}
+.term .pm::before{content:"PM "; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.1em; color:var(--hue-text); font-weight:600}
+
+/* 표 */
+.tbl{width:100%; overflow-x:auto; border:1px solid var(--border); border-radius:14px; background:var(--surface); box-shadow:var(--shadow)}
+table{width:100%; border-collapse:collapse; font-size:13.6px; min-width:520px}
+th,td{padding:11px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-size:11.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-3); background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td{color:var(--text-2); line-height:1.65}
+td b{color:var(--text)}
+td.c{text-align:center; white-space:nowrap}
+
+/* 배지 */
+.bg{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:600; letter-spacing:.05em; padding:2px 8px; border-radius:6px; white-space:nowrap}
+.bg.must{background:var(--bad-weak); color:var(--bad-text)}
+.bg.should{background:var(--warn-weak); color:var(--warn-text)}
+.bg.could{background:var(--accent-weak); color:var(--accent-text)}
+.bg.wont{background:var(--surface-3); color:var(--text-3)}
+.bg.pass{background:var(--good-weak); color:var(--good-text)}
+.bg.hold{background:var(--warn-weak); color:var(--warn-text)}
+.bg.fail{background:var(--bad-weak); color:var(--bad-text)}
+.bg.n{background:var(--surface-3); color:var(--text-2)}
+
+/* 흐름 */
+.flow{display:flex; align-items:stretch; gap:0; flex-wrap:wrap}
+.flow .node{
+  flex:1 1 150px; min-width:130px; background:var(--surface); border:1px solid var(--border);
+  border-radius:13px; padding:14px 15px; box-shadow:var(--shadow); text-align:center;
+}
+.flow .node .k{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--hue-text); letter-spacing:.08em; display:block; margin-bottom:6px}
+.flow .node .v{font-size:13.5px; font-weight:600; letter-spacing:-.01em; line-height:1.45}
+.flow .node .s{font-size:12px; color:var(--text-3); margin-top:5px; line-height:1.5}
+.flow .arw{display:flex; align-items:center; justify-content:center; padding:0 8px; color:var(--text-3); font-size:17px; flex:0 0 auto}
+@media(max-width:640px){ .flow{flex-direction:column} .flow .arw{padding:5px 0; transform:rotate(90deg)} }
+
+/* 단계 리스트 */
+.steps{counter-reset:s; display:flex; flex-direction:column; gap:11px; margin:0; padding:0; list-style:none}
+.steps li{
+  counter-increment:s; position:relative; padding:14px 17px 14px 52px;
+  background:var(--surface); border:1px solid var(--border); border-radius:13px; box-shadow:var(--shadow);
+  font-size:14px; color:var(--text-2); line-height:1.7;
+}
+.steps li::before{
+  content:counter(s); position:absolute; left:16px; top:14px;
+  width:24px; height:24px; display:grid; place-items:center; border-radius:8px;
+  background:var(--hue-weak); color:var(--hue-text);
+  font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600;
+}
+.steps li b{display:block; color:var(--text); font-size:14.5px; margin-bottom:3px; letter-spacing:-.01em}
+
+/* 체크 질문 */
+.qs{display:flex; flex-direction:column; gap:9px; margin:0; padding:0; list-style:none}
+.qs li{
+  position:relative; padding:12px 15px 12px 42px; font-size:14px; line-height:1.7; color:var(--text-2);
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+}
+.qs li::before{
+  content:"?"; position:absolute; left:14px; top:12px; width:20px; height:20px;
+  display:grid; place-items:center; border-radius:6px; background:var(--hue-weak);
+  color:var(--hue-text); font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700;
+}
+.qs li b{color:var(--text)}
+.qs.warn li::before{content:"!"; background:var(--bad-weak); color:var(--bad-text)}
+
+/* 숫자 스탯 */
+.stats{display:grid; gap:11px; grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.stat{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 17px; box-shadow:var(--shadow)}
+.stat b{display:block; font-size:27px; font-weight:700; letter-spacing:-.04em; line-height:1.1; font-variant-numeric:tabular-nums}
+.stat span{display:block; font-size:12.5px; color:var(--text-3); margin-top:6px; line-height:1.5}
+.stat small{display:block; font-size:11.5px; color:var(--text-3); margin-top:4px}
+
+/* 비교 2열 */
+.vs{display:grid; gap:13px; grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+.vs .side{border-radius:14px; padding:17px 18px; border:1px solid var(--border); background:var(--surface); box-shadow:var(--shadow)}
+.vs .side h4{margin:0 0 10px; font-size:14px; font-weight:700; letter-spacing:-.01em; display:flex; align-items:center; gap:8px}
+.vs .side h4 .dot{width:8px; height:8px; border-radius:50%; flex-shrink:0}
+.vs .side.a h4 .dot{background:var(--good)} .vs .side.b h4 .dot{background:var(--bad)}
+.vs .side ul{margin:0; padding-left:17px; font-size:13.6px; color:var(--text-2); line-height:1.75}
+.vs .side li{margin-bottom:5px}
+
+/* 표지 */
+.cover{display:flex; flex-direction:column; justify-content:center; min-height:min(560px,72vh); text-align:left}
+.cover h1{margin:0 0 18px; font-size:clamp(32px,6vw,54px); font-weight:700; letter-spacing:-.045em; line-height:1.16; text-wrap:balance}
+.cover .sub{font-size:17px; color:var(--text-2); max-width:60ch; line-height:1.75; margin:0 0 30px}
+.cover .meta{display:flex; flex-wrap:wrap; gap:9px; margin-bottom:34px}
+.cover .meta span{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--text-3); background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:6px 13px}
+.keyhint{display:flex; flex-wrap:wrap; gap:20px; padding:20px 22px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow)}
+.keyhint div{display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--text-2)}
+kbd{
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo",sans-serif; font-weight:600;
+  display:inline-grid; place-items:center; min-width:26px; height:26px; padding:0 7px;
+  background:var(--surface-2); border:1px solid var(--border-strong); border-bottom-width:2px;
+  border-radius:7px; font-size:12px; font-weight:500; color:var(--text-2);
+}
+
+/* ══════════════════ 하단 내비 ══════════════════ */
+.nav{
+  position:fixed; inset:auto 0 0 0; z-index:60; height:62px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 18px;
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter:saturate(1.6) blur(16px); border-top:1px solid var(--border);
+}
+.nbtn{
+  display:inline-flex; align-items:center; gap:10px; max-width:42vw;
+  padding:9px 15px; border:1px solid var(--border); background:var(--surface); color:var(--text-2);
+  border-radius:11px; cursor:pointer; font-family:inherit; font-size:13px; text-align:left;
+  box-shadow:var(--shadow); transition:transform .14s, border-color .14s, color .14s;
+}
+.nbtn:hover:not(:disabled){transform:translateY(-1px); border-color:var(--border-strong); color:var(--text)}
+.nbtn:disabled{opacity:.35; cursor:default}
+.nbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.nbtn .ar{font-size:15px; color:var(--text-3); flex-shrink:0}
+.nbtn .tx{display:flex; flex-direction:column; min-width:0}
+.nbtn .tx small{font-size:10.5px; color:var(--text-3); font-family:"IBM Plex Mono",monospace; letter-spacing:.06em}
+.nbtn .tx span{font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.dots{display:flex; gap:5px; align-items:center; flex:1; min-width:0; justify-content:center; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
+.dots::-webkit-scrollbar{display:none}
+.dots i{width:6px; height:6px; border-radius:50%; background:var(--border-strong); flex-shrink:0; transition:all .2s; cursor:pointer}
+.dots i.on{background:var(--accent); width:20px; border-radius:3px}
+.dots i.near{background:var(--text-3)}
+@media(max-width:760px){ .nbtn .tx span{display:none} .dots{display:none} }
+
+/* ══════════════════ 오버레이 ══════════════════ */
+.ov{
+  position:fixed; inset:0; z-index:90; background:color-mix(in srgb,var(--bg) 78%,transparent);
+  backdrop-filter:blur(18px) saturate(1.4); display:none; flex-direction:column;
+}
+.ov.on{display:flex}
+.ov-top{display:flex; align-items:center; gap:14px; padding:16px 20px; border-bottom:1px solid var(--border); flex-shrink:0}
+.ov-top h3{margin:0; font-size:16px; font-weight:700; letter-spacing:-.02em; flex-shrink:0}
+.ov-search{position:relative; flex:1; min-width:0; max-width:460px}
+.ov-search input{
+  width:100%; padding:10px 14px; font-size:14px; font-family:inherit; color:var(--text);
+  background:var(--surface); border:1px solid var(--border); border-radius:11px; outline:none;
+}
+.ov-search input:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-weak)}
+.ov-body{flex:1; overflow-y:auto; padding:22px 20px 40px}
+.ov-in{max-width:1060px; margin:0 auto}
+.ov-part{margin-bottom:26px}
+.ov-part > h4{
+  margin:0 0 11px; font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--text-3); display:flex; align-items:center; gap:9px;
+}
+.ov-part > h4::after{content:""; flex:1; height:1px; background:var(--border)}
+.ov-list{display:grid; gap:8px; grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.ov-item{
+  display:flex; align-items:flex-start; gap:11px; padding:11px 13px; text-align:left; cursor:pointer;
+  background:var(--surface); border:1px solid var(--border); border-radius:11px;
+  font-family:inherit; color:var(--text-2); transition:border-color .14s, transform .14s, background .14s;
+}
+.ov-item:hover{border-color:var(--border-strong); transform:translateY(-1px); background:var(--surface-2)}
+.ov-item.cur{border-color:var(--accent); background:var(--accent-weak)}
+.ov-item .num{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--text-3); flex-shrink:0; padding-top:2px; font-variant-numeric:tabular-nums}
+.ov-item .lab{font-size:13.5px; line-height:1.5; font-weight:500; color:var(--text)}
+.ov-item:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.ov-empty{text-align:center; color:var(--text-3); font-size:14px; padding:50px 0}
+
+/* 도움말 */
+.help-grid{display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); max-width:760px; margin:0 auto}
+.help-row{display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--surface); border:1px solid var(--border); border-radius:11px}
+.help-row .ks{display:flex; gap:4px; flex-shrink:0}
+.help-row span{font-size:13.5px; color:var(--text-2)}
+
+/* 좌우 클릭 영역 */
+.edge{position:fixed; top:58px; bottom:62px; width:9vw; max-width:110px; z-index:20; cursor:pointer; border:0; background:transparent; display:grid; place-items:center; opacity:0; transition:opacity .2s}
+.edge:hover{opacity:1}
+.edge.l{left:0} .edge.r{right:0}
+.edge i{width:38px; height:38px; display:grid; place-items:center; border-radius:50%; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-lg); color:var(--text-2); font-size:15px; font-style:normal}
+.edge:disabled{cursor:default} .edge:disabled:hover{opacity:0}
+@media(max-width:900px){ .edge{display:none} }
+@media(hover:none){ .edge{display:none} }
+
+::-webkit-scrollbar{width:10px; height:10px}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:6px; border:3px solid var(--bg)}
+::-webkit-scrollbar-track{background:transparent}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><b>SRS 읽는 PM</b><span>FINFRIENDS v1.0</span></div>
+  <div class="crumb"><span class="pill" id="cPart">시작</span><span class="ttl" id="cTitle">표지</span></div>
+  <div class="tools">
+    <span class="counter"><b id="cNum">1</b> / <span id="cTot">45</span></span>
+    <button class="tbtn" id="btnOv" aria-label="목차 열기"><span class="lbl">목차</span><kbd>O</kbd></button>
+    <button class="tbtn" id="btnHelp" aria-label="단축키 도움말">?</button>
+    <button class="tbtn" id="btnTheme" aria-label="테마 전환">◐</button>
+  </div>
+</header>
+<div class="prog"><i id="progBar"></i></div>
+
+<button class="edge l" id="edgeL" aria-label="이전 페이지"><i>←</i></button>
+<button class="edge r" id="edgeR" aria-label="다음 페이지"><i>→</i></button>
+
+<main class="deck" id="deck" tabindex="-1" aria-live="polite">
+
+<!-- ══════════════ PART 0 · 오리엔테이션 ══════════════ -->
+
+<section class="page" data-p="0" data-part="시작" data-title="표지 — SRS 읽는 PM" data-kw="표지 시작 커버 조작법">
+<div class="page-in cover">
+  <p class="eyebrow">핀프렌즈 SRS v1.0 · PM 학습 해설서</p>
+  <h1>엔지니어링 배경 없이,<br>SRS를 끝까지 읽는 법</h1>
+  <p class="sub">이 해설서는 <b>SRS-FINFRIENDS-MVP-001</b> 문서 한 건을 PM의 눈으로 완전히 해체한다. 목표는 코드를 이해하는 것이 아니라, <b>이 문서를 근거로 프로젝트를 운영하는 것</b>이다. 용어 해설집으로 시작해 핵심 개념, 그리고 회의에서 바로 쓰는 질문 세트로 끝난다.</p>
+  <div class="meta">
+    <span>44 페이지</span><span>6개 파트</span><span>예상 90분</span><span>대상 · 제품기획 PM</span>
+  </div>
+  <div class="keyhint">
+    <div><kbd>←</kbd><kbd>→</kbd> 페이지 넘기기</div>
+    <div><kbd>O</kbd> 목차 · 검색</div>
+    <div><kbd>?</kbd> 단축키</div>
+    <div><kbd>Home</kbd><kbd>End</kbd> 처음 · 끝</div>
+  </div>
+</div>
+</section>
+
+<section class="page" data-p="0" data-part="시작" data-title="SRS가 PM에게 하는 일 세 가지" data-kw="SRS 역할 합의문 판정기준 방어선 왜 읽나">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">시작 01</p>
+    <h2>SRS가 PM에게 하는 일 세 가지</h2>
+    <p class="dek">SRS는 개발자용 문서가 아니다. <b>PM이 프로젝트를 통제하는 세 가지 장치</b>가 한 파일에 들어 있는 것이다. 기술 문서로 읽으면 어렵지만, 이 세 가지 렌즈로 읽으면 대부분의 페이지가 PM의 일이 된다.</p>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <span class="tag">장치 ①</span>
+      <h3>합의문 — 무엇을 만들 것인가</h3>
+      <p>기능 17건 · 비기능 18건이 <b>번호를 달고</b> 적혀 있다. 번호가 있다는 것은 나중에 <em>"이건 얘기 안 했는데요"</em>가 성립하지 않는다는 뜻이다.</p>
+      <p>PM의 이득 — 범위 다툼이 기억 싸움이 아니라 <b>문서 대조</b>가 된다.</p>
+    </div>
+    <div class="card">
+      <span class="tag">장치 ②</span>
+      <h3>판정 기준 — 언제 끝난 것인가</h3>
+      <p>수용 기준 49건이 <b>숫자와 조건</b>으로 적혀 있다. <em>"거의 다 됐어요"</em>가 아니라 <em>"AC-4.2 정확도 90% 미달"</em>로 말하게 만든다.</p>
+      <p>PM의 이득 — 완료 판정이 <b>협상이 아니라 확인</b>이 된다.</p>
+    </div>
+    <div class="card">
+      <span class="tag">장치 ③</span>
+      <h3>방어선 — 무엇을 안 할 것인가</h3>
+      <p>제외 항목·제약·기각한 대안이 <b>근거와 함께</b> 적혀 있다. 반년 뒤 같은 아이디어가 다시 올라와도 다시 논쟁하지 않는다.</p>
+      <p>PM의 이득 — <b>같은 회의를 두 번 하지 않는다.</b></p>
+    </div>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">읽는 순서에 대하여</span>
+    <p>이 SRS는 처음부터 끝까지 읽도록 만들어지지 않았다. <b>§1(전체 그림) → §4(요구사항 목록) → §9(수용 기준·지표) → §12·13(제약·배분)</b>이 PM의 동선이고, §6.2 데이터 모델과 §5 추적성은 <b>필요할 때 찾아보는 참조표</b>다. 이 해설서도 같은 동선으로 짜여 있다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §1.1 목적 · §4 구체적 요구사항 · §9 검증 · §11 ADR</p>
+</div>
+</section>
+
+<section class="page" data-p="0" data-part="시작" data-title="PRD → SRS → DESIGN, 세 문서의 분업" data-kw="PRD SRS DESIGN 차이 문서 지도 분업">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">시작 02</p>
+    <h2>PRD → SRS → DESIGN, 세 문서의 분업</h2>
+    <p class="dek">같은 제품을 세 번 쓴 것이 아니다. <b>질문이 다르다.</b> 이 구분을 잡아 두면 "이건 어느 문서에 적을 일인가"가 바로 갈리고, 회의에서 엉뚱한 문서를 펼치는 일이 없어진다.</p>
+  </div>
+  <div class="flow" style="margin-bottom:16px">
+    <div class="node"><span class="k">PRD</span><span class="v">왜 · 무엇을 원하나</span><span class="s">사용자 문제 · 가치 · 시장</span></div>
+    <div class="arw">→</div>
+    <div class="node" style="border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-weak)"><span class="k">SRS ← 지금 여기</span><span class="v">무엇을 만들어야 하나</span><span class="s">검증 가능한 요구사항</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">DESIGN</span><span class="v">어떻게 만드나</span><span class="s">유스케이스 · 시퀀스 · ERD</span></div>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>구분</th><th>PRD</th><th>SRS <span class="bg n">본 문서</span></th><th>DESIGN</th></tr></thead>
+      <tbody>
+        <tr><td><b>답하는 질문</b></td><td>왜 이걸 하는가</td><td><b>무엇이 충족되어야 하는가</b></td><td>어떤 구조로 만드는가</td></tr>
+        <tr><td><b>주 저자</b></td><td>제품기획</td><td><b>기획 + 분석 + 개발 합의</b></td><td>개발팀</td></tr>
+        <tr><td><b>PM의 관여</b></td><td>주도</td><td><b>확정 · 승인</b></td><td>검토만 — 위임 구간</td></tr>
+        <tr><td><b>바뀌는 계기</b></td><td>시장·사용자 이해가 바뀔 때</td><td><b>범위·판정 기준이 바뀔 때</b></td><td>구현 방식이 바뀔 때</td></tr>
+        <tr><td><b>이 프로젝트</b></td><td><code>finfriends-prd-v1_0.md</code></td><td><code>SRS_finfriends-v1_0.md</code></td><td><code>DESIGN_finfriends-v1_0.md</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">PM이 실제로 쓰는 규칙</span>
+    <p><b>DESIGN 문서에서 발견된 것이 요구사항이면 SRS로 올라온다.</b> 이 SRS 서두에 「설계 문서로부터의 역류 반영」이 적혀 있는 것이 그 예다 — 설계하다 드러난 것 중 <em>판정 규칙에 해당하는 것</em>만 SRS로 올리고, 구현 수단은 DESIGN에 둔다. 이 경계를 PM이 지키지 않으면 SRS가 설계서로 부풀어 아무도 안 읽는 문서가 된다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS 머리말 「설계 문서로부터의 역류 반영」 · §1.4 말미</p>
+</div>
+</section>
+
+<section class="page" data-p="0" data-part="시작" data-title="이 SRS 한 장 요약" data-kw="요약 숫자 전체 개요 5분">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">시작 03</p>
+    <h2>이 SRS 한 장 요약</h2>
+    <p class="dek">본문 1,492줄을 숫자와 한 문장으로 압축하면 이렇다. 나머지 페이지는 전부 <b>이 숫자들이 왜 그 값인지</b>를 푸는 과정이다.</p>
+  </div>
+  <div class="stats" style="margin-bottom:16px">
+    <div class="stat"><b>17</b><span>기능 요구사항</span><small>Must 8 · Should 5 · Could 3 · Won't 1</small></div>
+    <div class="stat"><b>18</b><span>비기능 요구사항</span><small>성능 · 신뢰성 · 규제 · 원가</small></div>
+    <div class="stat"><b>49</b><span>수용 기준</span><small>정상 30 · 예외 19</small></div>
+    <div class="stat"><b>25</b><span>KPI</span><small>+ 계측 건강성 5</small></div>
+    <div class="stat"><b>8</b><span>ADR</span><small>되돌리기 어려운 결정</small></div>
+    <div class="stat"><b>13sp</b><span>MVP 규모</span><small>1sp = 2주 · 빌드 6구획</small></div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>제품이 하려는 일 — 한 문장</h3>
+      <p>배운 금융 지식을 <b>실제 돈 행동</b>으로 잇고, 그 변화를 <b>보호자가 읽을 수 있게</b> 하는 아동 금융교육 앱.</p>
+      <p>모든 요구사항은 둘 중 하나에 귀속된다 — <em>선언 ① 아이에게 성장이 일어난다</em> · <em>선언 ② 그 성장이 보호자에게 보인다</em>.</p>
+    </div>
+    <div class="card">
+      <h3>이 문서가 특별히 신경 쓴 것</h3>
+      <p><b>① 규제가 1순위다</b> — 아동 대상 금융이라 법정대리인 동의가 기능이 아니라 진입 순서 자체다.</p>
+      <p><b>② 지표를 세는 규칙을 먼저 정했다</b> — 무엇을 세는지가 흐릿하면 판정이 성립하지 않기 때문.</p>
+      <p><b>③ 돈이 움직이는 부분은 전부 제휴사에 있다</b> — 우리가 정하지 못하는 것이 많다는 뜻이고, 그것이 여러 제약을 낳았다.</p>
+    </div>
+  </div>
+  <div class="co wr" style="margin-top:16px">
+    <span class="lb">지금 열려 있는 것 · PM이 닫아야 할 것</span>
+    <p>제휴사 계약 조건(D1) · 예적금 법률 검토(D2) · 3D 에셋 사양(D4) · 출석 별 지급 조건(D5) · <b>계측 이벤트 2종 추가 여부</b> — 이 다섯 건이 미결이며, 그중 계측 2종은 <b>Must 요구사항 하나의 검증 자체를 막고 있다</b>. 자세한 내용은 파트 4에서 다룬다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §1.1~§1.2 · §4 집계 · §9.2 집계 · §10.2 · §13.1</p>
+</div>
+</section>
+
+<!-- ══════════════ PART 1 · 용어 해설집 ══════════════ -->
+
+<section class="page" data-p="1" data-part="용어집" data-title="용어집 — 먼저 이 다섯 개만" data-kw="용어집 시작 핵심5 WPA 수용기준 계측 제약 ADR">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어 해설집 · 들어가며</p>
+    <h2>먼저 이 다섯 개만</h2>
+    <p class="dek">앞으로 60여 개의 용어가 나오지만, <b>이 다섯 개를 잡으면 SRS의 8할이 읽힌다.</b> 나머지는 이 다섯 개에 붙은 세부다. 각 카드의 파란 상자는 <b>PM이 실제로 그 용어를 쓰는 순간</b>이다.</p>
+  </div>
+  <div class="terms">
+    <div class="term">
+      <div class="t">WPA <span class="en">Weekly Practiced Active</span></div>
+      <p class="d">주간 실천 인정 아동 비율. 이 제품의 <b>북극성 지표</b> — 성패를 하나로 말하는 숫자다. "이번 주에 <b>배운 게 아니라 실제로 뭔가를 한</b> 아이가 몇 %인가".</p>
+      <p class="pm">— 이 하나가 안 오르면 다른 지표가 아무리 좋아도 <b>프로젝트가 실패한 것</b>이다. 주간 리뷰의 첫 슬라이드가 항상 이 숫자여야 한다.</p>
+    </div>
+    <div class="term">
+      <div class="t">수용 기준 <span class="en">Acceptance Criteria · AC</span></div>
+      <p class="d">"이 요구사항은 <b>무엇이 확인되면 끝난 것인가</b>"를 미리 적어 둔 문장. 이 SRS엔 49건이 있고, 전부 <b>조건 + 숫자</b> 형태다.</p>
+      <p class="pm">— 스프린트 리뷰에서 "됐어요"를 들으면 <b>AC 번호를 묻는다.</b> "AC-4.2 몇 %예요?"가 "정말 다 된 거 맞아요?"보다 백 배 낫다.</p>
+    </div>
+    <div class="term">
+      <div class="t">계측 <span class="en">instrumentation</span></div>
+      <p class="d">앱이 스스로 "무슨 일이 일어났는지" <b>기록을 남기게 만드는 작업</b>. 화면을 만드는 일과 별개의 일이며, 안 해 두면 나중에 소급해서 알 수 없다.</p>
+      <p class="pm">— <b>기능 개발과 같은 스프린트에 넣어야 한다.</b> 뒤로 미루면 그 기간의 지표는 영원히 존재하지 않는다. 이 SRS가 B6 빌드를 전 구간 병행으로 둔 이유다.</p>
+    </div>
+    <div class="term">
+      <div class="t">제약 <span class="en">Constraint</span></div>
+      <p class="d">설계가 <b>선택할 수 없는 경계</b>. 요구사항은 "이렇게 되면 좋겠다"이고 제약은 "이건 넘을 수 없다"이다. <b>충돌하면 제약이 이긴다.</b></p>
+      <p class="pm">— 변경 요청이 오면 <b>제일 먼저</b> 제약 계층(§12)을 본다. 규제 제약에 걸리면 그 논의는 우선순위 조정으로 풀리지 않는다.</p>
+    </div>
+    <div class="term">
+      <div class="t">ADR <span class="en">Architecture Decision Record</span></div>
+      <p class="d">되돌리기 어려운 결정을 <b>결정 · 기각한 대안 · 뒤집히는 조건 · 대가</b> 네 칸으로 적은 기록. 이 문서엔 8건.</p>
+      <p class="pm">— <b>"뒤집히는 조건" 칸이 PM의 무기다.</b> "이 결정이 틀렸다는 걸 무엇으로 알게 되나"가 미리 적혀 있으면, 그 신호가 뜰 때까지 재논의를 막을 수 있다.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — SRS §1.3 정의 · §9.2 · §11 · §12 · §13.3</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="용어집" data-title="A. 문서·표준 용어 ①" data-kw="SRS PRD ISO 29148 요구사항 기능 비기능 표준">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어집 · A 문서와 표준 ①</p>
+    <h2>문서를 지탱하는 뼈대 용어</h2>
+    <p class="dek">이 다섯 개는 SRS의 <b>목차 자체</b>를 만들어 낸 개념이다. 각 장이 왜 그 자리에 있는지가 여기서 설명된다.</p>
+  </div>
+  <div class="terms">
+    <div class="term">
+      <div class="t">SRS <span class="en">Software Requirements Specification</span></div>
+      <p class="d">소프트웨어 요구사항 명세서. <b>만들 것을 검증 가능한 문장으로</b> 확정한 문서. 구현 방법은 담지 않는다.</p>
+      <p class="pm">— "이건 SRS에 있나요?"가 범위 논쟁의 종결 질문이다. 없으면 <b>변경 절차</b>를 타야 한다.</p>
+    </div>
+    <div class="term">
+      <div class="t">ISO/IEC/IEEE 29148 <span class="en">:2018</span></div>
+      <p class="d">요구사항 문서를 어떻게 써야 하는지 정한 <b>국제 표준</b>. "무엇을 빠뜨리면 안 되는가"의 체크리스트라고 보면 된다.</p>
+      <p class="pm">— 이 SRS의 §8~§13이 확장 절인 이유가 이것. <b>표준 조항 번호가 붙어 있으면 "이건 왜 있냐"는 질문을 방어할 수 있다.</b></p>
+    </div>
+    <div class="term">
+      <div class="t">기능 요구사항 <span class="en">Functional Requirement</span></div>
+      <p class="d">시스템이 <b>무엇을 하는가</b>. "보호자가 미션을 승인하면 별 1개를 준다" 같은 동작. 이 문서에서 <code>REQ-FUNC-###</code>.</p>
+      <p class="pm">— 세기 쉽고 시연하기 쉬워서 <b>진척 보고가 여기에 몰린다.</b> 그래서 아래 비기능이 조용히 밀린다.</p>
+    </div>
+    <div class="term">
+      <div class="t">비기능 요구사항 <span class="en">Non-Functional Requirement · NFR</span></div>
+      <p class="d">시스템이 <b>어떤 상태여야 하는가</b>. 속도·안정성·규제 준수·보안·원가. 이 문서에서 <code>REQ-NF-###</code>, 18건.</p>
+      <p class="pm">— 화면이 없어서 눈에 안 보이지만 <b>실패는 여기서 먼저 난다.</b> 이 SRS가 NFR에 별도 일정을 주지 않고 <b>기능의 완료 조건에 넣은</b> 이유(§13.1).</p>
+    </div>
+    <div class="term">
+      <div class="t">요구사항 ID <span class="en">Requirement ID</span></div>
+      <p class="d"><code>REQ-FUNC-008</code>처럼 요구사항마다 붙은 고유 번호. 문서 전체에서 이 번호로만 서로를 가리킨다.</p>
+      <p class="pm">— <b>회의에서 기능을 이름으로 부르지 말고 번호로 부르는 습관</b>이 정확도를 크게 올린다. "계획 카드 그거"는 세 사람이 세 가지로 듣는다.</p>
+    </div>
+    <div class="term">
+      <div class="t">상태 <span class="en">Status — Proposed · Approved · Deferred</span></div>
+      <p class="d">요구사항 한 건의 <b>현재 승인 단계</b>. 이 문서는 대부분 <code>Proposed</code>(제안됨)이고 REQ-FUNC-017만 <code>Deferred</code>(연기).</p>
+      <p class="pm">— 전부 Proposed라는 건 <b>아직 아무도 최종 승인하지 않았다</b>는 뜻이다. 착수 전에 이 칸을 Approved로 바꾸는 절차가 PM의 일이다.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — SRS 머리말 · §1.3 · §4.1 · §4.2 · §13.1</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="용어집" data-title="A. 문서·표준 용어 ②" data-kw="ADR 추적성 매트릭스 수용기준 Given When Then MoSCoW 우선순위">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어집 · A 문서와 표준 ②</p>
+    <h2>합의와 판정을 만드는 용어</h2>
+    <p class="dek">여기부터가 <b>PM이 직접 손대는 구간</b>이다. 우선순위를 매기고, 완료를 정의하고, 결정을 기록하는 장치들.</p>
+  </div>
+  <div class="terms">
+    <div class="term">
+      <div class="t">MoSCoW <span class="en">Must · Should · Could · Won't</span></div>
+      <p class="d">우선순위 4단계. <b>Must</b>=없으면 제품이 성립 안 함 · <b>Should</b>=중요하나 없어도 출시는 됨 · <b>Could</b>=여유 시 · <b>Won't</b>=이번엔 안 함.</p>
+      <p class="pm">— <b>Won't를 적는 게 핵심이다.</b> "안 한다"를 문서에 박아야 매 스프린트마다 다시 올라오지 않는다.</p>
+    </div>
+    <div class="term">
+      <div class="t">수용 기준 <span class="en">Acceptance Criteria · AC</span></div>
+      <p class="d">완료 판정 문장. 이 문서는 <b>정상 경로 AC 30건 + 예외 경로 ACE 19건 = 49건.</b></p>
+      <p class="pm">— AC가 없는 요구사항은 <b>영원히 안 끝난다.</b> "다 됐다"의 기준이 사람마다 다르기 때문.</p>
+    </div>
+    <div class="term">
+      <div class="t">Given / When / Then <span class="en">GWT</span></div>
+      <p class="d">수용 기준을 쓰는 형식. <b>Given</b>=어떤 상황에서 · <b>When</b>=무엇을 하면 · <b>Then</b>=무엇이 확인되어야 하는가.</p>
+      <p class="pm">— PM이 직접 쓸 수 있는 형식이다. 코드를 몰라도 <b>"이 상황에서 이걸 하면 이렇게 돼야 한다"</b>는 쓸 수 있다.</p>
+    </div>
+    <div class="term">
+      <div class="t">예외 경로 <span class="en">Exception AC · ACE</span></div>
+      <p class="d">잘 되는 경우가 아니라 <b>안 되는 경우</b>의 수용 기준. 오프라인·거절·데이터 없음·외부 API 실패 등.</p>
+      <p class="pm">— 이 문서는 <b>모든 요구사항이 최소 2건의 예외 경로를 갖도록</b> 강제했다. 예외가 0건인 요구사항이 보이면 그건 덜 쓴 것이다.</p>
+    </div>
+    <div class="term">
+      <div class="t">추적성 매트릭스 <span class="en">Traceability Matrix</span></div>
+      <p class="d">요구사항 → 구현 모듈 → 테스트 케이스를 <b>한 줄로 연결한 표</b>(§5). "이 요구사항이 어디에 구현됐고 무엇으로 검증되나".</p>
+      <p class="pm">— 빈칸이 있으면 그 요구사항은 <b>검증 계획이 없다</b>는 뜻이다. 착수 전에 이 표의 빈칸을 세는 게 PM의 점검 루틴.</p>
+    </div>
+    <div class="term">
+      <div class="t">ADR <span class="en">Architecture Decision Record</span></div>
+      <p class="d">결정 · 기각한 대안 · <b>뒤집히는 조건</b> · 대가를 적은 기록. 되돌리려면 다른 결정까지 흔들리는 것만 8건 수록.</p>
+      <p class="pm">— "대가" 칸이 정직한 문서의 표식이다. <b>대가가 안 적힌 결정은 아직 검토가 덜 된 결정이다.</b></p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — SRS §1.3 · §4.1 · §5 · §9.2~§9.3 · §11</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="용어집" data-title="B. 지표 용어 ① — 세는 법" data-kw="북극성 KPI 분자 분모 코호트 모집단 스냅샷 활성">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어집 · B 지표 ①</p>
+    <h2>지표는 이름이 아니라 세는 법이다</h2>
+    <p class="dek">같은 이름의 지표라도 <b>분자와 분모를 어떻게 잡느냐</b>에 따라 완전히 다른 숫자가 나온다. SRS가 §9.4에 카운트 규칙만 25건을 적어 둔 이유다.</p>
+  </div>
+  <div class="terms">
+    <div class="term">
+      <div class="t">북극성 지표 <span class="en">North Star Metric</span></div>
+      <p class="d">제품의 성패를 <b>대표하는 단 하나의 숫자</b>. 여러 개를 두면 나쁜 소식이 좋은 소식에 가려진다. 이 제품은 WPA 하나.</p>
+      <p class="pm">— 북극성을 하나로 유지하는 것 자체가 PM의 정치적 노동이다. <b>"우리 지표도 대시보드에 넣어주세요"를 견디는 일.</b></p>
+    </div>
+    <div class="term">
+      <div class="t">KPI <span class="en">Key Performance Indicator</span></div>
+      <p class="d">핵심 성과 지표. 이 문서엔 25건이 있고 <b>실천·전달·인정·데이터 타당성·운영</b> 5축으로 나뉜다.</p>
+      <p class="pm">— 25건을 다 보는 게 아니다. <b>주간 5건 · 월간 리뷰 10건</b>으로 잘라 보는 게 실무다. 나머지는 문제가 생겼을 때 파고드는 용도.</p>
+    </div>
+    <div class="term">
+      <div class="t">분자 · 분모 <span class="en">numerator / denominator</span></div>
+      <p class="d">비율 지표의 위·아래. <b>분모 정의가 지표의 정체다.</b> 예: WPA 분모는 "전체 아동"이 아니라 <em>동의 완료 + 계정 7일 경과 + 28일 내 접속</em>인 아동.</p>
+      <p class="pm">— 지표가 갑자기 좋아지면 <b>분모부터 의심한다.</b> 분모에서 뭔가 빠지면 비율은 저절로 오른다.</p>
+    </div>
+    <div class="term">
+      <div class="t">스냅샷 분모 <span class="en">frozen denominator</span></div>
+      <p class="d">기간 <b>시작 시점의 모집단으로 분모를 고정</b>하는 것. 기간 중 가입·이탈로 분모를 바꾸지 않는다.</p>
+      <p class="pm">— 이걸 안 하면 <b>같은 주의 값이 집계할 때마다 달라진다.</b> "지난주에 본 숫자랑 다른데요?"의 가장 흔한 원인.</p>
+    </div>
+    <div class="term">
+      <div class="t">코호트 <span class="en">cohort</span></div>
+      <p class="d">같은 시기에 시작한 사용자 묶음. "3월 첫째 주 가입자"처럼 묶어 <b>시간에 따른 변화를 공정하게</b> 비교한다.</p>
+      <p class="pm">— 신규 유입이 많은 시기엔 전체 평균이 신규에 눌려 내려간다. <b>코호트로 봐야 제품이 좋아졌는지 알 수 있다.</b></p>
+    </div>
+    <div class="term">
+      <div class="t">distinct <span class="en">고유 사용자 수</span></div>
+      <p class="d">"몇 건"이 아니라 <b>"몇 명"</b>으로 세는 것. 한 아이가 실천을 5번 해도 사람 수 지표에선 <b>1</b>.</p>
+      <p class="pm">— 건수와 사람 수를 섞으면 <b>열성 사용자 몇 명이 지표 전체를 부풀린다.</b> WPA는 반드시 사람 수다.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — SRS §1.3 · §9.4.1 원칙 M4·M5 · §9.4.2 WPA 정의</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="용어집" data-title="B. 지표 용어 ② — 읽는 법" data-kw="중위 p50 p95 백분위 델타 퍼널 이탈률 재방문율 리텐션 절단">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어집 · B 지표 ②</p>
+    <h2>숫자를 잘못 읽지 않는 법</h2>
+    <p class="dek">평균 하나만 보다가 판단을 그르치는 것이 지표 사고의 대부분이다. 이 SRS가 평균 대신 <b>중위·p95·분포</b>를 쓰는 이유가 여기 있다.</p>
+  </div>
+  <div class="terms">
+    <div class="term">
+      <div class="t">중위 <span class="en">median · p50</span></div>
+      <p class="d">줄 세웠을 때 <b>딱 가운데 사람</b>의 값. 평균과 달리 극단값에 흔들리지 않는다.</p>
+      <p class="pm">— "평균 체류 8초"는 한 명이 5분 머물렀으면 나온다. <b>중위 3초</b>가 실제 대다수의 경험이다.</p>
+    </div>
+    <div class="term">
+      <div class="t">p95 <span class="en">95th percentile</span></div>
+      <p class="d">100명 중 <b>95번째로 느린 사람</b>의 값. "가장 안 좋은 5%를 뺀 최악". 성능 기준은 거의 항상 p95로 쓴다.</p>
+      <p class="pm">— <em>"나무 화면 p95 ≤ 1,250ms"</em>는 <b>스무 명 중 열아홉 명은 1.25초 안에 본다</b>는 뜻. 평균으로 잡으면 느린 사용자가 통째로 안 보인다.</p>
+    </div>
+    <div class="term">
+      <div class="t">델타 <span class="en">delta · 변화량</span></div>
+      <p class="d">누적값이 아니라 <b>전 기간 대비 차이</b>. "별 총 120개"가 아니라 "지난달보다 +18개".</p>
+      <p class="pm">— 이 제품의 <b>핵심 설계 사상</b>이다. 보호자는 누적을 봐도 "성장했는지"를 못 읽는다. 월간 숲이 델타를 보여주는 이유.</p>
+    </div>
+    <div class="term">
+      <div class="t">퍼널 <span class="en">funnel</span></div>
+      <p class="d">단계별로 얼마씩 빠져나가는지 본 깔때기. 이 문서는 <b>보호자 온보딩 5단계</b>의 단계별 이탈률을 본다.</p>
+      <p class="pm">— <b>"어디서 빠지나"가 "몇 %가 완주하나"보다 실행 가능한 정보다.</b> 3단계 이탈률 30% 기준이 그 지점.</p>
+    </div>
+    <div class="term">
+      <div class="t">이탈률 vs 중단 <span class="en">drop-off vs pause</span></div>
+      <p class="d">이 문서는 <b>재개(<code>resumed</code>)해서 돌아온 사람을 이탈로 세지 않는다.</b> 세션 분할은 설계 의도이기 때문.</p>
+      <p class="pm">— 지표 정의가 <b>설계 의도와 어긋나면 정상 동작이 실패로 보고된다.</b> 이 항목이 그 교과서적 예다.</p>
+    </div>
+    <div class="term">
+      <div class="t">우측 절단 <span class="en">right censoring</span></div>
+      <p class="d">아직 결과가 안 나온 건을 분모에서 빼는 것. 예: <b>아직 승인 대기 중인 건</b>은 "승인 지연 분포"에 넣지 않는다.</p>
+      <p class="pm">— 안 뺀 채로 세면 <b>가장 오래 걸리는 건들이 통째로 빠져</b> 지연이 실제보다 짧아 보인다.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — SRS §4.2 REQ-NF-001·002 · §9.4.3 KPI-08·13·16·20</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="용어집" data-title="C. 판정·운영 용어" data-kw="PASS HOLD FAIL k/8 릴리스 게이트 SLO SLA 가용성 오류율 온콜 에스컬레이션">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어집 · C 판정과 운영</p>
+    <h2>"됐다 / 안 됐다"를 정하는 용어</h2>
+    <p class="dek">판정 규칙이 없으면 모든 리뷰가 <b>설득 경쟁</b>이 된다. 이 절의 용어들은 판정을 <b>확인 작업</b>으로 바꾸기 위한 장치다.</p>
+  </div>
+  <div class="terms">
+    <div class="term">
+      <div class="t">PASS · HOLD · FAIL <span class="en">3구간 판정</span></div>
+      <p class="d">통과선 이상=<span class="bg pass">PASS</span> · 그 사이=<span class="bg hold">HOLD</span> · 실패선 이하=<span class="bg fail">FAIL</span>. 모든 지표·수용 기준에 공통 적용.</p>
+      <p class="pm">— <b>HOLD 구간에서는 로드맵을 바꾸지 않는다</b>는 규칙이 핵심. 애매한 값으로 방향을 흔들면 판정 규칙 자체가 무의미해진다.</p>
+    </div>
+    <div class="term">
+      <div class="t">k/8 표기 <span class="en">정수 임계치</span></div>
+      <p class="d">8명 인터뷰에서 <b>비율 대신 사람 수</b>로 적는 것. "≥70%"는 5.6명이라 경계가 안 생기므로 <b>≥ 6/8</b>로 쓴다.</p>
+      <p class="pm">— 표본이 작을 때 %를 쓰면 <b>없는 정밀도를 있는 척</b>하게 된다. 대외 자료에서 특히 위험하다.</p>
+    </div>
+    <div class="term">
+      <div class="t">릴리스 게이트 <span class="en">Release Gate</span></div>
+      <p class="d">다음 단계로 넘어가기 위해 <b>반드시 통과해야 하는 조건</b>. α → β → 일반 공개 각각에 붙어 있다.</p>
+      <p class="pm">— <b>게이트는 날짜가 아니라 조건이다.</b> "다음 주에 β 갑니다"가 아니라 "AC-2.1 PASS 나오면 β 갑니다"가 맞는 문장.</p>
+    </div>
+    <div class="term">
+      <div class="t">SLO · SLA <span class="en">목표 / 협약</span></div>
+      <p class="d"><b>SLO</b>=우리가 스스로 정한 서비스 수준 목표 · <b>SLA</b>=계약으로 약속한 수준. 이 문서의 성능값은 아직 SLO가 아니라 <b>수용 기준에서 역산한 상한</b>이다.</p>
+      <p class="pm">— 실측 전 값을 <b>확정 SLO처럼 대외에 쓰면 안 된다</b>(CON-DOC-03). 이 구분이 흐려지면 나중에 말을 바꾸게 된다.</p>
+    </div>
+    <div class="term">
+      <div class="t">가용성 <span class="en">availability</span></div>
+      <p class="d">서비스가 살아 있는 시간 비율. 목표 <b>≥ 99.0%</b> — 월 약 7시간 정도까지의 중단을 허용한다는 뜻.</p>
+      <p class="pm">— <b>우리 가용성은 제휴사 SLA를 넘을 수 없다.</b> 남의 서비스 위에 얹혀 있으면 우리 목표가 상한에 걸린다는 걸 계약 전에 알아야 한다.</p>
+    </div>
+    <div class="term">
+      <div class="t">온콜 · 에스컬레이션 <span class="en">on-call / escalation</span></div>
+      <p class="d"><b>온콜</b>=알림을 1차로 받는 당번 · <b>에스컬레이션</b>=시간 내 해결 안 되면 위로 올리는 규칙. 이 문서는 규제·정합성 알림을 <b>30분 내 확인 · 2시간 미해결 시 서비스 중단</b>으로 규정.</p>
+      <p class="pm">— "누가 받고 언제까지 뭘 하는가"가 안 적힌 알림은 <b>아무도 안 본다.</b> PM이 리허설을 요구해야 하는 항목.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — SRS §9.1 · §9.5 · §4.2 REQ-NF-004·017 · §12.6 CON-DOC-03</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="용어집" data-title="D. 계측 용어" data-kw="이벤트 적재 계측 건강성 유실률 멱등키 client_ts server_ts 배치 오프라인">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어집 · D 계측</p>
+    <h2>지표가 만들어지는 배관</h2>
+    <p class="dek">지표는 하늘에서 떨어지지 않는다. <b>사용자 행동 → 이벤트 기록 → 배치 집계 → 지표 → 판정</b>의 배관을 타고 온다. 이 다섯 칸 중 하나가 끊기면 <b>그 뒤의 지표는 존재하지 않는다.</b></p>
+  </div>
+  <div class="terms">
+    <div class="term">
+      <div class="t">인앱 이벤트 <span class="en">in-app event</span></div>
+      <p class="d">앱 안에서 일어난 일 하나를 <b>한 줄의 기록으로 남긴 것</b>. 이 문서는 10종을 정의했다 — 실천 인정, 별 증감, 나무 변화, 화면 진입 등.</p>
+      <p class="pm">— <b>이벤트 목록이 곧 "우리가 알 수 있는 것의 전부"다.</b> 목록에 없는 것은 나중에 물어봐도 답이 없다.</p>
+    </div>
+    <div class="term">
+      <div class="t">적재 <span class="en">ingestion</span></div>
+      <p class="d">이벤트를 저장소에 <b>쌓아 넣는 것</b>. "적재 규칙"은 무엇을 필수로 담고 어떻게 중복을 거를지의 약속.</p>
+      <p class="pm">— 적재 규칙 없이 쌓인 데이터는 <b>나중에 못 쓴다.</b> 청소 비용이 새로 만드는 비용보다 비싸지는 지점.</p>
+    </div>
+    <div class="term">
+      <div class="t">멱등 키 <span class="en">idempotency key</span></div>
+      <p class="d">같은 요청이 두 번 와도 <b>결과가 한 번만 반영되게</b> 하는 식별표. 네트워크 재시도·오프라인 재전송에서 중복을 막는다.</p>
+      <p class="pm">— 어려운 말이지만 PM에게 뜻은 하나다 — <b>"별을 두 번 주지 않는다".</b> 이 문서가 ⭐ 중복 지급 0건을 요구하는 근거 장치.</p>
+    </div>
+    <div class="term">
+      <div class="t"><code>client_ts</code> / <code>server_ts</code> <span class="en">발생 시각 / 도착 시각</span></div>
+      <p class="d">앱에서 <b>일이 일어난 시각</b>과 서버에 <b>도착한 시각</b>. 오프라인이면 둘이 크게 벌어진다. 이 문서는 <b>주차 귀속을 발생 시각 기준</b>으로 정했다.</p>
+      <p class="pm">— 도착 시각으로 세면 <b>지하철에서 실천한 아이의 기록이 다음 주로 밀린다.</b> 그 주 WPA가 실제보다 낮게 나온다.</p>
+    </div>
+    <div class="term">
+      <div class="t">배치 <span class="en">batch</span></div>
+      <p class="d">실시간이 아니라 <b>정해진 시각에 몰아서 돌리는 계산</b>. 예: 주차 마감 후 다음날(D+1) WPA 집계, 매일 밤 원장 정산.</p>
+      <p class="pm">— <b>"오늘 WPA 얼마예요?"는 성립하지 않는 질문</b>일 수 있다. 지표마다 언제 값이 생기는지를 알고 물어야 한다.</p>
+    </div>
+    <div class="term">
+      <div class="t">계측 건강성 <span class="en">instrumentation health</span></div>
+      <p class="d"><b>지표를 믿어도 되는지를 보는 지표.</b> 이벤트 유실률 · 중복률 · 시각 역행 · 필수 필드 결측 등 5개 항목(H1~H5).</p>
+      <p class="pm">— <b>H1 유실률 0.5% 초과면 그 주의 행동 지표는 판정에 쓰지 않는다.</b> WPA가 떨어졌을 때 "안 한 건지, 안 들어온 건지"를 먼저 가른다.</p>
+    </div>
+  </div>
+  <div class="flow" style="margin-top:16px">
+    <div class="node"><span class="k">①</span><span class="v">사용자 행동</span></div><div class="arw">→</div>
+    <div class="node"><span class="k">②</span><span class="v">이벤트 적재</span></div><div class="arw">→</div>
+    <div class="node"><span class="k">③</span><span class="v">배치 집계</span></div><div class="arw">→</div>
+    <div class="node"><span class="k">④</span><span class="v">KPI 값</span></div><div class="arw">→</div>
+    <div class="node"><span class="k">⑤</span><span class="v">PASS·HOLD·FAIL</span></div>
+  </div>
+  <p class="src"><b>출처</b> — SRS §6.1 인터페이스 · §9.4 계측 계획 · §9.4.6 건강성 H1~H5 · §12.3 CON-ARC-07</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="용어집" data-title="E. 엔지니어링 최소 세트 ①" data-kw="API 스키마 ERD 열거형 enum 상태전이 캐시 서비스 모듈">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어집 · E 엔지니어링 최소 세트 ①</p>
+    <h2>회의에서 만나는 만큼만</h2>
+    <p class="dek">여기서부터는 <b>개발자가 쓰는 말</b>이다. 깊이 들어갈 필요는 없다. <b>"이 단어가 나오면 무엇을 물어야 하는가"</b>만 알면 충분하다.</p>
+  </div>
+  <div class="terms">
+    <div class="term">
+      <div class="t">API <span class="en">Application Programming Interface</span></div>
+      <p class="d">시스템끼리 <b>정해진 형식으로 주고받는 창구</b>. 이 제품에서 중요한 API는 전부 <b>제휴사 쪽</b>이다 — 충전·결제내역·해지·카드발급.</p>
+      <p class="pm">— <b>남의 API에 걸린 기능은 우리 일정으로 못 당긴다.</b> 이 문서에서 REQ-FUNC-008이 유일하게 외부 계약에 착수가 걸린 Must다.</p>
+    </div>
+    <div class="term">
+      <div class="t">스키마 <span class="en">schema</span></div>
+      <p class="d">데이터를 담는 <b>칸의 설계도</b>. "어떤 항목을 무슨 형태로 저장하는가". 스키마에 없는 항목은 저장되지 않는다.</p>
+      <p class="pm">— 규제 점검이 스키마 검사로 이뤄진다. <em>"위치 좌표 칸 0개 · 얼굴 이미지 칸 0개"</em>는 <b>칸 자체가 없다</b>는 확인이다.</p>
+    </div>
+    <div class="term">
+      <div class="t">ERD <span class="en">Entity-Relationship Diagram</span></div>
+      <p class="d">데이터가 <b>서로 어떻게 이어져 있는지</b> 그린 지도. "아동 1명에 나무 4개", "계획 1건에 결제 여러 건" 같은 관계.</p>
+      <p class="pm">— PM은 칸 이름을 외울 필요 없다. <b>"1:N인가 1:1인가"만 보면 된다</b> — 그게 화면과 판정 규칙을 바꾼다.</p>
+    </div>
+    <div class="term">
+      <div class="t">열거형 <span class="en">enum</span></div>
+      <p class="d">가능한 값을 <b>미리 정해 둔 목록</b>. 예: 승인 상태는 <code>대기 · 승인 · 소급승인 · 거절</code> 넷뿐.</p>
+      <p class="pm">— <b>"목록에 값을 하나 추가"는 대개 싼 변경, "새 분기 로직"은 비싼 변경.</b> 이 문서가 확장을 열거형 추가로만 처리하게 설계한 이유(REQ-NF-018).</p>
+    </div>
+    <div class="term">
+      <div class="t">상태 전이 <span class="en">state transition</span></div>
+      <p class="d">하나의 건이 거치는 <b>상태의 이동 경로</b>. 미션은 <code>대기 → 승인</code> 또는 <code>대기 → 소급승인</code> 또는 <code>대기 → 거절</code>로만 간다.</p>
+      <p class="pm">— <b>PM이 반드시 확인할 것 — 되돌아가는 경로가 있는가.</b> 거절을 취소할 수 있나? 문서에 없으면 그건 "안 된다"는 뜻이다.</p>
+    </div>
+    <div class="term">
+      <div class="t">캐시 <span class="en">cache</span></div>
+      <p class="d">한 번 계산한 결과를 <b>잠깐 저장해 두고 재사용</b>하는 것. 빠르지만 <b>과거 값을 보여줄 위험</b>이 있다.</p>
+      <p class="pm">— 이 문서는 <b>법정대리인 동의를 캐시하지 않는다</b>고 못 박았다. 규제 항목에 캐시를 쓰면 "옛날 동의"로 통과되는 구멍이 생긴다.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — SRS §3 시스템 맥락 · §6.1 · §6.2 · §6.4 · §4.1 REQ-FUNC-007 · §4.2 REQ-NF-009·018</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="용어집" data-title="E. 엔지니어링 최소 세트 ②" data-kw="원장 이중기입 멱등성 정적분석 CI 게이트 빌드 스프린트 sp 정합성">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어집 · E 엔지니어링 최소 세트 ②</p>
+    <h2>돈과 일정에 직접 닿는 용어</h2>
+    <p class="dek">앞 페이지가 "무슨 뜻인가"였다면, 이 여섯 개는 <b>PM의 판단을 바꾸는 것들</b>이다. 정합성·자동 차단·일정 단위가 여기서 나온다.</p>
+  </div>
+  <div class="terms">
+    <div class="term">
+      <div class="t">원장 <span class="en">ledger</span></div>
+      <p class="d">증감을 <b>지우지 않고 순서대로 쌓는 장부</b>. 이 제품의 별(⭐)은 잔액을 고쳐 쓰는 게 아니라 <b>+1 · −3 기록을 쌓아</b> 관리한다.</p>
+      <p class="pm">— 원장 방식이면 <b>"왜 별이 3개 줄었지?"에 항상 답이 있다.</b> 아동이 모은 것을 잃는 경험을 막는 구조적 장치.</p>
+    </div>
+    <div class="term">
+      <div class="t">이중 기입 <span class="en">double-entry</span></div>
+      <p class="d">한 사건을 <b>두 군데에 짝으로 기록</b>해 서로 대조하는 회계 방식. 실천 1건 ↔ 별 기입 1건이 1:1로 맞아야 한다.</p>
+      <p class="pm">— 이 대응이 깨지면 <b>정합성 오류율 0%(협상 불가)가 무너진다.</b> 매일 밤 정산 배치가 이 짝을 맞춰 본다.</p>
+    </div>
+    <div class="term">
+      <div class="t">정합성 <span class="en">consistency</span></div>
+      <p class="d">여러 곳의 기록이 <b>서로 어긋나지 않는 상태</b>. 화면의 별 개수 = 원장의 합계 = 정산 결과.</p>
+      <p class="pm">— 이 문서에서 <b>허용 오차가 0인 항목은 딱 둘</b> — 원장 정합성 0% · 소급 지급 성공률 100%. 이 둘은 협상 대상이 아니다.</p>
+    </div>
+    <div class="term">
+      <div class="t">정적 분석 · CI 게이트 <span class="en">static analysis / CI gate</span></div>
+      <p class="d">코드를 <b>돌려보지 않고 검사</b>해서, 금지된 것이 있으면 <b>빌드 자체를 실패시키는</b> 자동 관문.</p>
+      <p class="pm">— <b>"기능 플래그로 막았다"와 "코드에 없다"는 완전히 다르다.</b> 플래그는 켜질 수 있다. 규제 항목은 후자여야 검증이 성립한다.</p>
+    </div>
+    <div class="term">
+      <div class="t">스프린트 · sp <span class="en">sprint</span></div>
+      <p class="d">개발을 나누는 <b>고정 기간 단위</b>. 이 문서는 <b>1sp = 2주</b>이고, MVP 전체가 <b>13sp</b>다.</p>
+      <p class="pm">— <b>1sp를 넘는 요구사항은 반드시 분할 단위를 적는다</b>(§13.1). 안 쪼개면 "3주째 진행 중"이 두 달 간다.</p>
+    </div>
+    <div class="term">
+      <div class="t">빌드 <span class="en">build</span></div>
+      <p class="d">여기서는 <b>기능 묶음의 구획</b>. B1 기반 → B2 별·학습 → B3 실천·나무 → B4 소비 → B5 대조·전달 + B6 계측(병행).</p>
+      <p class="pm">— <b>빌드 순서는 취향이 아니라 의존성의 결과다.</b> B4만 외부 계약(D1)에 걸려 있고, 밀리면 B5까지 함께 밀린다.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — SRS §4.2 REQ-NF-006·007·010 · §6.4 · §12.3 CON-ARC-06 · §13.1 · §13.3</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="용어집" data-title="F. 도메인·규제 용어" data-kw="법정대리인 동의 선불업 선불전자지급수단 마이데이터 금융상품 중개 업종코드 MCC 가맹점">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어집 · F 도메인과 규제</p>
+    <h2>이 제품이 금융이라서 생긴 용어</h2>
+    <p class="dek">아동 대상 금융 서비스라서 <b>규제가 1순위 비기능 요구</b>가 됐다. 이 여섯 개는 몰라도 회의는 되지만, 알면 <b>왜 그 기능을 못 하는지</b>가 설명된다.</p>
+  </div>
+  <div class="terms">
+    <div class="term">
+      <div class="t">법정대리인 동의 <span class="en">parental consent</span></div>
+      <p class="d">아동의 개인정보를 다루기 전에 <b>보호자에게 받아야 하는 동의</b>. 이 제품에선 아동 화면 진입 자체가 이 동의 뒤에 온다.</p>
+      <p class="pm">— <b>"기능"이 아니라 "순서"가 규제 요건이다.</b> 아동 온보딩은 첫 화면부터 개인정보 처리가 시작되므로, 순서를 바꾸면 그 자체가 위반이다.</p>
+    </div>
+    <div class="term">
+      <div class="t">선불전자지급수단 · 선불업 <span class="en">prepaid payment instrument</span></div>
+      <p class="d">미리 충전해 쓰는 결제 수단과 그것을 발행하는 <b>등록 사업</b>. 이 제품은 직접 등록하지 않고 <b>제휴사에 위탁</b>했다.</p>
+      <p class="pm">— 위탁의 대가 — <b>한도·업종 제한을 우리가 못 정하고, 가용성 목표가 제휴사를 넘을 수 없고, 수수료를 나눈다.</b> ADR-004의 세 가지 대가.</p>
+    </div>
+    <div class="term">
+      <div class="t">마이데이터 <span class="en">MyData</span></div>
+      <p class="d">여러 금융사에 흩어진 내 데이터를 한 곳에 모아 보는 제도. <b>만 14세 미만은 가입이 불가</b>하다.</p>
+      <p class="pm">— 그래서 표준 연동을 <b>전제할 수 없다.</b> 우리가 발급한 카드의 결제 기록만이 <b>유일한 소비 데이터원</b>이 된다(CON-ARC-01).</p>
+    </div>
+    <div class="term">
+      <div class="t">금융상품 중개 <span class="en">brokerage</span></div>
+      <p class="d">금융상품 <b>가입을 연결해 주는 행위</b>. 인허가 대상이다. 이 제품은 예적금을 <b>비교·선택까지만</b> 하고 가입 연결은 하지 않는다.</p>
+      <p class="pm">— <b>법률 검토 통과 전에는 착수 자체가 불가</b>(REQ-FUNC-014). 우선순위를 올려도 안 열린다 — 일정 문제가 아니라 조건 문제다.</p>
+    </div>
+    <div class="term">
+      <div class="t">업종 코드 <span class="en">merchant category · MCC</span></div>
+      <p class="d">카드 결제에 붙는 <b>가맹점 분류 코드</b>. 문구점인지 편의점인지를 이 코드로 안다.</p>
+      <p class="pm">— <b>이 코드의 상세도가 제휴사에 달려 있고, 그게 계획↔실제 대조 정확도의 상한이다.</b> 계약 전에 반드시 확인할 항목(D1).</p>
+    </div>
+    <div class="term">
+      <div class="t">별 ↔ 저금통 분리 <span class="en">separation</span></div>
+      <p class="d">보상용 별(⭐)과 실제 돈(저금통)을 <b>절대 서로 바꿀 수 없게</b> 한 것. 전환 경로를 <b>코드에 두지 않는다.</b></p>
+      <p class="pm">— 별에 현금 가치가 붙는 순간 <b>규제의 성격이 완전히 달라진다.</b> 이 분리선을 건드리는 아이디어는 규제 계층 재검토가 선행한다.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — SRS §12.2 CON-REG-01·04·05·08·09 · §12.3 CON-ARC-01·04 · §11 ADR-003·004</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="용어집" data-title="G. 이 프로젝트만의 약속어" data-kw="4영역 실천 트리거 계획카드 두갈래 성장나무 월간숲 별원장 소급 정체 주기 선언">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">용어집 · G 프로젝트 고유어</p>
+    <h2>이 팀 안에서만 통하는 말</h2>
+    <p class="dek">이 열두 개는 표준 용어가 아니라 <b>이 프로젝트가 만든 약속어</b>다. 정의가 흔들리면 <b>기능·지표·화면이 동시에 흔들리므로</b> 정의를 바꾸려면 세 곳을 함께 바꿔야 한다.</p>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3><span class="n">01</span>4영역</h3>
+      <p><b>벌기 · 잘 쓰기 · 모으기 · 불리기.</b> 학습·나무·실천이 <b>공유하는 고정 분류</b>. 영역을 늘리거나 줄이면 세 곳이 함께 바뀐다.</p>
+      <p>현재 <b>「불리기」만 실천 경로가 닫혀 있고</b>, 화면에 "곧 열려요"를 표시해야 한다 — 결함으로 오인되지 않게.</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">02</span>실천 트리거 · 학습 경로</h3>
+      <p>별을 주는 사건 8종 중 <b>실천</b>에 해당하는 것 — MVP는 <b>미션 승인 · 소비 회고 · 위시리스트 달성</b> 3종.</p>
+      <p>온보딩 학습·출석체크·퀴즈 정답은 <b>학습 경로</b>이고 <b>WPA 분자에서 제외</b>된다. 넣으면 접속만으로 실천 지표가 오른다.</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">03</span>계획 카드 · 두 갈래</h3>
+      <p><b>결제 전에</b> 적는 소비 계획(어디서·업종·얼마까지·무엇을). 결제 후 <b>두 갈래</b>로 갈린다.</p>
+      <p><b>갈래 A</b> 계획 이내 → ⭐1 · <b>갈래 B</b> 계획 초과 → 회고만, <b>보유 별 차감 없음</b>. 판정은 <b>금액 단독</b>이며 업종 불일치는 별을 막지 않는다.</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">04</span>성장 나무 · 월간 숲</h3>
+      <p><b>나무</b> — 4영역 각각의 진행 단계 + <b>실천 근거를 기본 노출</b>. 14일 이상 안 자라면 <b>정체 원인을 조건 단위로 전부</b> 표시.</p>
+      <p><b>숲</b> — 월 스냅샷. 누적이 아니라 <b>전월 대비 델타</b>를 보여주고, 초기화 없이 계속 쌓인다.</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">05</span>별 원장 · 소급 지급</h3>
+      <p><b>별 원장</b> — ⭐ 증감의 이중 기입 장부. <b>현금 전환 칸이 아예 없다.</b></p>
+      <p><b>소급 지급</b> — 보호자 승인이 늦어도 <b>아이가 완료한 시점 기준</b>으로 별을 주는 것. 성공률 <b>100% · 협상 불가</b>.</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">06</span>정체 · 주기 · 선언 ①②</h3>
+      <p><b>정체</b> — 주기 시작 후 <b>14일 이상</b> 미상승. 그 전에는 정체로 표시하지 않는다.</p>
+      <p><b>주기</b> — 나무 성장 조건의 집계 단위. <b>선언 ①</b> 아이에게 성장이 일어난다 · <b>선언 ②</b> 그 성장이 보호자에게 보인다.</p>
+    </div>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">PM이 지켜야 할 규칙</span>
+    <p>이 약속어들은 <b>화면 문구 · 요구사항 문장 · 지표 정의에서 같은 말로 쓰여야 한다.</b> 회의에서 누가 "미션 성공"이라고 부르고 문서엔 "미션 승인"이면, 지표를 만들 때 두 사람이 다른 것을 센다. <b>용어를 바꾸는 것은 요구사항 변경이다.</b></p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §1.3 정의 · §6.2 데이터 모델 · §6.3 비즈니스 규칙 1~13</p>
+</div>
+</section>
+
+<!-- ══════════════ PART 2 · 핵심 개념 ══════════════ -->
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 지도 — 15개가 서로 붙어 있는 방식" data-kw="개념 지도 목차 구조 15개">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">핵심 개념 · 들어가며</p>
+    <h2>15개 개념이 서로 붙어 있는 방식</h2>
+    <p class="dek">개념을 낱개로 외우면 안 남는다. <b>세 덩어리</b>로 잡으면 남는다 — 무엇을 만들지 정하는 것 · 됐는지 판정하는 것 · 못 넘는 선을 지키는 것.</p>
+  </div>
+  <div class="grid g3">
+    <div class="card" style="border-color:color-mix(in srgb,var(--good) 35%,var(--border))">
+      <span class="tag">덩어리 ① · 무엇을 만드나</span>
+      <h3>범위를 정하는 개념</h3>
+      <p><b>01</b> 두 가치 선언 — 모든 요구사항의 소속<br>
+         <b>02</b> 검증 가능성 — 좋은 요구사항의 조건<br>
+         <b>03</b> MoSCoW — 우선순위와 Won't<br>
+         <b>04</b> 인과 루프 — 세트로만 성립하는 요구사항</p>
+      <p style="color:var(--text-3); font-size:13px">범위 축소 회의에서 쓰는 무기가 여기 있다.</p>
+    </div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--accent) 35%,var(--border))">
+      <span class="tag">덩어리 ② · 됐는지 어떻게 아나</span>
+      <h3>판정을 만드는 개념</h3>
+      <p><b>05</b> 수용 기준 · <b>06</b> 예외 경로<br>
+         <b>07</b> PASS·HOLD·FAIL 판정 규칙<br>
+         <b>08</b> 계측이 먼저다 · <b>09</b> 카운트 규칙<br>
+         <b>10</b> 계측 공백</p>
+      <p style="color:var(--text-3); font-size:13px">스프린트 리뷰와 지표 리뷰의 언어가 여기 있다.</p>
+    </div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--bad) 35%,var(--border))">
+      <span class="tag">덩어리 ③ · 못 넘는 선</span>
+      <h3>경계를 지키는 개념</h3>
+      <p><b>11</b> 비기능 요구사항<br>
+         <b>12</b> 제약의 6계층<br>
+         <b>13</b> 가정 · 의존성 · 리스크<br>
+         <b>14</b> ADR · <b>15</b> 임계 경로</p>
+      <p style="color:var(--text-3); font-size:13px">변경 요청이 왔을 때 판단하는 순서가 여기 있다.</p>
+    </div>
+  </div>
+  <div class="co qt" style="margin-top:16px">
+    <span class="lb">이 파트를 읽는 요령</span>
+    <p>각 개념 페이지는 <b>「무엇인가 → 이 문서에서 어떻게 쓰였나 → PM이 이걸로 무엇을 하나」</b> 순서로 되어 있다. 시간이 없으면 <b>맨 아래 「PM의 사용법」 상자만</b> 읽어도 된다. 별표(★)가 붙은 04 · 08 · 12 · 14는 <b>이 문서에서 가장 실전적인 네 개</b>다.</p>
+  </div>
+  <p class="src"><b>구성 근거</b> — SRS §1.5 · §4 · §9 · §10 · §11 · §12 · §13</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 01 — 두 가치 선언이 범위를 지킨다" data-kw="가치 선언 범위 통제 귀속 성장 보인다">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 01</p>
+    <h2>두 가치 선언이 범위를 지킨다</h2>
+    <p class="dek">이 SRS는 요구사항 17건을 나열하기 전에 <b>선언 두 개</b>를 먼저 박아 뒀다. 그리고 <b>모든 요구사항은 이 둘 중 하나에 귀속된다</b>고 못 박았다. 이 한 문장이 범위 통제 장치다.</p>
+  </div>
+  <div class="vs" style="margin-bottom:16px">
+    <div class="side a">
+      <h4><span class="dot"></span>선언 ① — 아이에게 성장이 일어난다</h4>
+      <ul>
+        <li>학습 → 실천으로 이어지는가</li>
+        <li>담당 요구사항 — 미션 루프 · 계획 카드 · 위시리스트 · 별 지급 엔진 · 학습 커리큘럼</li>
+        <li>측정 — <b>WPA(북극성)</b> · 7일 내 첫 실천 인정률</li>
+      </ul>
+    </div>
+    <div class="side b" style="--dotc:var(--accent)">
+      <h4><span class="dot" style="background:var(--accent)"></span>선언 ② — 그 성장이 보호자에게 보인다</h4>
+      <ul>
+        <li>실천이 <b>변화의 증거</b>로 전달되는가</li>
+        <li>담당 요구사항 — 성장 나무 · 월간 숲 · 소비 내역 · 소급 지급 · 미접속 알림</li>
+        <li>측정 — 5초 회상률 · 정체 원인 열람률 · 확인 소요시간</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>왜 두 개인가 — 하나로는 안 되는 이유</h3>
+      <p>①만 있으면 <b>아이는 자라는데 보호자는 모른다</b> → 앱을 못 믿고 조용히 이탈한다.</p>
+      <p>②만 있으면 <b>보여줄 것이 없다</b> → 화면만 예쁜 대시보드가 된다.</p>
+      <p>이 문서는 두 선언이 <b>서로를 먹여 살리는 구조</b>(개념 04)로 설계됐다.</p>
+    </div>
+    <div class="card">
+      <h3>여기서 나온 「명시적 범위 제외」</h3>
+      <p>제외 항목이 <b>근거와 함께</b> 적혀 있다 — 소비 순간 자동 개입 · 위치정보 수집 일체 · 앱 외부 현금 · 친구 기능 · 모의투자 · 아동 유료 구독.</p>
+      <p>문서의 표현이 정확하다 — <em>"누락이 아니라 결정된 제외"</em>. 각각의 근거는 §11 ADR에 있다.</p>
+    </div>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">PM의 사용법</span>
+    <p>새 기능 아이디어가 올라오면 <b>첫 질문은 "좋은가"가 아니라 "어느 선언에 귀속되는가"</b>다. 둘 다 아니면 이번 릴리스가 아니고, 둘 다라고 우기면 대개 아무 데도 안 붙는다. 이 질문 하나가 <b>기능 목록이 무한히 늘어나는 것</b>을 막는다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §1.1 가치 선언 · §1.2 명시적 범위 제외 · §4.1 요구사항 지도</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 02 — 좋은 요구사항은 '검증 가능'이 전부다" data-kw="검증 가능 verifiable 좋은 요구사항 모호 숫자 인수기준">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 02</p>
+    <h2>좋은 요구사항은 「검증 가능」이 전부다</h2>
+    <p class="dek">요구사항의 품질 기준은 여러 가지가 있지만, PM이 실무에서 잡을 것은 하나다 — <b>"이게 됐는지 안 됐는지를 다투지 않고 확인할 수 있는가."</b> 나머지 조건은 대부분 여기서 파생된다.</p>
+  </div>
+  <div class="vs" style="margin-bottom:16px">
+    <div class="side b">
+      <h4><span class="dot"></span>검증 불가능한 문장</h4>
+      <ul>
+        <li>"성장 나무가 <b>직관적</b>이어야 한다"</li>
+        <li>"화면이 <b>빠르게</b> 떠야 한다"</li>
+        <li>"알림이 <b>적절한 시점</b>에 가야 한다"</li>
+        <li>"소급 지급이 <b>안정적</b>이어야 한다"</li>
+      </ul>
+      <p style="font-size:13px; color:var(--text-3); margin:10px 0 0">→ 리뷰가 <b>취향 논쟁</b>이 된다. 목소리 큰 사람이 이긴다.</p>
+    </div>
+    <div class="side a">
+      <h4><span class="dot"></span>이 SRS가 쓴 문장</h4>
+      <ul>
+        <li>나무를 <b>5초만</b> 보여주고 덮은 뒤, 변화를 1문장 회상 <b>≥ 6/8</b></li>
+        <li>진입~첫 화면 <b>p95 ≤ 1,250ms</b></li>
+        <li>최종 접속 후 <b>72시간</b> 경과 시 발송률 <b>100%</b>, 71시간 재접속 시 <b>오탐 0건</b></li>
+        <li>소급 지급 성공률 <b>100% · 협상 불가</b></li>
+      </ul>
+      <p style="font-size:13px; color:var(--text-3); margin:10px 0 0">→ 리뷰가 <b>확인 작업</b>이 된다.</p>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><h3><span class="n">①</span>단일성</h3><p>한 문장에 요구 하나. "빠르고 안정적이어야 한다"는 두 개다 — 하나만 실패해도 판정이 애매해진다.</p></div>
+    <div class="card"><h3><span class="n">②</span>추적 가능성</h3><p>어디서 왔고(출처 PRD §), 어디에 구현되고(모듈), 무엇으로 검증되나(테스트 ID)가 이어져야 한다.</p></div>
+    <div class="card"><h3><span class="n">③</span>필요성</h3><p>없으면 무엇이 깨지는지 말할 수 있어야 한다. 말 못 하면 그건 요구사항이 아니라 <b>희망</b>이다.</p></div>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">PM의 사용법</span>
+    <p>SRS 리뷰에서 PM이 할 일은 코드 검토가 아니라 <b>모호어 사냥</b>이다. <em>직관적 · 빠르게 · 적절히 · 충분히 · 유연하게 · 필요시</em> — 이 여섯 단어가 보이면 <b>"그걸 무엇으로 확인하나요?"</b>를 묻는다. 대답이 안 나오면 그 문장은 아직 요구사항이 아니다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §4.1 인수 기준 칸 · §4.2 REQ-NF-001·007·011 · §9.2 AC-1.1 · §5 추적성</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 03 — MoSCoW, Won't를 적는 힘" data-kw="MoSCoW Must Should Could Wont 우선순위 성격 중요도">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 03</p>
+    <h2>MoSCoW — Won't를 적는 힘</h2>
+    <p class="dek">우선순위는 <b>순서를 매기는 일이 아니라 무엇을 안 할지 정하는 일</b>이다. 이 SRS의 17건 배분에서 배울 점은 Must가 몇 개인가가 아니라, <b>Should와 Won't를 어떤 논리로 갈랐는가</b>다.</p>
+  </div>
+  <div class="stats" style="margin-bottom:16px">
+    <div class="stat"><b style="color:var(--bad)">8</b><span>Must Have</span><small>없으면 제품이 성립 안 함</small></div>
+    <div class="stat"><b style="color:var(--warn)">5</b><span>Should Have</span><small>끊긴 자리를 메우는 역할</small></div>
+    <div class="stat"><b style="color:var(--accent)">3</b><span>Could Have</span><small>2건은 블로커에 막힘</small></div>
+    <div class="stat"><b style="color:var(--text-3)">1</b><span>Won't Have</span><small>이번엔 안 한다 — 문구로 처리</small></div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>Should가 「덜 중요해서」가 아닌 이유</h3>
+      <p>소급 지급(010)과 미접속 알림(011)은 <b>중요도가 아니라 성격 때문에</b> Should다 — 새 가치를 만들지 않고 <b>다른 요구사항이 끊기는 자리를 메우는</b> 역할이라서.</p>
+      <p>그래서 문서가 못 박았다 — <em>"Should 5건 중 어느 하나를 빼도 「인정」 또는 「탐지」 경로가 끊긴다."</em> <b>즉 실제로는 뺄 수 없다.</b></p>
+    </div>
+    <div class="card">
+      <h3>Won't 1건이 하는 일</h3>
+      <p>REQ-FUNC-017 기존 앱 기록 이전 — 외부 앱 데이터 이관 경로가 없어 <b>구현하지 않는다</b>. 그런데 문서가 여기서 멈추지 않았다.</p>
+      <p><b>부재를 문구로 처리한다</b> — 「이전」이 아니라 <em>「지금부터」</em> 프레임으로 제시해 <b>없는 기능이 결함으로 오인되지 않게</b> 한다. Won't에도 할 일이 있다는 뜻.</p>
+    </div>
+  </div>
+  <div class="co wr" style="margin-top:16px">
+    <span class="lb">함정 — 우선순위로는 열리지 않는 것이 있다</span>
+    <p>Could 3건 중 <b>2건은 우선순위를 Must로 올려도 착수가 안 된다.</b> 예적금(014)은 <b>법률 검토 통과</b>가, 별의 옷장 외 목적지(016)는 <b>현금 분리선 재검토</b>가 선행 조건이기 때문이다. 이 문서의 규칙 AP-1이 그것을 명문화했다 — <em>"블로커는 일정 문제가 아니라 조건 문제다."</em></p>
+  </div>
+  <div class="co ok" style="margin-top:13px">
+    <span class="lb">PM의 사용법</span>
+    <p>우선순위 회의에서 <b>세 종류를 구분해 말한다</b> — ① 중요도로 밀린 것(진짜 Should) ② 성격으로 배분된 것(빼면 다른 게 끊김) ③ <b>조건이 안 열린 것</b>(우선순위로 못 푼다). 셋을 섞어서 논의하면 결론이 안 난다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §4.1 우선순위 집계 · §13.2 릴리스 배분 · §13.5 AP-1</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="★ 개념 04 — 요구사항은 낱개가 아니라 세트다" data-kw="인과 루프 R1 B1 성장 루프 불신 루프 세트 범위축소 함께 움직인다">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 04 ★ 가장 실전적인 것</p>
+    <h2>요구사항은 낱개가 아니라 세트다</h2>
+    <p class="dek">범위 축소 회의에서 <b>"이거 하나만 빼면 안 될까요"</b>가 나온다. 이 SRS는 그 질문에 미리 답해 뒀다. 요구사항 몇 건은 <b>서로를 부르는 되돌이(루프)의 다른 지점을 막고 있어서</b>, 하나만 빼면 나머지가 무력화된다.</p>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card" style="border-color:color-mix(in srgb,var(--good) 40%,var(--border)); background:color-mix(in srgb,var(--good-weak) 55%,var(--surface))">
+      <span class="tag" style="color:var(--good-text)">R1 · 스스로 커지는 되돌이</span>
+      <h3>성장 루프</h3>
+      <p>아이의 <b>실천 1건</b> → ⭐ 지급 → 나무 조건 충족 → 나무 상승 → <b>보호자가 변화를 읽음</b> → 승인·미션 등록 활발 → 다시 실천.</p>
+      <p>안쪽에 작은 고리가 하나 더 있다 — ⭐ → 아바타 아이템 → 다음 실천 동기. <b>이 안쪽 고리는 보호자를 거치지 않아서</b>, 보호자 반응이 느린 구간에도 계속 돈다.</p>
+      <p><b>입구가 「실천 1건」이다.</b> 실천이 0이면 뒤의 화살표가 전부 멈춘다.</p>
+    </div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--bad) 40%,var(--border)); background:color-mix(in srgb,var(--bad-weak) 55%,var(--surface))">
+      <span class="tag" style="color:var(--bad-text)">B1 · 스스로 커지는 하강 루프</span>
+      <h3>불신 루프</h3>
+      <p>나무 2주 정체 → 보호자가 <b>원인을 모름</b> → <b>오귀인</b>("우리 애가 안 하는구나" 또는 앱 불신) → 확인 빈도 ↓ → 승인 속도 ↓ → 아이의 실천이 인정 안 됨 → <b>더 멈춘다.</b></p>
+      <p>같은 기계가 반대로 도는 것이다. 그리고 이게 <b>실제 관찰된 이탈 경로</b>다 — H1형 보호자는 자녀를 탓하지 않고 <b>앱을 조용히 떠난다.</b></p>
+    </div>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>루프를 끊는 지점</th><th>이 요구사항이</th><th>없으면 벌어지는 일</th></tr></thead>
+      <tbody>
+        <tr><td><b>원인을 모름</b></td><td><b>REQ-FUNC-001</b> 정체 원인 조건 단위 표시</td><td>정체가 「앱이 멈췄다」로 읽힌다</td></tr>
+        <tr><td><b>오귀인</b></td><td><b>REQ-FUNC-010</b> 「승인 대기 N건」 표시</td><td>보호자 자신의 지연이 아이의 미실천으로 보인다</td></tr>
+        <tr><td><b>인정 끊김</b></td><td><b>REQ-NF-007</b> ⭐ 소급 지급 100%</td><td>보호자의 지연이 아이의 실패로 기록된다</td></tr>
+        <tr><td><b>정체 진입</b></td><td><b>REQ-FUNC-011</b> 3일 미접속 알림</td><td>루프가 시작된 사실 자체를 아무도 모른다</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co bd" style="margin-top:16px">
+    <span class="lb">PM의 사용법 — 이 표를 회의에 그대로 들고 간다</span>
+    <p>네 건은 <b>각각 루프의 다른 지점을 끊는다.</b> 하나만 넣으면 남은 지점에서 루프가 다시 닫힌다. 그래서 문서의 문장이 이것이다 — <em>"범위 축소 논의에서 이 표의 4행은 함께 움직여야 한다."</em><br>
+    <b>"뺄 수 없다"가 아니라 "빼려면 넷 다 빼고 그 결과를 감수한다"가 정확한 선택지다.</b> PM은 이 표로 <b>선택지를 정직하게 만들어</b> 의사결정자에게 올린다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §1.5 R1·R2·B1 인과 루프 · §8.1 H1형 이탈 트리거 · §13.2 R1 배분 근거</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 05 — 수용 기준이 '다 됐어요'를 없앤다" data-kw="수용 기준 AC Given When Then 완료 정의 49건">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 05</p>
+    <h2>수용 기준이 「다 됐어요」를 없앤다</h2>
+    <p class="dek">개발이 끝났다는 말과 요구사항이 충족됐다는 말은 <b>다른 말</b>이다. 수용 기준은 그 간극을 <b>착수 전에</b> 메우는 문장이다. 끝나고 나서 쓰면 이미 늦다.</p>
+  </div>
+  <div class="card" style="margin-bottom:16px">
+    <h3>실제 예시 — AC-1.1을 뜯어보면</h3>
+    <div class="grid g3" style="margin-top:12px">
+      <div style="padding:13px 15px; background:var(--surface-2); border-radius:11px; border:1px solid var(--border)">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; color:var(--good-text); margin-bottom:6px">GIVEN · 어떤 상황에서</div>
+        <div style="font-size:13.5px; color:var(--text-2); line-height:1.65">이번 달 실천 기록이 <b>1건 이상</b>인 계정</div>
+      </div>
+      <div style="padding:13px 15px; background:var(--surface-2); border-radius:11px; border:1px solid var(--border)">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; color:var(--accent-text); margin-bottom:6px">WHEN · 무엇을 하면</div>
+        <div style="font-size:13.5px; color:var(--text-2); line-height:1.65">성장 나무를 <b>5초만</b> 노출하고 덮은 뒤 기억나는 것을 묻는다</div>
+      </div>
+      <div style="padding:13px 15px; background:var(--surface-2); border-radius:11px; border:1px solid var(--border)">
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.1em; color:var(--warn-text); margin-bottom:6px">THEN · 무엇이 확인되나</div>
+        <div style="font-size:13.5px; color:var(--text-2); line-height:1.65">"이번 달 행동이 어떻게 달라졌나"를 1문장으로 회상 <b>≥ 6/8</b></div>
+      </div>
+    </div>
+    <p style="margin-top:13px">여기에 <b>측정 도구·표본</b>까지 붙는다 — 인터뷰 n=8 · rubric 코딩. <b>즉 "누가 · 몇 명에게 · 어떻게 확인하는가"까지 미리 정해져 있다.</b></p>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>왜 「5초」인가 — AC가 요구사항을 되먹인다</h3>
+      <p>5초 안에 회상되려면 <b>실천 근거가 기본으로 보여야</b> 한다(펼쳐야 보이면 실패). 그래서 REQ-FUNC-001의 문장이 <em>"실천 근거를 기본 노출"</em>이 됐다.</p>
+      <p>또 5초 안에 화면이 떠야 하므로 <b>p95 ≤ 1,250ms</b>라는 성능 요구가 <b>여기서 역산</b>됐다. AC가 기능과 성능을 동시에 결정한 것.</p>
+    </div>
+    <div class="card">
+      <h3>「생존 조건」이라고 표시된 AC</h3>
+      <p><b>AC-4.4</b> — 계획 카드 작성률 ≥ 50%. 이게 안 나오면 계획 카드 기능 자체가 <b>성립하지 않는다.</b></p>
+      <p>사전에 적는 사람이 없으면 <b>사후에 대조할 것도 없다.</b> 그래서 문서가 이 하나에만 「생존 조건」 딱지를 붙였다.</p>
+    </div>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">PM의 사용법</span>
+    <p>PM은 코드를 못 읽어도 <b>AC는 직접 쓸 수 있다.</b> "이 상황에서 이걸 하면 이렇게 돼야 한다"는 도메인 지식의 영역이지 기술의 영역이 아니다. <b>착수 전 회의에서 AC를 소리 내어 읽고 개발자가 "그건 이렇게 못 합니다"라고 말하게 만드는 것</b>이 그 회의의 목적이다 — 그 말은 끝나고 들으면 재작업이고, 시작 전에 들으면 설계다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §9.2 AC-1.1 · AC-4.4 · §4.1 REQ-FUNC-001 · §4.2 REQ-NF-001</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 06 — 예외 경로가 제품의 품질을 가른다" data-kw="예외 경로 ACE 실패 오프라인 거절 빈화면 19건">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 06</p>
+    <h2>예외 경로가 제품의 품질을 가른다</h2>
+    <p class="dek">정상 경로 30건에 예외 경로 <b>19건</b>. 예외를 이 정도 비중으로 적은 문서는 흔치 않다. 그리고 <b>사용자가 제품을 신뢰하거나 떠나는 순간은 거의 전부 예외 경로에서 일어난다.</b></p>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card">
+      <h3><span class="n">ACE-1.1</span>실천 기록이 0건일 때</h3>
+      <p>나무를 열면 <em>"아직 기록이 없어요 + 첫 실천 안내"</em>가 뜨고, <b>빈 화면을 앱 결함으로 인식한 응답자 ≤ 2/8</b>.</p>
+      <p style="color:var(--text-3); font-size:13px">→ 이 앱은 실천 0건이면 나무가 안 자라도록 <b>설계</b>됐다(ADR-006). 그 설계의 대가가 "초기 화면이 오래 비어 보인다"이고, 이 AC가 그 대가를 관리한다.</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">ACE-1.2</span>전월 데이터가 없을 때</h3>
+      <p>가입 첫 달엔 비교할 지난달이 없다. <b>델타를 0으로 그리지 않고</b> <em>"다음 달부터 비교할 수 있어요"</em>로 대체한다.</p>
+      <p style="color:var(--text-3); font-size:13px">→ 0으로 그리면 <b>"우리 애가 아무것도 안 했다"로 읽힌다.</b> 없는 것과 0인 것은 다르다.</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">ACE-7.3</span>71시간에 재접속했을 때</h3>
+      <p>72시간 미접속 알림 판정 시점에 이미 돌아왔으면 <b>발송하지 않는다 — 오탐 0건.</b></p>
+      <p style="color:var(--text-3); font-size:13px">→ 잘못된 알림 한 번이 알림 전체의 신뢰를 깎는다. <b>"안 보내는 것"도 요구사항이다.</b></p>
+    </div>
+    <div class="card">
+      <h3><span class="n">ACE-6.1</span>보호자가 거절했을 때</h3>
+      <p>⭐ 미지급 + <b>사유 표시</b> + <b>「미실천」과 시각적으로 구별</b> + 실천 카운트 미가산.</p>
+      <p style="color:var(--text-3); font-size:13px">→ 아이 입장에서 <b>"했는데 거절당함"과 "아예 안 함"은 완전히 다른 경험</b>이다. 화면이 그걸 구별하지 않으면 아이가 배우는 게 달라진다.</p>
+    </div>
+  </div>
+  <div class="co key">
+    <span class="lb">PM의 사용법 — 예외를 뽑아내는 다섯 질문</span>
+    <p>요구사항 하나를 받으면 이 다섯 개를 던진다. 대부분의 예외가 여기서 나온다.<br>
+    <b>① 데이터가 없으면?</b> (첫 달·기록 0건) &nbsp;<b>② 네트워크가 끊기면?</b> (오프라인·재연결) &nbsp;<b>③ 상대가 거절/실패하면?</b> (보호자 거절·외부 API 실패)<br>
+    <b>④ 두 번 일어나면?</b> (중복 요청·일괄 처리) &nbsp;<b>⑤ 너무 늦게 일어나면?</b> (승인 지연·주기 종료 후)</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §9.3 예외 경로 19건 · §6.3 규칙 11·12 · §11 ADR-006</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 07 — PASS·HOLD·FAIL과 HOLD 규율" data-kw="판정 규칙 PASS HOLD FAIL 3구간 표본 k/8 코딩 재판정">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 07</p>
+    <h2>PASS · HOLD · FAIL과 HOLD 규율</h2>
+    <p class="dek">지표에 <b>합격선 하나만</b> 두면, 아슬아슬한 값이 나올 때마다 논쟁이 벌어진다. 이 문서는 <b>세 구간</b>을 두고, 가운데 구간에서 <b>무엇을 하지 말아야 하는지</b>까지 정했다. 후자가 진짜 규율이다.</p>
+  </div>
+  <div class="flow" style="margin-bottom:16px">
+    <div class="node" style="border-color:color-mix(in srgb,var(--good) 45%,var(--border))"><span class="k">통과선 이상</span><span class="v" style="color:var(--good-text)">PASS</span><span class="s">다음 게이트로 진행</span></div>
+    <div class="arw">·</div>
+    <div class="node" style="border-color:color-mix(in srgb,var(--warn) 45%,var(--border))"><span class="k">그 사이</span><span class="v" style="color:var(--warn-text)">HOLD</span><span class="s">표본 +4 후 재판정<br><b>로드맵을 바꾸지 않는다</b></span></div>
+    <div class="arw">·</div>
+    <div class="node" style="border-color:color-mix(in srgb,var(--bad) 45%,var(--border))"><span class="k">실패선 이하</span><span class="v" style="color:var(--bad-text)">FAIL</span><span class="s">지정된 재설계 실행</span></div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>HOLD의 진짜 규칙 두 개</h3>
+      <p><b>① 2회 연속 HOLD는 FAIL로 본다.</b> 애매한 값이 무한히 이어지며 결정을 미루는 것을 막는다.</p>
+      <p><b>② HOLD 구간에서는 배분을 바꾸지 않는다</b>(AP-2). 중간값으로 로드맵을 흔들면 판정 규칙 자체가 무의미해지기 때문.</p>
+    </div>
+    <div class="card">
+      <h3>표본이 모자랄 때의 판정</h3>
+      <p><b>n ≥ 8</b> 정상 판정 · <b>5 ≤ n &lt; 8</b> <span class="bg hold">HOLD 고정</span> — PASS를 내리지 않고 비율 환산도 금지 · <b>n &lt; 5</b> <b>판정 불가</b>(실험 미실시로 기록).</p>
+      <p style="color:var(--text-3); font-size:13px">→ 표본이 적을 때 <b>"그래도 대충 6명 중 4명이면 66%네요"</b>를 구조적으로 막았다.</p>
+    </div>
+    <div class="card">
+      <h3>사람이 판정하는 항목의 처리</h3>
+      <p>"보호자가 정체 원인을 앱 탓으로 돌렸나" 같은 건 <b>해석이 들어간다.</b> 그래서 <b>코더 2인이 독립으로 코딩</b>하고 일치도(κ) <b>≥ 0.6</b>을 요구한다.</p>
+      <p>미달이면 규칙을 고쳐 <b>전 표본 재코딩</b>. 5초 노출도 <b>±0.5초를 넘으면 그 세션은 제외</b>하고 제외 건수를 보고한다.</p>
+    </div>
+    <div class="card">
+      <h3>계측이 불건전하면 판정 자체를 안 한다</h3>
+      <p>이벤트 유실률이 <b>0.5%를 넘은 기간</b>의 행동 지표는 <b>판정에 쓰지 않는다.</b> 「계측 신뢰 미달」로 기록하고 원인을 특정한 뒤 다시 산출한다.</p>
+      <p>중요한 단서 — 이 규칙은 <b>PASS를 막는 방향으로만</b> 작동한다. 계측이 나빴다고 FAIL을 PASS로 되돌리지 않는다.</p>
+    </div>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">PM의 사용법</span>
+    <p>지표 리뷰의 첫 문장을 <b>"이 값은 PASS인가요, HOLD인가요, FAIL인가요"</b>로 고정한다. 숫자를 먼저 말하면 해석 경쟁이 시작되지만, 구간을 먼저 말하면 <b>다음 행동이 자동으로 정해진다.</b> 그리고 HOLD가 나왔을 때 <b>가만히 있는 것</b>이 PM의 실력이다 — 흔들면 다음 판정을 못 믿게 된다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §9.1 판정 규칙 ①~⑤ · §6.2.7 Verdict · §13.5 AP-2</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="★ 개념 08 — 계측이 먼저다" data-kw="계측 먼저 H1 유실률 값의 하락 계측의 하락 병행 B6 instrumentation">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 08 ★ 가장 실전적인 것</p>
+    <h2>값의 하락과 계측의 하락은 다른 사건이다</h2>
+    <p class="dek">이번 주 WPA가 떨어졌다. <b>아이들이 안 한 것인가, 기록이 안 들어온 것인가?</b> 이 질문에 답할 수 없으면 그 숫자로는 아무 결정도 내릴 수 없다. 그런데 대부분의 팀이 이 구분 없이 대시보드를 본다.</p>
+  </div>
+  <div class="vs" style="margin-bottom:16px">
+    <div class="side b">
+      <h4><span class="dot"></span>구분 없이 볼 때 벌어지는 일</h4>
+      <ul>
+        <li>WPA 하락 → 원인 회의 소집 → UX 개선 스프린트 → <b>실은 앱 업데이트로 이벤트 하나가 안 나가고 있었음</b></li>
+        <li>2주와 인력을 쓰고, 진짜 원인은 그대로 남는다</li>
+        <li>다음번 하락 때 팀이 <b>지표를 안 믿기 시작한다</b></li>
+      </ul>
+    </div>
+    <div class="side a">
+      <h4><span class="dot"></span>이 SRS가 정한 순서</h4>
+      <ul>
+        <li><b>H1 이벤트 유실률</b>을 먼저 본다 — 원장 기입 건수와 대조해서 몇 %가 안 들어왔는지</li>
+        <li><b>≤ 0.5%</b>면 정상 판정 · <b>초과</b>면 그 기간 행동 지표를 <b>판정에 쓰지 않는다</b></li>
+        <li>문서의 문장 — <em>"계측 건강성 점검은 KPI 감시보다 먼저 켜져 있어야 한다."</em></li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>건강성 점검 5종 — 무엇을 보는가</h3>
+      <p><b>H1 유실률</b> ≤0.5% · <b>H2 중복 적재율</b> 추세 관찰 · <b>H3 시각 역행</b> 0건 · <b>H4 필수 필드 결측</b> 0건(배포 시 차단) · <b>H5 주차 재계산</b> 이력 보존.</p>
+      <p style="font-size:13px; color:var(--text-3)">→ PM은 다섯 개를 다 이해할 필요 없다. <b>H1 하나만 주간 리뷰 첫 줄에 두면</b> 나머지는 개발팀이 관리한다.</p>
+    </div>
+    <div class="card">
+      <h3>그래서 계측 빌드를 병행으로 뒀다</h3>
+      <p>B6(계측)은 독립 빌드가 아니라 <b>B1~B5 전 구간과 동시에</b> 간다. 각 빌드의 완료 조건에 <b>"자기 이벤트를 함께 낸다"</b>가 들어 있다.</p>
+      <p><b>이유는 단순하다</b> — 계측을 마지막으로 미루면 그 앞 기간의 어떤 지표도 <b>소급해서 만들 수 없다.</b> 잃어버린 시간은 돌아오지 않는다.</p>
+    </div>
+  </div>
+  <div class="co bd" style="margin-top:16px">
+    <span class="lb">PM의 사용법 — 두 문장을 습관으로</span>
+    <p><b>① 대시보드를 볼 때</b> — "이 기간 H1 유실률 얼마였나요?"를 값보다 먼저 묻는다.<br>
+    <b>② 스프린트 계획에서</b> — "이 기능의 이벤트는 같은 스프린트에 들어가나요?"를 반드시 확인한다. 개발팀이 "다음에 붙일게요"라고 하면, <b>그건 이번 스프린트의 결과를 영원히 측정하지 않겠다는 뜻</b>이라고 통역해서 되물어야 한다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §9.1 ⑤ · §9.4 계측 경로 그림 · §9.4.6 H1~H5 · §13.3 B6 병행 근거</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 09 — 카운트 규칙이 곧 지표다" data-kw="M1 M6 카운트 규칙 원칙 이벤트 원천 멱등 client_ts distinct 스냅샷 관측불가">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 09</p>
+    <h2>카운트 규칙이 곧 지표다</h2>
+    <p class="dek">"WPA 55%"라는 문장은 <b>정보가 아니다.</b> 무엇을 분자에 넣고 무엇을 뺐는지를 모르면 그 숫자는 해석될 수 없다. 이 SRS가 지표 계획에 <b>목표값이 아니라 세는 규칙만</b> 적은 이유가 이것이다.</p>
+  </div>
+  <div class="tbl" style="margin-bottom:16px">
+    <table>
+      <thead><tr><th style="width:52px">#</th><th>원칙</th><th>PM에게 뜻하는 것</th></tr></thead>
+      <tbody>
+        <tr><td class="c"><b>M1</b></td><td><b>행동 1건 = 이벤트 1건.</b> 모든 KPI는 이벤트에서만 파생한다 — 화면 상태·추정값·수동 집계로 대체 금지</td><td>화면을 고치면 지표가 같이 변하는 사고를 막는다</td></tr>
+        <tr><td class="c"><b>M2</b></td><td><b>중복 제거는 멱등 키로만.</b> 같은 키 재수신은 카운트하지 않는다</td><td>재시도·오프라인 재전송·일괄 승인이 지표를 부풀리지 않는다</td></tr>
+        <tr><td class="c"><b>M3</b></td><td><b>시간 귀속은 발생 시각(<code>client_ts</code>).</b> 도착 시각은 진단 전용</td><td>오프라인 아동의 실천이 다음 주로 밀리지 않는다</td></tr>
+        <tr><td class="c"><b>M4</b></td><td><b>사람 단위 지표는 고유 인원 수.</b> 이벤트 건수로 사람 수를 대체하지 않는다</td><td>열성 사용자 몇 명이 비율을 부풀리는 경로를 막는다</td></tr>
+        <tr><td class="c"><b>M5</b></td><td><b>분모는 기간 시작 시점으로 고정.</b> 기간 중 가입·이탈로 바꾸지 않는다</td><td>같은 주의 값이 집계할 때마다 달라지지 않는다</td></tr>
+        <tr><td class="c"><b>M6</b></td><td><b>인앱으로 못 보는 지표는 「관측 불가」를 명시</b>하고 릴리스 게이트 기준으로 쓰지 않는다</td><td>인터뷰·자기보고를 상시 지표처럼 쓰다 게이트가 무너지는 걸 막는다</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>실제 사례 — 소급 지급된 별은 어느 주에 세나</h3>
+      <p>아이가 <b>월요일에 완료</b>했는데 보호자가 <b>다음 주 목요일에 승인</b>했다. 이 실천은 어느 주의 WPA에 들어가나?</p>
+      <p><b>완료 시점 주차</b>다. 승인 시점으로 세면 <b>보호자의 지연이 아이의 미실천으로 기록</b>된다. 이미 마감된 주차라면 <b>재계산하고 갱신 이력을 남긴다</b> — 조용히 덮어쓰지 않는다.</p>
+    </div>
+    <div class="card">
+      <h3>실제 사례 — 비율이 100%를 넘는 사고</h3>
+      <p>계획 카드 작성률(KPI-04)에서, 결제 1건에 계획 카드가 여러 건 매칭되면 <b>분자를 1로 캡</b>한다. 결제가 없는 계획 카드는 분자에서 빼고 <b>별도 집계</b>한다.</p>
+      <p>캡과 제외가 없으면 <b>작성률이 100%를 넘는다.</b> 카운트 규칙이 없는 지표에서 실제로 자주 벌어지는 일.</p>
+    </div>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">PM의 사용법</span>
+    <p>새 지표를 요청할 때 <b>이름만 말하지 않는다.</b> <em>"열람률 보고 싶어요"</em>가 아니라 <b>"분자는 무엇, 분모는 무엇, 중복은 어떻게, 언제 기준"</b> 네 칸을 같이 준다. 이 네 칸을 PM이 못 채우면 데이터 담당자가 <b>대신 채우고, 그건 대개 PM이 원한 지표가 아니다.</b></p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §9.4.1 M1~M6 · §9.4.2 WPA 경계 상황 · §9.4.3 KPI-04</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 10 — 계측 공백: 정의는 있는데 셀 수가 없다" data-kw="계측 공백 KPI-04 plan_card_created payment_settled 이벤트 추가 판정불가">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 10</p>
+    <h2>정의는 있는데 셀 수가 없다</h2>
+    <p class="dek">이 SRS에서 <b>가장 값진 발견</b>은 새 기능이 아니라 <b>구멍</b>이다. 지표 계획을 세우다 <b>"이건 산출 자체가 불가능하다"</b>는 사실이 드러났고, 문서는 그것을 숨기지 않고 <b>이해관계자 검토 항목으로 올렸다.</b></p>
+  </div>
+  <div class="co bd" style="margin-bottom:16px">
+    <span class="lb">지금 벌어지고 있는 일</span>
+    <p><b>KPI-04 계획 카드 작성률</b>은 REQ-FUNC-008의 <b>생존 조건(AC-4.4)</b>이다. 그런데 현재 정의된 인앱 이벤트 <b>10종으로는 산출할 수 없다.</b><br>
+    · <b>분자가 없다</b> — 계획 카드를 저장할 때 아무 이벤트도 남지 않는다.<br>
+    · <b>분모가 없다</b> — 계획 카드가 없는 결제는 회고 화면을 만들지 않으므로 회고 이벤트도 안 생긴다. 즉 <b>"계획 없이 쓴 소비"가 구조적으로 기록되지 않는다.</b><br>
+    <b>결과 — Must 요구사항 하나의 성립 여부를 측정할 방법이 없다.</b></p>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>필요한 것 — 이벤트 2종 추가</h3>
+      <p><code>plan_card_created</code> — 계획 카드를 저장한 시점(누가 썼는지 · 업종 · 상한 금액 포함)<br>
+         <code>payment_settled</code> — 결제가 확정된 시점(금액 · 업종 · 매칭된 계획 카드)</p>
+      <p>필드 사양은 설계 문서에 <b>이미 준비돼 있다.</b> 다만 <b>채택 결정이 안 났고, 적재 코드는 넣지 않은 상태</b>다.</p>
+    </div>
+    <div class="card">
+      <h3>안 넣으면 어떻게 되나</h3>
+      <p>문서가 처리 방침까지 적어 뒀다 — <b>AC-4.2(매칭 정확도)와 AC-4.4(작성률)를 「판정 불가」로 기록</b>하고, <b>릴리스 게이트의 통과 근거로 쓰지 않는다.</b></p>
+      <p style="color:var(--text-3); font-size:13px">→ 즉 "그냥 넘어가자"가 아니라 <b>"모른다고 기록하고, 그 상태로는 통과시키지 않는다"</b>가 된다.</p>
+    </div>
+  </div>
+  <div class="co wr" style="margin-top:16px">
+    <span class="lb">이것이 왜 PM의 결정인가</span>
+    <p>이벤트 2종 추가는 <b>인터페이스 목록(§6.1)과 데이터 모델(§6.2.8)을 함께 개정하는 일</b>이라 개발팀이 단독으로 결정하지 않는다. 그리고 이건 <b>기능 추가가 아니라 계측 명세의 보완</b>이다 — 사용자에게 보이는 것이 하나도 없어서, <b>우선순위 회의에서 제일 먼저 잘려나가는 종류의 항목</b>이다. 그 잘림을 막는 것이 PM의 일이다.</p>
+  </div>
+  <div class="co ok" style="margin-top:13px">
+    <span class="lb">PM의 사용법 — 다른 프로젝트에서도 통하는 점검</span>
+    <p>지표 목록을 받으면 <b>한 건씩 "이 값은 어느 이벤트에서 나오나"를 되짚는다.</b> 원천을 말 못 하는 지표가 하나라도 있으면, 그건 <b>대시보드에 영원히 안 뜨거나 수동 집계로 연명하게 된다.</b></p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §9.4.4 계측 공백 · §6.1 결정 대기 이벤트 2종 · §9.2 AC-4.4</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 11 — 비기능 요구사항이 먼저 무너진다" data-kw="비기능 NFR 성능 신뢰성 규제 불변 협상불가 AP-6 완료조건">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 11</p>
+    <h2>비기능 요구사항이 먼저 무너진다</h2>
+    <p class="dek">기능은 안 되면 눈에 보인다. 비기능은 <b>조용히 미달한 채로 출시된다.</b> 화면이 없어서 데모에 안 나오고, 시연할 게 없어서 진척 보고에서 밀리기 때문이다. 이 SRS는 그 밀림을 <b>구조로</b> 막았다.</p>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card" style="border-color:color-mix(in srgb,var(--bad) 40%,var(--border))">
+      <h3>장치 ① — 별도 일정을 주지 않는다</h3>
+      <p>비기능 요구사항 18건에는 <b>스프린트 규모(sp)를 부여하지 않았다.</b> 대신 <b>귀속된 기능 요구사항의 완료 조건에 포함</b>시켰다.</p>
+      <p>문서의 근거가 정확하다 — <em>"분리해 배분하면 규제·정합성 항목이 뒤로 밀린다."</em></p>
+      <p>그리고 규칙 <b>AP-6</b>이 못을 박았다 — 비기능을 후속 릴리스로 미루는 배분은 <b>허용하지 않으며, 완료 조건에서 빼는 방식도 포함</b>한다.</p>
+    </div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--bad) 40%,var(--border))">
+      <h3>장치 ② — 「불변」 두 건을 지정했다</h3>
+      <p>대부분의 수치는 실측 후 조정 가능한 <b>상한</b>이다. 그런데 딱 두 건만 <b>협상 불가</b>로 못 박혔다.</p>
+      <p><b>REQ-NF-006</b> 별 원장 정합성 오류율 <b>0%</b><br>
+         <b>REQ-NF-007</b> ⭐ 소급 지급 성공률 <b>100%</b></p>
+      <p>근거 — <em>"아동이 모은 것을 잃는 경험이므로 허용 오차가 없다."</em> 이 둘에는 <b>재설정 트리거조차 두지 않았다.</b></p>
+    </div>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>유형</th><th>대표 항목</th><th>PM이 볼 지점</th></tr></thead>
+      <tbody>
+        <tr><td><b>성능</b></td><td>나무 p95 ≤ 1,250ms · 숲 ≤ 2,000ms · ⭐ 반영 ≤ 800ms</td><td>수용 기준에서 <b>역산된 상한</b>이다 — 초과하면 그 AC가 성립하지 않는다</td></tr>
+        <tr><td><b>신뢰성</b></td><td>가용성 ≥ 99.0% · 오류율 ≤ 0.5% · 원장 정합성 0%</td><td>오류율 <b>3일 연속 초과 시 릴리즈 중단</b> — 자동 규칙이 있는지 확인</td></tr>
+        <tr><td><b>규제</b></td><td>동의 게이트 100% 차단 · 좌표·얼굴 필드 0건 · 별↔저금통 분리</td><td>검증이 <b>사람의 확인이 아니라 자동 테스트·CI 게이트</b>인지 확인</td></tr>
+        <tr><td><b>원가</b></td><td>클라우드 +30% 초과 알림 · 본인인증 1.2회/건 초과 알림</td><td>수수료율 확정 전이라 <b>우변(원가)만 선행 관리</b> 중</td></tr>
+        <tr><td><b>운영</b></td><td>규제·정합성·보안 알림 30분 내 확인 · 2시간 미해결 시 중단</td><td>알림에 <b>수신자와 SLA가 이름으로</b> 붙어 있는지 확인</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">PM의 사용법</span>
+    <p>스프린트 완료 판정에서 <b>기능 AC와 비기능 완료 조건을 같은 체크리스트에</b> 둔다. 별도 목록으로 관리하는 순간 비기능은 "다음에"가 된다. 그리고 <b>불변 두 건은 대시보드 상단 고정</b> — 이 둘은 추세를 보는 게 아니라 <b>1건이라도 발생했는지</b>를 보는 항목이다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §4.2 REQ-NF-001~018 · §11 불변 항목 · §13.1 · §13.5 AP-6</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="★ 개념 12 — 제약의 6계층, 충돌하면 제약이 이긴다" data-kw="제약 계층 CON-REG CON-ARC CON-DEV CON-RES CON-DOC 규제 우선순위 충돌">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 12 ★ 가장 실전적인 것</p>
+    <h2>제약의 6계층 — 충돌하면 제약이 이긴다</h2>
+    <p class="dek">아동 대상 금융 서비스의 1순위 비기능 요구는 <b>성능이 아니라 규제</b>다. 그래서 이 문서는 제약을 6계층으로 세우고, <b>계층이 충돌하면 상위가 하위를 잘라낸다</b>고 명시했다. PM이 변경 요청을 판단하는 <b>기본 자</b>가 이것이다.</p>
+  </div>
+  <div class="stack" style="gap:9px; margin-bottom:16px">
+    <div style="display:flex; gap:13px; align-items:flex-start; padding:13px 16px; border-radius:12px; background:var(--bad-weak); border:1px solid color-mix(in srgb,var(--bad) 32%,transparent)">
+      <span class="bg fail" style="flex-shrink:0; margin-top:2px">1</span>
+      <div><b style="font-size:14.5px">규제·법령 CON-REG</b> <span class="bg n">허용 오차 0 · 협상 불가</span><div style="font-size:13.5px; color:var(--text-2); margin-top:4px">동의 선행 · 위치정보 미수집 · 중개 금지 · 별↔저금통 분리 · 얼굴 미수집 · 전액 환불 · 제휴사 정책 종속 · 마이데이터 불가 <b>(9건)</b><br><span style="color:var(--text-3)">충돌 시 — <b>하위 계층의 목표를 포기한다. 기능 자체를 착수하지 않는 것을 포함.</b></span></div></div>
+    </div>
+    <div style="display:flex; gap:13px; align-items:flex-start; padding:13px 16px; border-radius:12px; background:color-mix(in srgb,var(--bad-weak) 55%,var(--surface)); border:1px solid color-mix(in srgb,var(--bad) 22%,transparent)">
+      <span class="bg fail" style="flex-shrink:0; margin-top:2px">2</span>
+      <div><b style="font-size:14.5px">정합성·보안</b> <span class="bg n">허용 오차 0 · 불변</span><div style="font-size:13.5px; color:var(--text-2); margin-top:4px">별 원장 정합성 · 동의 게이트 — <b>예외를 만들지 않는다</b><br><span style="color:var(--text-3)">충돌 시 — <b>성능·비용 목표를 희생한다.</b></span></div></div>
+    </div>
+    <div style="display:flex; gap:13px; align-items:flex-start; padding:13px 16px; border-radius:12px; background:var(--warn-weak); border:1px solid color-mix(in srgb,var(--warn) 30%,transparent)">
+      <span class="bg hold" style="flex-shrink:0; margin-top:2px">3</span>
+      <div><b style="font-size:14.5px">아키텍처·데이터 CON-ARC</b> <span class="bg n">구조적 · 회피 불가</span><div style="font-size:13.5px; color:var(--text-2); margin-top:4px">자체 카드 발급 필수 · 가용성 상한이 제휴사 SLA · 대조 정확도 상한이 업종 코드 상세도 · 앱 외부 현금 범위 제외 <b>(7건)</b><br><span style="color:var(--text-3)">충돌 시 — <b>요구사항의 범위를 축소한다</b>(예: 업종 대조 → 금액 단독 판정).</span></div></div>
+    </div>
+    <div style="display:flex; gap:13px; align-items:flex-start; padding:13px 16px; border-radius:12px; background:var(--surface); border:1px solid var(--border)">
+      <span class="bg n" style="flex-shrink:0; margin-top:2px">4</span>
+      <div><b style="font-size:14.5px">플랫폼·기기 CON-DEV</b><div style="font-size:13.5px; color:var(--text-2); margin-top:4px">아동 전용 스마트폰 전제 금지(키즈워치·공유 기기 포함) · 기기 유형을 기능 판정에 쓰지 않음 · 아동 독립 로그인 부재 · <b>푸시 차단을 정상 경로로 취급</b> <b>(4건)</b></div></div>
+    </div>
+    <div style="display:flex; gap:13px; align-items:flex-start; padding:13px 16px; border-radius:12px; background:var(--surface); border:1px solid var(--border)">
+      <span class="bg n" style="flex-shrink:0; margin-top:2px">5</span>
+      <div><b style="font-size:14.5px">자원·원가 CON-RES</b> <span class="bg n">착수 게이트</span><div style="font-size:13.5px; color:var(--text-2); margin-top:4px">구독 매출 0원 · <b>3D 에셋은 사양 확정 전 제작 착수 금지</b>(되돌릴 수 없는 원가) · 클라우드 +30% 알림 · 수수료율이 외부에 있음 <b>(4건)</b></div></div>
+    </div>
+    <div style="display:flex; gap:13px; align-items:flex-start; padding:13px 16px; border-radius:12px; background:var(--accent-weak); border:1px solid color-mix(in srgb,var(--accent) 28%,transparent)">
+      <span class="bg could" style="flex-shrink:0; margin-top:2px">6</span>
+      <div><b style="font-size:14.5px">표현·인용 CON-DOC</b> <span class="bg n">사실 아닌 서술 금지</span><div style="font-size:13.5px; color:var(--text-2); margin-top:4px">폐기된 기능을 기능으로 쓰지 않음 · <b>성장 효과를 성과로 주장하지 않음</b> · 목표값을 달성치처럼 옮겨 적지 않음 · 근거 등급 표기 유지 <b>(6건)</b><br><span style="color:var(--text-3)">충돌 시 — <b>문구를 내린다. 기능이 아니라 서술을 조정하는 계층.</b></span></div></div>
+    </div>
+  </div>
+  <div class="co ok">
+    <span class="lb">PM의 사용법 — 변경 요청이 오면 위에서부터 내려온다</span>
+    <p><b>"1계층에 걸리나?"</b> → 걸리면 논의 종료, 착수 불가. <b>"3계층에 걸리나?"</b> → 기능을 줄이는 방향으로 재설계. <b>"5계층인가?"</b> → 조건이 열릴 때까지 보류. <b>"6계층인가?"</b> → 기능은 그대로 두고 문구만 고친다.<br>
+    이 순서를 지키면 회의가 <b>10분에 끝난다.</b> 순서 없이 하면 규제 얘기와 문구 얘기가 섞여 두 시간이 간다. 그리고 <b>6계층은 PM이 가장 자주 위반하는 계층이다</b> — 대외 자료를 쓸 때.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §12.1 제약 우선순위 · §12.2~§12.6 CON-REG·ARC·DEV·RES·DOC</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 13 — 가정 · 의존성 · 리스크는 다른 물건이다" data-kw="가정 의존성 리스크 A1 A4 D1 D2 R1 R8 관리 방법">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 13</p>
+    <h2>가정 · 의존성 · 리스크는 다른 물건이다</h2>
+    <p class="dek">셋을 한 표에 뭉쳐서 「이슈」라고 부르는 순간 관리가 안 된다. <b>각각 관리 방법이 다르기 때문</b>이다. 이 SRS는 셋을 §10 안에서 따로 세웠다.</p>
+  </div>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="card">
+      <span class="tag">§10.1 · 5건</span>
+      <h3>가정 — 틀릴 수 있는 믿음</h3>
+      <p>"이럴 것이다"라고 <b>믿고 만들고 있는 것</b>. 관리법은 <b>검증 수단과 판정 시점을 미리 정하는 것.</b></p>
+      <p style="font-size:13px; color:var(--text-3)">예 — <b>A2</b> "아이와 보호자는 결제 전에 계획 카드를 적는다" → 운영 4주 실측으로 판정.</p>
+    </div>
+    <div class="card">
+      <span class="tag">§10.2 · 5건</span>
+      <h3>의존성 — 남에게 걸린 것</h3>
+      <p>우리가 <b>노력해도 못 당기는 것</b>. 관리법은 <b>확정 방법과 마감 시점을 박고, 지연을 즉시 보고하는 것.</b></p>
+      <p style="font-size:13px; color:var(--text-3)">예 — <b>D1</b> 제휴사 수수료율·SLA·업종 코드 상세도 → <b>제휴 계약 체결 전</b>에 확정 필요.</p>
+    </div>
+    <div class="card">
+      <span class="tag">§10.4 · 8건</span>
+      <h3>리스크 — 벌어질 수 있는 나쁜 일</h3>
+      <p>확률과 영향이 있는 사건. 관리법은 <b>완화책을 미리 붙이는 것.</b></p>
+      <p style="font-size:13px; color:var(--text-3)">예 — <b>R8</b> 온라인 결제 사전 대응 수단 0개 → <b>미대응 확정</b>하고 대외 자료에 기능으로 쓰지 않는다.</p>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>같은 가정도 층위가 다르다</h3>
+      <p>문서가 짚은 구분이 날카롭다 — <b>A2가 무너지면</b> REQ-FUNC-008의 사전 절반이 비고 <b>사후 대조까지 함께</b> 무너진다(기능 하나의 문제).</p>
+      <p><b>A4가 무너지면</b>("실천 인정 증가 = 실제 행동 변화의 대리 지표") <b>북극성 지표 자체의 정의를 재작성</b>해야 한다(제품 전체의 문제).</p>
+      <p style="color:var(--text-3); font-size:13px">→ <b>가정에도 등급이 있다.</b> 무너졌을 때 다시 써야 하는 범위로 등급을 매긴다.</p>
+    </div>
+    <div class="card">
+      <h3>열려 있는 결정에도 이유가 있다</h3>
+      <p><b>D5 출석체크 ⭐ 지급 조건</b>이 아직 안 정해진 이유 — 두 사용자 유형이 <b>정반대 신호</b>를 준다.</p>
+      <p>H1형 보호자는 <em>"출석만 해도 주면 공부를 안 할 수도"</em>를 우려하고, H2형 아동은 학습 진도가 느려 <b>출석 ⭐가 유일한 초기 별</b>이다.</p>
+      <p style="color:var(--text-3); font-size:13px">→ <b>"아직 안 정함"과 "정하기 어려움"은 다르다.</b> 후자는 근거를 적어 두면 나중에 같은 논의를 처음부터 하지 않는다.</p>
+    </div>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">PM의 사용법</span>
+    <p>주간 관리 리듬을 셋으로 나눈다. <b>가정</b> — 판정 시점이 다가온 것만 본다(대부분의 주는 볼 게 없다). <b>의존성</b> — <b>매주 본다.</b> 남의 일정은 조용히 밀리고, 밀린 걸 늦게 알수록 손해가 커진다. <b>리스크</b> — 월 1회 갱신하되 <b>완화책이 실제로 실행되고 있는지</b>를 확인한다. 완화책이 문서에만 있는 리스크는 관리되지 않는 리스크다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §10.1 A1~A5 · §10.2 D1~D5 · §10.4 R1~R8</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="★ 개념 14 — ADR, '뒤집히는 조건'을 적는 기술" data-kw="ADR 결정 기각 대안 뒤집히는 조건 대가 재논의 방지 8건">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 14 ★ 가장 실전적인 것</p>
+    <h2>ADR — 「뒤집히는 조건」을 적는 기술</h2>
+    <p class="dek">대부분의 팀은 <b>결정만</b> 기록한다. 그러면 반년 뒤 같은 논쟁이 처음부터 다시 시작된다. 이 SRS의 ADR은 네 칸이고, <b>뒤의 두 칸이 진짜 값어치</b>다.</p>
+  </div>
+  <div class="grid g4" style="margin-bottom:16px">
+    <div class="card"><h3><span class="n">칸1</span>결정</h3><p style="font-size:13px">무엇으로 정했는가</p></div>
+    <div class="card"><h3><span class="n">칸2</span>기각한 대안</h3><p style="font-size:13px"><b>왜 다른 길을 안 갔는가.</b> 이게 있으면 같은 제안이 다시 와도 5초에 끝난다</p></div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--good) 45%,var(--border))"><h3><span class="n">칸3</span>뒤집히는 조건</h3><p style="font-size:13px"><b>이 결정이 틀렸다는 걸 무엇으로 알게 되나.</b> 재검토의 방아쇠를 미리 정해 둔다</p></div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--warn) 45%,var(--border))"><h3><span class="n">칸4</span>대가</h3><p style="font-size:13px"><b>이 결정으로 무엇을 잃었나.</b> 대가가 안 적힌 결정은 검토가 덜 된 결정이다</p></div>
+  </div>
+  <div class="tbl" style="margin-bottom:16px">
+    <table>
+      <thead><tr><th style="width:64px">ADR</th><th>결정</th><th>뒤집히는 조건 <span class="bg pass">방아쇠</span></th><th>치른 대가</th></tr></thead>
+      <tbody>
+        <tr><td class="c"><b>001</b></td><td>북극성을 <b>WPA 하나</b>로</td><td>종단 관찰에서 실천은 느는데 행동 3지표가 불변이면 → <b>성장의 정의부터 재작성</b></td><td>보호자 쪽 전달 품질이 보조 지표로 내려감 — 별도 감시 필요</td></tr>
+        <tr><td class="c"><b>002</b></td><td>자동 사전 개입 <b>폐기</b>, 계획 카드로 대체. 위치정보 미사용</td><td>계획 카드 작성률이 <b>30% 미만(FAIL)</b>이면 → 사전·사후가 함께 무너짐</td><td><b>온라인·충동 결제 대응 0개.</b> 사각지대가 「짧은 체류」에서 「안 적은 소비」로 옮겨감</td></tr>
+        <tr><td class="c"><b>003</b></td><td>별은 차감형 · 초기화 없음 · <b>현금 전환 경로 코드에 없음</b></td><td>출석률과 WPA의 상관이 <b>0.3 초과</b>면 → 경로 분리 실패, 트리거 재설계</td><td>별의 쓸 데가 <b>옷장 하나뿐</b> — 모으기 성향 아동의 루프가 약함</td></tr>
+        <tr><td class="c"><b>004</b></td><td>선불업 직접 등록 대신 <b>제휴사 위탁</b></td><td>업종 코드 상세도가 낮으면 → 매칭 정확도 90% 불성립, 금액 단독 판정으로 축소</td><td>한도·업종을 <b>우리가 못 정함</b> · 가용성이 제휴사 SLA에 걸림 · 수수료를 나눔</td></tr>
+        <tr><td class="c"><b>006</b></td><td><b>실천 0건이면 나무가 안 자란다</b></td><td>실천 증가가 행동 개선으로 안 이어지면 → 「실천」 정의 재설계</td><td><b>초기 화면이 오래 비어 보인다</b> → ACE-1.1로 대응</td></tr>
+        <tr><td class="c"><b>008</b></td><td>계획↔실제 판정은 <b>금액 단독</b></td><td>매칭 정확도가 안정되고 업종 불일치 비율이 유의하게 높으면 → 업종 일치를 ⭐ 조건으로 승격 재검토</td><td>계획한 곳과 <b>다른 데서 쓴 소비가 「지킴」으로 집계</b>됨 — 이 비율을 상시 관측</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co ok">
+    <span class="lb">PM의 사용법 — 세 가지로 쓴다</span>
+    <p><b>① 재논의 차단</b> — 같은 제안이 올라오면 "칸2를 보시죠. 그때 이 대안을 이런 이유로 기각했습니다. <b>달라진 사실이 있나요?</b>" 새 사실이 없으면 회의는 거기서 끝난다.<br>
+    <b>② 감시 항목 만들기</b> — <b>칸3(뒤집히는 조건)은 그대로 지표 감시 목록이 된다.</b> "출석률과 WPA 상관 0.3"은 실제로 누군가 매달 재야 하는 숫자다. 안 재면 그 ADR은 <b>영원히 안 뒤집힌다.</b><br>
+    <b>③ 정직한 대외 커뮤니케이션</b> — 칸4(대가)를 알고 있으면 <b>약점을 먼저 말할 수 있다.</b> 이 문서가 <em>"온라인 결제 대응 수단은 0개"</em>라고 대놓고 적은 것이 그 예다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §11 ADR-001~008 · 불변 항목 주석</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="핵심 개념" data-title="개념 15 — 임계 경로, 무엇이 밀리면 무엇이 밀리나" data-kw="임계 경로 선행 의존성 007 004 병목 블로커 일정">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">개념 15</p>
+    <h2>임계 경로 — 무엇이 밀리면 무엇이 밀리나</h2>
+    <p class="dek">일정 관리의 핵심은 <b>모든 작업을 똑같이 챙기는 것이 아니라, 밀리면 전체가 밀리는 지점만 집중해서 보는 것</b>이다. 이 SRS는 그 지점을 <b>두 건</b>으로 특정했다.</p>
+  </div>
+  <div class="flow" style="margin-bottom:16px">
+    <div class="node" style="border-color:var(--bad); box-shadow:0 0 0 3px var(--bad-weak)"><span class="k" style="color:var(--bad-text)">병목 ①</span><span class="v">FUNC-007<br>온보딩 · 동의</span><span class="s">D1 제휴사 · 본인인증에 종속</span></div>
+    <div class="arw">→</div>
+    <div class="node" style="border-color:var(--bad); box-shadow:0 0 0 3px var(--bad-weak)"><span class="k" style="color:var(--bad-text)">병목 ②</span><span class="v">FUNC-004<br>별 지급 엔진</span><span class="s">모든 보상의 원장</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">뒤따르는 것</span><span class="v">FUNC-001 · 002 · 008</span><span class="s">나무 · 미션 · 계획 카드</span></div>
+  </div>
+  <div class="grid g2">
+    <div class="card" style="border-color:color-mix(in srgb,var(--bad) 40%,var(--border))">
+      <h3>이 둘이 밀리면 Must 8건 중 6건이 함께 밀린다</h3>
+      <p>그래서 문서가 규칙으로 못 박았다 — <b>AP-3: REQ-FUNC-007·004의 지연은 즉시 릴리스 일정 리스크로 보고한다.</b></p>
+      <p>다른 요구사항이 하루 밀리는 것과 이 둘이 하루 밀리는 것은 <b>일정에 미치는 영향이 다르다.</b> 같은 무게로 보고하면 안 된다.</p>
+    </div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--warn) 40%,var(--border))">
+      <h3>외부에 걸린 유일한 Must</h3>
+      <p><b>REQ-FUNC-008</b>(계획 카드·업종 대조)은 제휴사 결제 내역 API와 <b>업종 코드 상세도</b>에 착수가 걸려 있다 — <b>우리가 앞당길 수 없다.</b></p>
+      <p>그래서 대비책이 미리 적혀 있다(<b>AP-4</b>) — D1이 지연되면 <b>①계획 카드 입력만 선행 구현</b>하고 ②결제 매칭·③두 갈래 회고를 분리 착수한다.</p>
+      <p style="color:var(--text-3); font-size:13px">근거 — <em>"계약을 기다리며 유일한 Must를 멈추면 13sp 전체가 대기한다."</em></p>
+    </div>
+  </div>
+  <div class="co wr" style="margin-top:16px">
+    <span class="lb">두 종류의 「막힘」을 구분해야 한다</span>
+    <p><b>임계 경로 지연</b>은 시간 문제다 — 자원을 넣거나 순서를 바꾸면 줄어든다.<br>
+    <b>블로커</b>는 조건 문제다 — <b>법률 검토(D2)와 현금 분리선 재검토</b>는 인력을 두 배로 넣어도 안 열린다. 우선순위를 Must로 올려도 안 열린다.<br>
+    이 둘을 같은 회의에서 같은 언어로 다루면 <b>해결 가능한 것에 쏟을 시간을 해결 불가능한 것에 쓴다.</b></p>
+  </div>
+  <div class="co ok" style="margin-top:13px">
+    <span class="lb">PM의 사용법</span>
+    <p>주간 상태 보고를 <b>세 줄로 고정</b>한다 — ① <b>임계 경로 2건(007·004)의 상태</b> ② <b>외부 의존성 D1의 상태</b> ③ 나머지 진척. 이 순서로 보고하면 <b>읽는 사람이 3초에 위험을 안다.</b> 진척률 %를 먼저 쓰면 아무도 위험을 못 본다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §10.3 선행 의존성 · 임계 경로 · §13.5 AP-3 · AP-4</p>
+</div>
+</section>
+
+<!-- ══════════════ PART 3 · 실전 운영 ══════════════ -->
+
+<section class="page" data-p="3" data-part="실전 운영" data-title="배분 — 13sp를 어떻게 나눴나" data-kw="배분 13sp 스프린트 규모 환산 분할 단위 릴리스 R1 R2">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">실전 운영 01</p>
+    <h2>13sp를 어떻게 나눴나</h2>
+    <p class="dek">요구사항 목록만으로는 일정을 못 짠다. <b>규모 환산 → 분할 → 릴리스 배분 → 빌드 순서</b>의 네 단계를 거쳐야 실행 가능한 계획이 된다. 이 SRS의 §13이 그 과정을 그대로 보여준다.</p>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card">
+      <h3>규모 환산 규칙</h3>
+      <p><b>1sp = 2주.</b> 난이도 5→2sp · 4→1.5sp · 3→1sp · 2→0.5sp.</p>
+      <p><b>1sp를 넘으면 분할 단위를 명시</b>해 스프린트 경계에 맞춘다 — 해당 4건(001 · 005 · 007 · 008).</p>
+      <p><b>비기능에는 sp를 주지 않는다</b> — 귀속 기능의 완료 조건에 포함(개념 11).</p>
+    </div>
+    <div class="card">
+      <h3>분할의 예 — REQ-FUNC-008 (2sp)</h3>
+      <p><b>① 계획 카드 CRUD</b> 0.75 → <b>② 결제 매칭</b> 0.75 → <b>③ 두 갈래 회고</b> 0.5</p>
+      <p>②가 ③보다 무거운 이유 — <b>정확도 게이트 ≥ 90%를 안고 있어서</b>다. 같은 "절반"이 아니다.</p>
+      <p style="color:var(--text-3); font-size:13px">→ 분할은 균등 분배가 아니라 <b>검증 부담까지 반영</b>해야 한다.</p>
+    </div>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>릴리스</th><th>포함</th><th class="c">규모</th><th>착수 조건</th></tr></thead>
+      <tbody>
+        <tr><td><b>R1 — MVP</b><br><span style="font-size:12px;color:var(--text-3)">α → β → 일반 공개</span></td><td>FUNC-001~013 <span class="bg must">Must 8</span> <span class="bg should">Should 5</span> + NF-001~017 전건</td><td class="c"><b>13sp</b></td><td>없음 <span style="font-size:12px;color:var(--text-3)">(단 007② · 008②는 D1 종속)</span></td></tr>
+        <tr><td><b>R1.1</b> 여력 편입</td><td>FUNC-015 카드 없는 체험 <span class="bg could">Could</span></td><td class="c">1sp</td><td>R1 Must 8건 완료 — <b>블로커 없는 유일한 Could</b></td></tr>
+        <tr><td><b>R2</b> WPA-v2 전환</td><td>FUNC-014 예적금 비교·선택</td><td class="c">1sp</td><td>🔴 <b>D2 법률 검토 통과</b> — 미확정 시 이월</td></tr>
+        <tr><td><b>R2+</b> 조건 해제 후</td><td>FUNC-016 별의 옷장 외 목적지</td><td class="c">1sp</td><td>🔴 <b>현금 분리선 재검토 통과</b></td></tr>
+        <tr><td><b>미배분</b></td><td>FUNC-017 기록 이전 <span class="bg wont">Won't</span></td><td class="c">2sp</td><td>이관 경로 확보 시 재검토 — 부재는 <b>문구로 처리</b></td></tr>
+        <tr><td><b>영구 제외</b></td><td>소비 순간 자동 개입 · 위치정보 수집</td><td class="c">—</td><td>릴리스 배분 대상이 아님(ADR-002 · CON-REG-03)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">R2 전환이 지표를 바꾼다 — PM이 미리 준비할 것</span>
+    <p>예적금이 열리면 실천 트리거가 <b>3종 → 5종</b>이 되어 <b>북극성 지표의 정의 자체가 바뀐다.</b> 그래서 전환 시 <b>시계열을 단절 표기하고 4주간 v1·v2를 병기</b>하기로 정해 뒀다. 이 준비 없이 트리거를 늘리면 <b>WPA가 저절로 오르고, 그걸 성과로 착각한다.</b></p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §13.1 배분 단위 · §13.2 릴리스 배분 · §7.1 WPA-v2 전환</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="실전 운영" data-title="빌드 순서 B1~B6과 게이트" data-kw="빌드 B1 B2 B3 B4 B5 B6 순서 완료 판정 릴리스 게이트 알파 베타">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">실전 운영 02</p>
+    <h2>빌드 순서와 통과 게이트</h2>
+    <p class="dek">빌드 순서는 취향이 아니라 <b>의존성의 결과</b>다. 그리고 각 빌드에는 <b>"무엇이 확인되면 끝난 것인가"</b>가 붙어 있다 — 이게 없으면 빌드 구획은 이름표에 불과하다.</p>
+  </div>
+  <div class="tbl" style="margin-bottom:16px">
+    <table>
+      <thead><tr><th style="width:130px">빌드</th><th>포함</th><th class="c">누적</th><th>완료 판정 — 이게 확인돼야 끝</th></tr></thead>
+      <tbody>
+        <tr><td><b>B1</b> 기반</td><td>동의·계정 · 규제 게이트</td><td class="c">0.75</td><td>동의 미완 진입 <b>100% 차단</b> · 좌표·얼굴 필드 <b>0건</b> · 아동 독립 로그인 <b>0건</b></td></tr>
+        <tr><td><b>B2</b> 별 · 학습</td><td>원장 이중 기입 · 커리큘럼</td><td class="c">2.75</td><td>원장 불일치 <b>0건</b> · 전환 경로 <b>CI 게이트 통과</b> · 4영역 이수 판정 동작</td></tr>
+        <tr><td><b>B3</b> 실천 · 나무</td><td>미션 · 위시리스트 · 소급 · 단계 렌더</td><td class="c">6.25</td><td><b>실천 0건 미승급</b>(AC-2.2) · 소급 지급 <b>100%</b>(AC-6.1)</td></tr>
+        <tr><td><b>B4</b> 소비 <span class="bg fail">외부 종속</span></td><td>카드 신청 · 계획 카드 · 결제 매칭</td><td class="c">9.0</td><td>매칭 정확도 <b>≥ 90%</b>(AC-4.2) · 계획 없는 결제 ⭐ 미지급(AC-4.3)</td></tr>
+        <tr><td><b>B5</b> 대조 · 전달</td><td>두 갈래 회고 · 월간 숲 · 정체 원인</td><td class="c">13.0</td><td>델타 항목 <b>7개 이상</b> · 정체 원인 <b>조건 단위 표시</b> · 72시간 발송률 <b>100%</b></td></tr>
+        <tr><td><b>B6</b> 계측 <span class="bg pass">전 구간 병행</span></td><td>이벤트 10종 · 건강성 H1~H5</td><td class="c">—</td><td>유실률 <b>≤ 0.5%</b> · 필수 필드 결측 <b>0건</b> — <b>각 빌드의 완료 조건에 포함</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid g2">
+    <div class="card" style="border-color:color-mix(in srgb,var(--warn) 40%,var(--border))">
+      <h3>B4가 밀리면 어떻게 되나</h3>
+      <p>D1(제휴사 API)이 지연되면 <b>B4를 계획 카드 CRUD까지만 하고</b> 결제 매칭을 다음으로 넘긴다.</p>
+      <p><b>그런데 B5의 두 갈래 회고는 매칭이 없으면 성립하지 않는다</b> — 함께 밀린다. 즉 <b>D1 지연의 실제 영향은 B4 하나가 아니라 B4+B5다.</b></p>
+    </div>
+    <div class="card">
+      <h3>릴리스 게이트 — 날짜가 아니라 조건</h3>
+      <p><b>α 내부</b>(팀+지인 3~5가정) — 규제 자동 테스트 100% · 원장 불일치 0건</p>
+      <p><b>β 클로즈드</b>(8슬롯) — 첫 실천 인정률 <b>≥ 60%</b> PASS · 5초 회상 <b>≥ 6/8</b> PASS · <b>WPA ≥ 5/8</b></p>
+      <p><b>일반 공개</b> — <b>WPA ≥ 55% 2주 연속</b> · 정지→인지 ≤ 3일 · 정합성 오류 0건</p>
+    </div>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">PM의 사용법</span>
+    <p>스프린트 리뷰의 형식을 <b>"이번 빌드의 완료 판정 항목을 하나씩 읽고 값을 확인한다"</b>로 고정한다. 데모를 먼저 보면 <b>보이는 것만 검토하게 된다</b> — 그리고 B1·B2의 완료 조건은 <b>전부 눈에 안 보이는 것</b>이다(차단 100% · 불일치 0건 · CI 통과). 데모로는 절대 검증되지 않는다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §13.3 R1 빌드 순서 · §9.5 릴리즈 게이트</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="실전 운영" data-title="추적성 — 요구사항이 테스트까지 닿아 있는가" data-kw="추적성 매트릭스 모듈 테스트 케이스 빈칸 점검 검증방식">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">실전 운영 03</p>
+    <h2>요구사항이 테스트까지 닿아 있는가</h2>
+    <p class="dek">추적성 매트릭스(§5)는 <b>PM이 가장 안 보는 표이면서, 5분에 가장 많은 위험을 찾을 수 있는 표</b>다. 읽는 법은 간단하다 — <b>빈칸을 센다.</b></p>
+  </div>
+  <div class="grid g3" style="margin-bottom:16px">
+    <div class="card"><h3><span class="n">1</span>요구사항</h3><p>REQ-FUNC-008</p><p style="color:var(--text-3); font-size:13px">무엇을 만들 것인가</p></div>
+    <div class="card"><h3><span class="n">2</span>모듈 · 구현</h3><p>Plan &amp; Spending Service<br><code>PlanCardService</code> · <code>PaymentMatcher</code> · <code>RetroBrancher</code></p><p style="color:var(--text-3); font-size:13px">어디에 만들어지는가 — <b>PM은 이름을 외울 필요 없다</b></p></div>
+    <div class="card"><h3><span class="n">3</span>테스트</h3><p><code>TC-FUNC-008</code></p><p style="color:var(--text-3); font-size:13px">무엇으로 검증되는가 — <b>여기가 비면 위험</b></p></div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>PM이 5분에 하는 점검 세 가지</h3>
+      <ol style="margin:0; padding-left:18px; font-size:14px; color:var(--text-2); line-height:1.8">
+        <li><b>빈칸 세기</b> — 테스트 칸이 비어 있으면 그 요구사항은 <b>검증 계획이 없다.</b> 이 문서에선 REQ-FUNC-017(Won't)만 비어 있고 나머지는 다 채워져 있다.</li>
+        <li><b>「전 서비스」로 적힌 것 찾기</b> — REQ-NF-014(알기 쉬운 고지)·REQ-NF-018(확장성)이 그렇다. <b>담당이 전부면 담당이 없는 것</b>과 비슷해진다 — 실제 책임자를 확인한다.</li>
+        <li><b>검증 방식이 「사람의 검수」인 것 세기</b> — 자동 테스트가 아니라 화면 검수·문구 검수·인터뷰인 항목은 <b>매 릴리스마다 사람의 시간이 든다.</b> 그 시간이 일정에 잡혀 있는지 본다.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>이 문서에서 눈에 띄는 것</h3>
+      <p><b>REQ-NF-010(별↔저금통 분리)의 검증이 <code>ConversionPathStaticCheck (CI 게이트)</code></b>다 — 사람이 확인하는 게 아니라 <b>자동으로 빌드를 실패시킨다.</b></p>
+      <p>규제 항목의 검증이 사람에게 걸려 있으면 <b>언젠가 놓친다.</b> 자동으로 막히는지 여부는 PM이 물어야 할 질문이다.</p>
+      <p style="color:var(--text-3); font-size:13px">→ 마찬가지로 REQ-NF-009(데이터 최소 수집)는 <b>스키마 스캔 일 1회 + 배포 시</b>로 자동화돼 있다.</p>
+    </div>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">PM의 사용법</span>
+    <p>착수 승인 전에 이 표를 열고 <b>"테스트 칸이 빈 요구사항이 몇 건입니까"</b>를 묻는다. 그리고 <b>규제·정합성 항목의 검증이 자동인지 수동인지</b>를 확인한다. 이 두 질문이 SRS 검토 회의에서 <b>PM만 할 수 있는 질문</b>이다 — 개발자는 대개 물어보지 않는다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §5 추적성 매트릭스 · §4.1~§4.2 검증 방식 칸</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="실전 운영" data-title="회의별 질문 세트 ① — 킥오프 · 스프린트" data-kw="질문 세트 킥오프 스프린트 리뷰 회의 체크리스트">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">실전 운영 04</p>
+    <h2>회의별 질문 세트 ① — 착수와 스프린트</h2>
+    <p class="dek">이 문서를 다 읽어도, <b>회의에서 무슨 말을 할지</b> 모르면 소용이 없다. 아래는 그대로 읽어도 되는 질문들이다. 각 질문 옆에 <b>왜 그걸 묻는지</b>가 붙어 있다.</p>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <span class="tag">회의 1 · SRS 착수 승인</span>
+      <h3>착수 전에 닫아야 할 것</h3>
+      <ul class="qs" style="margin-top:10px">
+        <li><b>요구사항 상태가 아직 전부 Proposed인데, 무엇이 충족되면 Approved로 바꾸나요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ 승인 절차 자체가 없는 경우가 흔하다</span></li>
+        <li><b>추적성 표에서 테스트 칸이 빈 요구사항이 몇 건인가요?</b></li>
+        <li><b>계측 이벤트 2종(<code>plan_card_created</code>·<code>payment_settled</code>) 추가는 결정됐나요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ 안 넣으면 AC-4.2·4.4가 판정 불가가 된다</span></li>
+        <li><b>D1(제휴사)의 업종 코드 상세도는 언제 확인되나요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ B4·B5 두 빌드가 여기 걸려 있다</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="tag">회의 2 · 스프린트 계획</span>
+      <h3>이번 스프린트를 시작하기 전</h3>
+      <ul class="qs" style="margin-top:10px">
+        <li><b>이번에 하는 요구사항의 AC를 소리 내어 읽어 볼까요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ "그건 그렇게 못 합니다"를 <b>지금</b> 듣기 위한 질문</span></li>
+        <li><b>이 기능의 이벤트는 같은 스프린트에 들어가나요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ "다음에"는 곧 "이 기간은 영원히 측정 불가"다</span></li>
+        <li><b>귀속된 비기능 요구사항이 완료 조건에 들어가 있나요?</b></li>
+        <li><b>1sp를 넘는 항목의 분할 단위는 뭔가요?</b></li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="tag">회의 3 · 스프린트 리뷰</span>
+      <h3>「됐어요」를 들었을 때</h3>
+      <ul class="qs" style="margin-top:10px">
+        <li><b>AC 번호로 말해 주세요 — 몇 번이 PASS인가요?</b></li>
+        <li><b>예외 경로 AC는 확인됐나요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ 데모는 항상 정상 경로만 보여준다</span></li>
+        <li><b>이 빌드의 완료 판정 항목을 하나씩 볼까요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ B1·B2의 완료 조건은 <b>데모로는 검증 불가</b>하다</span></li>
+        <li><b>임계 경로 2건(007·004)은 계획 대비 어떤가요?</b></li>
+      </ul>
+    </div>
+    <div class="card">
+      <span class="tag">회의 4 · 지표 리뷰</span>
+      <h3>숫자를 보기 전에 묻는 것</h3>
+      <ul class="qs" style="margin-top:10px">
+        <li><b>이 기간 이벤트 유실률(H1)이 0.5% 이하였나요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ 초과면 이 값은 <b>판정에 쓰지 않는다</b></span></li>
+        <li><b>이 값은 PASS인가요, HOLD인가요, FAIL인가요?</b></li>
+        <li><b>분모가 지난주와 같은 정의인가요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ 값이 갑자기 좋아졌다면 여기부터 본다</span></li>
+        <li><b>이 KPI는 지금 산출 가능한 시점이 맞나요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ §9.4.5에 지표별 「값이 생기는 시점」이 있다</span></li>
+      </ul>
+    </div>
+  </div>
+  <p class="src"><b>근거</b> — SRS §5 · §9.1 · §9.2 · §9.4.5 · §9.4.6 · §13.1 · §13.3</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="실전 운영" data-title="회의별 질문 세트 ② — 범위 축소 · 릴리스 판정" data-kw="범위 축소 릴리스 판정 회의 질문 세트 의사결정">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">실전 운영 05</p>
+    <h2>회의별 질문 세트 ② — 어려운 회의</h2>
+    <p class="dek">범위를 줄이자는 회의와 출시 여부를 정하는 회의는 <b>압력이 걸린다.</b> 이럴 때 PM이 기댈 것은 설득력이 아니라 <b>문서에 이미 적혀 있는 규칙</b>이다.</p>
+  </div>
+  <div class="grid g2" style="margin-bottom:16px">
+    <div class="card" style="border-color:color-mix(in srgb,var(--bad) 40%,var(--border))">
+      <span class="tag" style="color:var(--bad-text)">회의 5 · 범위 축소</span>
+      <h3>"이거 하나만 빼면 안 될까요"</h3>
+      <ul class="qs warn" style="margin-top:10px">
+        <li><b>이건 인과 루프의 어느 지점을 막고 있나요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ 001·010·011·NF-007 중 하나면 <b>넷이 함께 움직여야 한다</b>(개념 04)</span></li>
+        <li><b>이 요구사항이 빠지면 어느 AC가 판정 불가가 되나요?</b></li>
+        <li><b>이건 중요도로 밀린 건가요, 성격으로 배분된 건가요, 조건이 안 열린 건가요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ 셋은 다른 회의다(개념 03)</span></li>
+        <li><b>비기능 요구사항을 빼자는 건가요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ <b>AP-6이 금지한다</b> — 완료 조건에서 빼는 방식도 포함</span></li>
+      </ul>
+      <p style="margin-top:11px; font-size:13px; color:var(--text-3)">PM의 최종 문장 — <b>"뺄 수 없다"가 아니라 "빼려면 이 넷을 함께 빼고 이 결과를 감수한다"</b>로 선택지를 정직하게 만들어 올린다.</p>
+    </div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--good) 40%,var(--border))">
+      <span class="tag" style="color:var(--good-text)">회의 6 · 릴리스 판정</span>
+      <h3>"다음 단계로 가도 될까요"</h3>
+      <ul class="qs" style="margin-top:10px">
+        <li><b>이 단계의 게이트 조건을 하나씩 읽어 볼까요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ β는 첫 실천 인정률 ≥60% · 5초 회상 ≥6/8 · WPA ≥5/8</span></li>
+        <li><b>PASS 근거로 쓴 지표 중 계측 신뢰 미달 기간의 값이 있나요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ 있으면 <b>통과 근거로 쓸 수 없다</b></span></li>
+        <li><b>「판정 불가」로 기록된 AC가 몇 건인가요?</b></li>
+        <li><b>불변 두 건(정합성 0% · 소급 100%)은 위반 0건인가요?</b><br><span style="font-size:12.5px;color:var(--text-3)">→ 이 둘은 추세가 아니라 <b>1건이라도 있었는지</b>를 본다</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="co wr">
+    <span class="lb">회의 7 · 대외 자료 검토 — PM이 가장 자주 어기는 계층</span>
+    <p>보도자료·투자 자료·앱스토어 설명을 쓸 때 <b>표현 제약(CON-DOC) 6건</b>을 체크리스트로 쓴다.<br>
+    · <b>위치 기반 · 매장 알림 · 소비 순간 개입</b>을 기능으로 쓰지 않는다 — 폐기됐고 로드맵에도 없다. 정확한 문장은 <em>"가기 전에 적고, 쓴 뒤에 맞춰본다."</em><br>
+    · <b>성장 효과를 성과로 주장하지 않는다</b> — 제3자 검증이 없다. 허용 범위는 <em>"설계상 그렇게 되도록 만들었다"</em>까지.<br>
+    · <b>목표값을 달성치처럼 옮겨 적지 않는다</b> — 기준선이 아직 미실측이고, 성능값은 확정 SLO가 아니라 <b>역산된 상한</b>이다.<br>
+    · <b>경쟁 대안을 "확인 기능이 없다"로 쓰지 않는다</b> — 정확한 문장은 <em>"확인은 됩니다. 그게 성장인지 알 수 없는 것이 문제입니다."</em><br>
+    · <b>사각지대가 해소됐다고 쓰지 않는다</b> — 계획 카드는 부분 대응이고 <b>온라인·충동 결제 대응은 0개</b>다.</p>
+  </div>
+  <p class="src"><b>근거</b> — SRS §1.5 끊는 지점 표 · §9.1 ⑤ · §9.5 · §12.6 CON-DOC-01~06 · §13.5 AP-6</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="실전 운영" data-title="변경 요청이 왔을 때의 판단 순서" data-kw="변경 요청 판단 순서 절차 플로우 제약 루프 배분 규칙">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">실전 운영 06</p>
+    <h2>변경 요청이 왔을 때의 판단 순서</h2>
+    <p class="dek">"이거 추가할 수 있나요"에 즉답하지 않는다. <b>여섯 단계를 순서대로</b> 통과시키면 대부분의 요청이 3분 안에 판정된다. 순서가 중요하다 — 아래로 갈수록 판단이 비싸지기 때문이다.</p>
+  </div>
+  <ol class="steps">
+    <li><b>제약 계층에 걸리는가 — §12를 먼저 본다</b>
+      1계층(규제)에 걸리면 <b>거기서 끝</b>이다. 우선순위·자원·일정으로 풀리지 않는다. 3계층(아키텍처)이면 기능을 줄이는 방향으로 되묻는다. <b>이 단계에서 절반이 걸러진다.</b></li>
+    <li><b>어느 가치 선언에 귀속되는가 — §1.1</b>
+      선언 ① 또는 ②에 안 붙으면 이번 릴리스가 아니다. <b>"둘 다"라고 하면 대개 아무 데도 안 붙는다.</b></li>
+    <li><b>이미 기각된 대안인가 — §11 ADR</b>
+      ADR의 「기각한 대안」 칸에 있으면 <b>"달라진 사실이 있나요?"</b>를 묻는다. 새 사실이 없으면 논의 종료.</li>
+    <li><b>인과 루프를 건드리는가 — §1.5</b>
+      요구사항을 <b>빼자는</b> 요청이면 이 단계가 핵심이다. 루프의 끊는 지점 4건(001·010·011·NF-007)에 해당하면 <b>낱개로 뺄 수 없다.</b></li>
+    <li><b>어떤 AC가 새로 필요하고, 어떤 AC가 무효가 되나 — §9.2·§9.3</b>
+      "완료를 어떻게 판정할 것인가"를 답하지 못하면 <b>아직 요구사항이 아니다.</b> 예외 경로도 함께 묻는다.</li>
+    <li><b>배분 규칙에 어긋나지 않는가 — §13.5</b>
+      <b>AP-1</b> 블로커는 우선순위로 안 풀린다 · <b>AP-2</b> HOLD 구간에선 배분을 바꾸지 않는다 · <b>AP-5</b> Won't 승격은 릴리스 게이트 통과 후에만 · <b>AP-6</b> 비기능은 미룰 수 없다.</li>
+  </ol>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">통과했을 때 — 그다음이 진짜 일이다</span>
+    <p>여섯 단계를 다 통과한 변경도 <b>공짜가 아니다.</b> 반드시 세 가지를 함께 정한다 — <b>① 어느 sp에서 빼 올 것인가</b>(13sp는 이미 다 배분돼 있다) <b>② 어느 빌드에 들어가는가</b>(의존성 확인) <b>③ 계측 이벤트가 새로 필요한가</b>. 특히 ③을 빼먹으면 <b>새로 넣은 기능의 효과를 영영 모른다.</b></p>
+  </div>
+  <p class="src"><b>근거</b> — SRS §1.1 · §1.5 · §9.2~§9.3 · §11 · §12.1 · §13.5</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="실전 운영" data-title="조기 경보 — 이 문서 기준 위험 신호 10" data-kw="조기 경보 위험 신호 체크리스트 징후 프로젝트 문제">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">실전 운영 07</p>
+    <h2>조기 경보 — 위험 신호 10가지</h2>
+    <p class="dek">프로젝트가 무너질 때는 <b>갑자기 무너지지 않는다.</b> 아래 열 개는 이 SRS의 구조에서 도출한 <b>조기 징후</b>다. 하나가 보이면 확인하고, 셋이 겹치면 일정 계획을 다시 짜야 한다.</p>
+  </div>
+  <div class="grid g2">
+    <div class="card" style="border-color:color-mix(in srgb,var(--bad) 35%,var(--border))">
+      <h3>계측 · 지표 쪽 신호</h3>
+      <ul class="qs warn" style="margin-top:10px">
+        <li><b>이벤트 유실률(H1)을 아무도 보고하지 않는다</b> — 지표를 믿을 근거가 없는 상태로 판단하고 있다</li>
+        <li><b>계측 작업이 "다음 스프린트"로 두 번 이상 밀렸다</b> — 그 기간의 지표는 소급 생성 불가</li>
+        <li><b>같은 지표 값이 회의마다 다르다</b> — 분모가 흐르고 있다(M5 위반)</li>
+        <li><b>WPA가 올랐는데 실천 3경로 중 한 경로만 쓰이고 있다</b> — KPI-02 경로별 도달률이 이걸 잡는다</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--warn) 35%,var(--border))">
+      <h3>일정 · 범위 쪽 신호</h3>
+      <ul class="qs warn" style="margin-top:10px">
+        <li><b>D1(제휴사) 상태가 3주 연속 "확인 중"이다</b> — B4·B5 두 빌드가 걸려 있다</li>
+        <li><b>비기능 요구사항이 별도 백로그로 분리됐다</b> — AP-6 위반의 전형적 시작</li>
+        <li><b>HOLD 판정이 나왔는데 로드맵 논의가 시작됐다</b> — AP-2 위반, 판정 규칙이 무너지는 순간</li>
+        <li><b>Should 5건 중 하나를 빼는 논의가 낱개로 진행된다</b> — 인과 루프를 안 보고 있다</li>
+      </ul>
+    </div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--violet) 35%,var(--border))">
+      <h3>제품 · 신뢰 쪽 신호</h3>
+      <ul class="qs warn" style="margin-top:10px">
+        <li><b>회고 체류 중위가 3초 아래로 떨어졌다</b> — 회고가 <b>형식적 클릭으로 퇴화</b>하는 중. 갈래별로 나눠 봐야 한다</li>
+        <li><b>계획 초과(갈래 B) 건의 회고 열람률이 계획 준수 건 대비 70% 아래로 벌어졌다</b> — 별을 못 받는 갈래만 이탈하고 있다</li>
+      </ul>
+      <p style="font-size:13px; color:var(--text-3); margin-top:10px">이 둘은 <b>기능은 정상 동작하는데 의도가 무너지는</b> 유형이라, 버그 리포트로는 절대 안 올라온다. <b>지표로만 보인다.</b></p>
+    </div>
+    <div class="card">
+      <h3>문서 자체가 보내는 신호</h3>
+      <p>SRS가 <b>최근 3개월 개정되지 않았는데 기능은 계속 바뀌고 있다면</b>, 그건 문서가 죽은 것이다. 죽은 SRS는 범위 다툼에서 아무 힘이 없다.</p>
+      <p>반대로 <b>개정 이력이 남아 있고 「설계 문서로부터의 역류 반영」 같은 항목이 갱신되고 있다면</b> 그 문서는 살아 있다 — 이 SRS는 현재 살아 있는 쪽이다.</p>
+    </div>
+  </div>
+  <p class="src"><b>근거</b> — SRS §9.4.3 KPI-02·16·18 · §9.4.6 H1 · §10.2 D1 · §13.5 AP-2·AP-6 · §6.3 규칙 13</p>
+</div>
+</section>
+
+<!-- ══════════════ PART 4 · 지금 닫아야 할 결정 ══════════════ -->
+
+<section class="page" data-p="4" data-part="닫아야 할 결정" data-title="지금 열려 있는 결정 6건" data-kw="열린 결정 D1 D2 D4 D5 계측공백 현금분리선 미결 블로커">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">닫아야 할 결정 01</p>
+    <h2>지금 열려 있는 결정 6건</h2>
+    <p class="dek">이 SRS를 다 읽고 나면 <b>PM이 실제로 손대야 할 일</b>이 남는다. 아래 여섯 건이 현재 미결이며, 각각 <b>누가 · 언제까지 · 안 닫히면 무엇이 멈추는지</b>가 문서에 이미 적혀 있다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th style="width:60px">#</th><th>결정할 것</th><th>주관</th><th>마감 시점</th><th>안 닫히면</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="c"><span class="bg fail">D1</span></td>
+          <td><b>제휴사 조건</b> — 수수료율 · 최소 물량 · SLA · <b>업종 코드 상세도</b></td>
+          <td>사업 담당</td>
+          <td><b>제휴 계약 체결 전</b></td>
+          <td><b>B4·B5 두 빌드가 멈춘다.</b> 가용성 목표도 확정 못 하고, 수익식의 좌변이 계속 비어 있다</td>
+        </tr>
+        <tr>
+          <td class="c"><span class="bg fail">공백</span></td>
+          <td><b>계측 이벤트 2종 추가</b> — <code>plan_card_created</code> · <code>payment_settled</code></td>
+          <td>제품기획 + 개발</td>
+          <td><b>B4 착수 전</b><br><span style="font-size:12px;color:var(--text-3)">(운영 4주 실측의 선행 조건)</span></td>
+          <td><b>AC-4.2 · AC-4.4가 「판정 불가」</b>가 되고, Must 요구사항 하나의 생존 조건을 측정할 수 없다</td>
+        </tr>
+        <tr>
+          <td class="c"><span class="bg hold">D2</span></td>
+          <td><b>예적금 「가입 연결」의 중개업 해당 여부</b></td>
+          <td>정책·법령</td>
+          <td>REQ-FUNC-014 착수 전</td>
+          <td>R2(WPA-v2 전환)가 <b>다음 판본으로 이월</b>. 「불리기」 영역이 계속 닫혀 있다</td>
+        </tr>
+        <tr>
+          <td class="c"><span class="bg hold">D4</span></td>
+          <td><b>3D 아바타 사양</b> — 종수 · 의상 수</td>
+          <td>팀 결정</td>
+          <td><b>제작 착수 전</b></td>
+          <td>미결 상태로 제작에 들어가면 <b>되돌릴 수 없는 원가가 확정</b>된다(CON-RES-02)</td>
+        </tr>
+        <tr>
+          <td class="c"><span class="bg could">D5</span></td>
+          <td><b>출석체크 ⭐ 지급 조건</b></td>
+          <td>팀 결정</td>
+          <td>REQ-FUNC-004 사양 확정 전</td>
+          <td>H1·H2 두 사용자 유형이 <b>정반대 신호</b>를 준다 — 어느 쪽을 택해도 대가가 있으므로 근거를 남겨야 한다</td>
+        </tr>
+        <tr>
+          <td class="c"><span class="bg n">—</span></td>
+          <td><b>현금 분리선 재검토</b> — 별의 사용처 확장 가부</td>
+          <td>정책·법령</td>
+          <td>REQ-FUNC-016 착수 전</td>
+          <td>R2+ 항목이 열리지 않는다. 규제 계층(CON-REG-05)을 건드리므로 <b>서두를 항목이 아니다</b></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co bd" style="margin-top:16px">
+    <span class="lb">여섯 건 중 순서가 있다</span>
+    <p><b>D1과 계측 공백 2종이 먼저다.</b> 둘 다 <b>REQ-FUNC-008(계획 카드·업종 대조)</b>의 성립 여부를 직접 바꾸고, 그 요구사항은 <b>외부 계약에 착수가 걸린 유일한 Must</b>다. 나머지 넷은 R2 이후 항목이거나 원가 게이트라 <b>지금 당장 일정을 막고 있지 않다.</b><br>
+    그리고 <b>계측 2종은 사용자에게 보이는 것이 하나도 없어서 우선순위 회의에서 가장 먼저 잘려나가는 종류</b>다. 이걸 지키는 것이 PM의 일이다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §10.2 D1~D5 · §9.4.4 계측 공백 · §6.1 결정 대기 이벤트 · §12.5 CON-RES-02 · §13.4 착수 게이트</p>
+</div>
+</section>
+
+<section class="page" data-p="4" data-part="닫아야 할 결정" data-title="착수 게이트 — 선결 과제의 순서" data-kw="착수 게이트 선결 과제 순서 검증 순서 6단계">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">닫아야 할 결정 02</p>
+    <h2>착수 게이트 — 선결 과제의 순서</h2>
+    <p class="dek">할 일이 여섯 개면 <b>순서를 정하는 것이 곧 전략</b>이다. 이 SRS의 §13.4는 그 순서를 확정했고, <b>왜 ①②가 맨 앞인지</b>까지 적었다.</p>
+  </div>
+  <ol class="steps" style="margin-bottom:16px">
+    <li><b>① 결제 매칭 검증 — 업종 코드 ↔ 계획 카드, 정확도 ≥ 90%</b>
+      실패하면 <b>대조 화면 자체가 신뢰를 잃는다.</b> 그리고 이 정확도의 상한은 우리가 못 정한다(제휴사 종속) — 그래서 제일 먼저 확인해야 한다. <span class="bg fail">AC-4.2</span></li>
+    <li><b>② 계획 카드 작성률 실측 — 운영 4주</b>
+      실패하면 <b>대조할 것이 없다.</b> 사전에 적는 사람이 없으면 사후 절반까지 무너진다(ADR-002의 뒤집히는 조건). <b>계측 공백 2종 해소가 실행의 선행 조건이다.</b> <span class="bg fail">AC-4.4 · 생존 조건</span></li>
+    <li><b>③ 업종 갈래 회고 검수 — 금액 단독 판정 확정</b>
+      계획한 곳과 다른 데서 쓴 소비를 「지킴」으로 셀지의 문제. ADR-008의 대가를 화면에서 어떻게 다룰지 확정한다.</li>
+    <li><b>④ 프로토타입 1~2주 — 첫 실천 · 회고 체류</b>
+      여기서부터 기준선(baseline)이 생긴다. 그 전까지 모든 목표값은 <b>「기준선 미확보」</b>로 표기해야 한다.</li>
+    <li><b>⑤ 인터뷰 8슬롯 — 회차성 검증</b>
+      5초 회상 · 정체 원인의 오귀인 감소 · 금융 주제 집중 요구(가정 A1). <b>상시 계측으로는 볼 수 없는 것들</b>이라 회차로 확인한다.</li>
+    <li><b>⑥ 기준선 실측치 반영 — 목표값 확정</b>
+      성능·가용성 값을 <b>역산한 상한에서 확정 SLO로</b> 교체한다. 단 <b>상한을 조이는 방향으로만</b> 갱신한다(ADR-007).</li>
+  </ol>
+  <div class="co key">
+    <span class="lb">①②가 먼저인 이유 — 문서의 논리를 그대로</span>
+    <p>둘 다 <b>문항이 아니라 계측</b>이고, 결과가 <b>REQ-FUNC-008의 성립 여부를 직접 바꾼다.</b> 인터뷰(⑤)를 먼저 하면 <b>사람들의 의견은 얻지만 기능이 성립하는지는 여전히 모른다.</b> 성립 여부를 모르는 기능에 대한 의견은 판단 근거가 되지 못한다.<br>
+    <b>이것이 PM이 배워 갈 순서 감각이다</b> — <em>"제품이 성립하는가"</em>를 <em>"사람들이 좋아하는가"</em>보다 먼저 확인한다.</p>
+  </div>
+  <p class="src"><b>출처</b> — SRS §13.4 착수 게이트 · §9.4.5 산출 가능 시점 · §9.4.7 회차성 검증 · §11 ADR-007</p>
+</div>
+</section>
+
+<section class="page" data-p="4" data-part="닫아야 할 결정" data-title="치트시트 — 한 장에 담은 전부" data-kw="치트시트 요약 한장 숫자 불변 임계경로 계층 암기">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">닫아야 할 결정 03</p>
+    <h2>치트시트 — 한 장에 담은 전부</h2>
+    <p class="dek">회의 전에 이 페이지만 다시 본다. 나머지는 필요할 때 찾으면 된다.</p>
+  </div>
+  <div class="grid g2" style="margin-bottom:14px">
+    <div class="card" style="border-color:color-mix(in srgb,var(--bad) 45%,var(--border))">
+      <h3>협상 불가 — 이 둘은 예외가 없다</h3>
+      <p><b>별 원장 정합성 오류율 0%</b> (REQ-NF-006)<br><b>⭐ 소급 지급 성공률 100%</b> (REQ-NF-007)</p>
+      <p style="font-size:13px; color:var(--text-3)">근거 — 아동이 모은 것을 잃는 경험. 재설정 트리거조차 없다. <b>추세가 아니라 1건이라도 있었는지</b>를 본다.</p>
+    </div>
+    <div class="card" style="border-color:color-mix(in srgb,var(--warn) 45%,var(--border))">
+      <h3>임계 경로 — 밀리면 즉시 보고</h3>
+      <p><b>REQ-FUNC-007</b> 온보딩·동의 → <b>REQ-FUNC-004</b> 별 지급 엔진</p>
+      <p style="font-size:13px; color:var(--text-3)">이 둘이 밀리면 <b>Must 8건 중 6건이 함께 밀린다</b>(AP-3). 그리고 <b>REQ-FUNC-008</b>은 외부 계약에 걸린 유일한 Must다.</p>
+    </div>
+  </div>
+  <div class="grid g3" style="margin-bottom:14px">
+    <div class="card">
+      <h3>제약 6계층 <span style="font-size:11px; color:var(--text-3)">위가 이긴다</span></h3>
+      <p style="font-size:13.5px; line-height:1.9">① 규제·법령 <span class="bg fail">오차 0</span><br>② 정합성·보안 <span class="bg fail">불변</span><br>③ 아키텍처·데이터<br>④ 플랫폼·기기<br>⑤ 자원·원가 <span class="bg n">착수 게이트</span><br>⑥ 표현·인용 <span class="bg n">문구 조정</span></p>
+    </div>
+    <div class="card">
+      <h3>판정 3구간</h3>
+      <p style="font-size:13.5px; line-height:1.9"><span class="bg pass">PASS</span> 다음 게이트로<br><span class="bg hold">HOLD</span> 표본 +4 재판정<br><b>· 로드맵 안 바꿈</b><br><b>· 2회 연속이면 FAIL</b><br><span class="bg fail">FAIL</span> 지정된 재설계</p>
+      <p style="font-size:12.5px; color:var(--text-3); margin-top:6px">8인 표본은 <b>k/8</b>로 표기. n&lt;5면 판정 불가.</p>
+    </div>
+    <div class="card">
+      <h3>지표 보기 전 두 질문</h3>
+      <p style="font-size:13.5px; line-height:1.85"><b>① H1 유실률 ≤ 0.5%였나?</b><br>초과면 이 값은 <b>판정에 못 쓴다</b><br><br><b>② 분모가 지난주와 같은 정의인가?</b><br>값이 갑자기 좋아졌으면 여기부터</p>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>세트로 움직이는 4건 — 낱개로 못 뺀다</h3>
+      <p style="font-size:13.5px; line-height:1.85"><b>REQ-FUNC-001</b> 정체 원인 조건 단위 표시<br><b>REQ-FUNC-010</b> 「승인 대기 N건」 표시<br><b>REQ-NF-007</b> ⭐ 소급 지급 100%<br><b>REQ-FUNC-011</b> 3일 미접속 알림</p>
+      <p style="font-size:12.5px; color:var(--text-3); margin-top:6px">각각 불신 루프(B1)의 <b>다른 지점</b>을 끊는다. 하나만 넣으면 남은 지점에서 루프가 다시 닫힌다.</p>
+    </div>
+    <div class="card">
+      <h3>배분 변경 규칙 — 외워 둘 넷</h3>
+      <p style="font-size:13.5px; line-height:1.85"><b>AP-1</b> 블로커는 우선순위로 안 풀린다<br><b>AP-2</b> HOLD 구간에선 배분을 바꾸지 않는다<br><b>AP-3</b> 007·004 지연은 즉시 일정 리스크로 보고<br><b>AP-6</b> 비기능은 미룰 수 없다 — 완료 조건에서 빼는 것도 금지</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — SRS §1.5 · §9.1 · §9.4.6 · §10.3 · §11 · §12.1 · §13.5</p>
+</div>
+</section>
+
+<!-- ══════════════ 부록 ══════════════ -->
+
+<section class="page" data-p="5" data-part="부록" data-title="부록 A — 요구사항 17건 한눈에" data-kw="부록 요구사항 17건 목록 표 전체 Must Should Could Wont">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">부록 A</p>
+    <h2>기능 요구사항 17건 한눈에</h2>
+    <p class="dek">회의 중 <b>번호와 이름을 맞춰 보는 용도</b>. 「핵심 인수 기준」은 각 요구사항에서 <b>가장 다투기 쉬운 한 줄</b>만 뽑았다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th style="width:112px">ID</th><th>제목</th><th class="c">우선</th><th>핵심 인수 기준 — 이 한 줄이 판정을 가른다</th></tr></thead>
+      <tbody>
+        <tr><td><b>FUNC-001</b></td><td>성장 나무 · 정체 원인</td><td class="c"><span class="bg must">Must</span></td><td><b>실천 근거를 기본 노출</b> · 14일 미상승 시 미충족 조건을 <b>전부</b> 표시하고 가장 적게 남은 것을 최상단에</td></tr>
+        <tr><td><b>FUNC-002</b></td><td>미션 루프</td><td class="c"><span class="bg must">Must</span></td><td>승인 시 ⭐1 + 실천 카운트 가산 · <b>거절 시 사유 표시 + 「미실천」과 시각적으로 구별</b></td></tr>
+        <tr><td><b>FUNC-003</b></td><td>학습 커리큘럼 · 퀴즈</td><td class="c"><span class="bg must">Must</span></td><td>4영역 전부가 금융 주제 · 이수와 정답 수가 <b>나무 승급 조건의 입력</b>으로 기록</td></tr>
+        <tr><td><b>FUNC-004</b></td><td>별 지급 엔진</td><td class="c"><span class="bg must">Must</span></td><td>트리거 8종 <b>이중 기입</b> · 차감형 · 주기 초기화 없음 · <b>현금 전환 경로가 존재하지 않을 것</b></td></tr>
+        <tr><td><b>FUNC-005</b></td><td>아바타 · 옷장</td><td class="c"><span class="bg must">Must</span></td><td>보유 ⭐로 사전 제작 아이템 교환 · 교환 시 원장에 <b>차감 기입</b></td></tr>
+        <tr><td><b>FUNC-006</b></td><td>아동 온보딩</td><td class="c"><span class="bg should">Should</span></td><td>첫 보상 루프가 <b>5분 이내</b>에 닫힐 것 · 동의 미완 시 진입 차단</td></tr>
+        <tr><td><b>FUNC-007</b></td><td>보호자 온보딩 5단계 · 동의</td><td class="c"><span class="bg must">Must</span></td><td><b>세션 분할 가능</b> · 재진입 시 재입력 0건 · <b>동의는 캐시 금지</b> · API 실패 시 입력값 24시간 보존</td></tr>
+        <tr><td><b>FUNC-008</b></td><td>계획 카드 · 업종 대조</td><td class="c"><span class="bg must">Must</span></td><td>어디서·업종·얼마까지 필수 · <b>매칭 정확도 ≥ 90%</b> · 계획 없는 결제는 <b>⭐ 미지급</b> + 작성 유도</td></tr>
+        <tr><td><b>FUNC-009</b></td><td>월간 숲 · 전월 대비</td><td class="c"><span class="bg must">Must</span></td><td><b>변화 항목 7개 이상</b> · 전월 없으면 델타 0으로 렌더 금지 · <b>이번 달 획득 별이 스크롤 없이</b> 노출</td></tr>
+        <tr><td><b>FUNC-010</b></td><td>⭐ 소급 지급 · 대기 건수</td><td class="c"><span class="bg should">Should</span></td><td>완료 시점 기준 소급 · <b>성공률 100%</b> · 주기 종료 시 ⭐는 주되 <b>나무 조건은 완료 시점 주기에 귀속</b></td></tr>
+        <tr><td><b>FUNC-011</b></td><td>3일 미접속 알림</td><td class="c"><span class="bg should">Should</span></td><td>72시간 경과 시 <b>발송률 100%</b> · <b>멈춘 지점 함께 표시</b> · 71시간 재접속 시 <b>오탐 0건</b></td></tr>
+        <tr><td><b>FUNC-012</b></td><td>위시리스트 30·70·100%</td><td class="c"><span class="bg should">Should</span></td><td>각 단계 ⭐1 지급 + <b>실천 트리거로 계상</b></td></tr>
+        <tr><td><b>FUNC-013</b></td><td>소비 내역 · 업종별 집계</td><td class="c"><span class="bg should">Should</span></td><td><b>전월 대비 증감액을 화면 상단</b>에 · 계획 카드가 수집한 업종 기준으로 집계</td></tr>
+        <tr><td><b>FUNC-014</b></td><td>예적금 비교 · 선택</td><td class="c"><span class="bg could">Could</span></td><td><b>비교·선택까지만</b> · 가입 중개 금지 · <b>법률 검토 통과 전 착수 불가</b></td></tr>
+        <tr><td><b>FUNC-015</b></td><td>카드 없는 체험 경로</td><td class="c"><span class="bg could">Could</span></td><td>배송 대기 중에도 <b>학습·퀴즈·별 획득 가능</b> · 잠긴 기능은 사유 표시</td></tr>
+        <tr><td><b>FUNC-016</b></td><td>별의 옷장 외 목적지</td><td class="c"><span class="bg could">Could</span></td><td>사용처 확장하되 <b>현금·저금통 분리선 침범 금지</b> · 분리선 재검토 전 착수 불가</td></tr>
+        <tr><td><b>FUNC-017</b></td><td>기존 앱 기록 이전</td><td class="c"><span class="bg wont">Won't</span></td><td>구현하지 않음 · 「이전」이 아니라 <b>「지금부터」 프레임</b>으로 제시</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="src"><b>출처</b> — SRS §4.1 기능 요구사항 표 전건</p>
+</div>
+</section>
+
+<section class="page" data-p="5" data-part="부록" data-title="부록 B — 문서 지도: 어느 절이 무엇을 하나" data-kw="부록 문서 지도 목차 절 챕터 어디를 봐야">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">부록 B</p>
+    <h2>문서 지도 — 어느 절을 언제 펴나</h2>
+    <p class="dek">SRS를 처음부터 읽지 않는다. <b>상황이 생기면 그 상황의 절을 편다.</b> 아래가 그 대응표다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th style="width:130px">절</th><th>담당하는 것</th><th>PM이 이걸 펴는 순간</th></tr></thead>
+      <tbody>
+        <tr><td><b>§1.1~1.2</b> 목적·범위</td><td>두 가치 선언 · <b>명시적 범위 제외</b></td><td>새 아이디어의 귀속을 따질 때 · "이건 왜 안 하죠?"를 들었을 때</td></tr>
+        <tr><td><b>§1.3</b> 정의</td><td>약어와 프로젝트 고유어</td><td>회의에서 용어가 엇갈릴 때</td></tr>
+        <tr><td><b>§1.4~1.5</b> 그림</td><td>5단계 전체 흐름 · <b>인과 루프 R1·B1</b></td><td><span class="bg fail">범위 축소 회의</span> · 신규 인원 온보딩</td></tr>
+        <tr><td><b>§2</b> 이해관계자</td><td>역할별 책임</td><td>"이건 누가 결정하죠?"를 물을 때</td></tr>
+        <tr><td><b>§3</b> 시스템 맥락</td><td>우리 것과 <b>제휴사 것</b>의 경계</td><td>제휴사 협의 전 · 외부 종속 확인</td></tr>
+        <tr><td><b>§4.1~4.2</b> 요구사항</td><td>기능 17 · 비기능 18 + 인수 기준</td><td>착수 승인 · 스프린트 계획 · 완료 판정</td></tr>
+        <tr><td><b>§5</b> 추적성</td><td>요구사항 → 모듈 → 테스트</td><td>착수 전 <b>빈칸 점검</b> · 검증 자동화 여부 확인</td></tr>
+        <tr><td><b>§6.1</b> 인터페이스</td><td>제휴사 API · <b>인앱 이벤트 10종</b></td><td>지표 요청 전 <b>"원천이 있나" 확인</b></td></tr>
+        <tr><td><b>§6.2~6.4</b> 데이터</td><td>열거형 · 상태 전이 · 관계도</td><td>참조용 — <b>필요할 때만</b>. 1:N인지 1:1인지만 보면 된다</td></tr>
+        <tr><td><b>§6.3</b> 비즈니스 규칙</td><td>13개 규칙 — <b>가장 압축된 요약</b></td><td>급할 때 여기만 읽어도 제품 로직의 뼈대가 잡힌다</td></tr>
+        <tr><td><b>§7</b> 향후 개선</td><td>다음 판본 계획</td><td>로드맵 논의 · "언제 되나요?"를 들었을 때</td></tr>
+        <tr><td><b>§8</b> 사용자 특성</td><td>H1·H2 유형 · <b>이탈 트리거</b></td><td>UX 논쟁이 취향 싸움이 될 때 — 근거를 여기서 가져온다</td></tr>
+        <tr><td><b>§9.1</b> 판정 규칙</td><td>PASS·HOLD·FAIL · k/8 · 표본</td><td><span class="bg pass">지표 리뷰 시작할 때</span></td></tr>
+        <tr><td><b>§9.2~9.3</b> 수용 기준</td><td>정상 30 · 예외 19</td><td>스프린트 리뷰 · "됐어요"를 들었을 때</td></tr>
+        <tr><td><b>§9.4</b> 계측 계획</td><td>KPI 25 카운트 규칙 · <b>계측 공백</b> · 건강성</td><td>지표 정의 · 대시보드 설계 · 새 지표 요청</td></tr>
+        <tr><td><b>§9.5</b> 릴리즈 게이트</td><td>α · β · 일반 공개 조건</td><td><span class="bg pass">출시 판정 회의</span></td></tr>
+        <tr><td><b>§10</b> 가정·의존성·리스크</td><td>A1~A5 · D1~D5 · R1~R8 · <b>임계 경로</b></td><td>주간 상태 보고 작성 · 일정 리스크 판단</td></tr>
+        <tr><td><b>§11</b> ADR</td><td>결정 8건 · <b>뒤집히는 조건</b> · 대가</td><td><span class="bg fail">같은 제안이 다시 올라올 때</span> · 감시 항목 만들 때</td></tr>
+        <tr><td><b>§12</b> 제약</td><td>6계층 · CON-REG/ARC/DEV/RES/DOC</td><td><span class="bg fail">변경 요청 판단의 1단계</span> · <b>대외 자료 검토</b></td></tr>
+        <tr><td><b>§13</b> 배분·릴리스</td><td>13sp · 빌드 B1~B6 · 착수 게이트 · AP-1~6</td><td>일정 수립 · 범위 조정 · 배분 변경 판단</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="src"><b>출처</b> — SRS 전체 목차 구조</p>
+</div>
+</section>
+
+<section class="page" data-p="5" data-part="부록" data-title="마침 — 이 다음에 할 일 세 가지" data-kw="마침 끝 다음 할 일 결론 정리">
+<div class="page-in cover">
+  <p class="eyebrow">학습 완료</p>
+  <h1 style="font-size:clamp(28px,4.6vw,42px)">읽었으면,<br>이 세 가지를 하면 된다</h1>
+  <p class="sub">이 해설서의 목적은 SRS를 <b>외우는 것</b>이 아니라 <b>쓰는 것</b>이었다. 아래 셋은 지금 바로 할 수 있고, 셋 다 하는 데 <b>한 시간이 안 걸린다.</b></p>
+  <ol class="steps" style="margin-bottom:26px">
+    <li><b>계측 이벤트 2종 추가를 안건으로 올린다</b>
+      <code>plan_card_created</code> · <code>payment_settled</code>. 이 결정이 안 나면 <b>Must 요구사항 하나(REQ-FUNC-008)의 생존 조건을 측정할 수 없다.</b> 사용자에게 보이는 게 없어서 가장 먼저 잘려나갈 항목이므로, <b>PM이 직접 지켜야 한다.</b></li>
+    <li><b>ADR 8건의 「뒤집히는 조건」을 감시 목록으로 옮긴다</b>
+      "출석률과 WPA의 상관 0.3", "계획 카드 작성률 30% 미만" 같은 것들은 <b>누군가 실제로 재야 하는 숫자</b>다. 안 재면 그 결정들은 영원히 재검토되지 않는다.</li>
+    <li><b>주간 보고 양식을 세 줄로 고정한다</b>
+      ① 임계 경로 2건(FUNC-007·004)의 상태 ② 외부 의존성 D1의 상태 ③ 나머지 진척. <b>진척률 %를 맨 앞에 쓰면 아무도 위험을 못 본다.</b></li>
+  </ol>
+  <div class="keyhint">
+    <div><kbd>O</kbd> 목차로 돌아가 특정 페이지 찾기</div>
+    <div><kbd>Home</kbd> 처음부터 다시</div>
+  </div>
+  <p class="src" style="margin-top:28px"><b>원본 문서</b> — <code>SRS_finfriends-v1_0.md</code> (SRS-FINFRIENDS-MVP-001 · 개정 1.0 · 2026-08-24)<br><b>연관 문서</b> — <code>finfriends-prd-v1_0.md</code> · <code>DESIGN_finfriends-v1_0.md</code></p>
+</div>
+</section>
+
+</main>
+
+<nav class="nav">
+  <button class="nbtn" id="prevBtn"><span class="ar">←</span><span class="tx"><small>PREV</small><span id="prevT">—</span></span></button>
+  <div class="dots" id="dots"></div>
+  <button class="nbtn" id="nextBtn" style="flex-direction:row-reverse"><span class="ar">→</span><span class="tx" style="text-align:right"><small>NEXT</small><span id="nextT">—</span></span></button>
+</nav>
+
+<!-- 목차 오버레이 -->
+<div class="ov" id="ovTOC" role="dialog" aria-modal="true" aria-label="목차">
+  <div class="ov-top">
+    <h3>목차</h3>
+    <div class="ov-search"><input type="text" id="ovQ" placeholder="페이지 · 용어 검색 (예: 계측, ADR, 제약)" autocomplete="off"></div>
+    <button class="tbtn" id="ovClose">닫기 <kbd>Esc</kbd></button>
+  </div>
+  <div class="ov-body"><div class="ov-in" id="ovIn"></div></div>
+</div>
+
+<!-- 도움말 오버레이 -->
+<div class="ov" id="ovHelp" role="dialog" aria-modal="true" aria-label="단축키">
+  <div class="ov-top"><h3>키보드 단축키</h3><div style="flex:1"></div><button class="tbtn" id="helpClose">닫기 <kbd>Esc</kbd></button></div>
+  <div class="ov-body"><div class="ov-in">
+    <div class="help-grid">
+      <div class="help-row"><span class="ks"><kbd>←</kbd><kbd>→</kbd></span><span>이전 · 다음 페이지</span></div>
+      <div class="help-row"><span class="ks"><kbd>Space</kbd></span><span>다음 페이지</span></div>
+      <div class="help-row"><span class="ks"><kbd>PgUp</kbd><kbd>PgDn</kbd></span><span>이전 · 다음 페이지</span></div>
+      <div class="help-row"><span class="ks"><kbd>Home</kbd><kbd>End</kbd></span><span>첫 · 마지막 페이지</span></div>
+      <div class="help-row"><span class="ks"><kbd>↑</kbd><kbd>↓</kbd></span><span>긴 페이지 안에서 스크롤</span></div>
+      <div class="help-row"><span class="ks"><kbd>O</kbd></span><span>목차 열기 · 검색</span></div>
+      <div class="help-row"><span class="ks"><kbd>Esc</kbd></span><span>오버레이 닫기</span></div>
+      <div class="help-row"><span class="ks"><kbd>T</kbd></span><span>라이트 · 다크 전환</span></div>
+      <div class="help-row"><span class="ks"><kbd>?</kbd></span><span>이 도움말</span></div>
+      <div class="help-row"><span class="ks"><kbd>1</kbd>–<kbd>6</kbd></span><span>파트 첫 페이지로 이동</span></div>
+    </div>
+    <p style="text-align:center; color:var(--text-3); font-size:13px; margin-top:24px">모바일에서는 <b>좌우 스와이프</b>로 넘길 수 있습니다. 마지막으로 본 페이지는 자동 저장되어 다시 열면 이어서 시작합니다.</p>
+  </div></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var pages = Array.prototype.slice.call(document.querySelectorAll(".page"));
+  var N = pages.length, cur = 0;
+  var KEY = "ff-srs-pm-study";
+
+  var elNum=document.getElementById("cNum"), elTot=document.getElementById("cTot"),
+      elPart=document.getElementById("cPart"), elTitle=document.getElementById("cTitle"),
+      bar=document.getElementById("progBar"), dots=document.getElementById("dots"),
+      prevB=document.getElementById("prevBtn"), nextB=document.getElementById("nextBtn"),
+      prevT=document.getElementById("prevT"), nextT=document.getElementById("nextT"),
+      edgeL=document.getElementById("edgeL"), edgeR=document.getElementById("edgeR"),
+      ovTOC=document.getElementById("ovTOC"), ovHelp=document.getElementById("ovHelp"),
+      ovIn=document.getElementById("ovIn"), ovQ=document.getElementById("ovQ"),
+      deck=document.getElementById("deck");
+
+  elTot.textContent = N;
+
+  /* ── 파트 그룹 ── */
+  var parts = [];
+  pages.forEach(function(p,i){
+    var nm = p.getAttribute("data-part");
+    if(!parts.length || parts[parts.length-1].name !== nm) parts.push({name:nm, first:i, items:[]});
+    parts[parts.length-1].items.push(i);
+  });
+
+  /* ── 점 내비 ── */
+  pages.forEach(function(p,i){
+    var d = document.createElement("i");
+    d.title = (i+1) + ". " + p.getAttribute("data-title");
+    d.addEventListener("click", function(){ go(i); });
+    dots.appendChild(d);
+  });
+  var dotEls = Array.prototype.slice.call(dots.children);
+
+  /* ── 목차 ── */
+  function buildTOC(q){
+    q = (q||"").trim().toLowerCase();
+    ovIn.innerHTML = "";
+    var shown = 0;
+    parts.forEach(function(pt){
+      var matched = pt.items.filter(function(i){
+        if(!q) return true;
+        var p = pages[i];
+        return (p.getAttribute("data-title")+" "+(p.getAttribute("data-kw")||"")+" "+p.getAttribute("data-part")).toLowerCase().indexOf(q) > -1;
+      });
+      if(!matched.length) return;
+      shown += matched.length;
+      var sec = document.createElement("div"); sec.className = "ov-part";
+      var h = document.createElement("h4"); h.textContent = pt.name; sec.appendChild(h);
+      var list = document.createElement("div"); list.className = "ov-list";
+      matched.forEach(function(i){
+        var b = document.createElement("button");
+        b.className = "ov-item" + (i===cur ? " cur" : "");
+        b.innerHTML = '<span class="num">'+String(i+1).padStart(2,"0")+'</span><span class="lab"></span>';
+        b.querySelector(".lab").textContent = pages[i].getAttribute("data-title");
+        b.addEventListener("click", function(){ closeOv(); go(i); });
+        list.appendChild(b);
+      });
+      sec.appendChild(list); ovIn.appendChild(sec);
+    });
+    if(!shown){
+      var e = document.createElement("div"); e.className = "ov-empty";
+      e.textContent = "'" + q + "' 에 해당하는 페이지가 없습니다.";
+      ovIn.appendChild(e);
+    }
+  }
+
+  /* ── 이동 ── */
+  function go(i, noPush){
+    if(i < 0 || i >= N || i === cur) { if(i===cur) return; }
+    i = Math.max(0, Math.min(N-1, i));
+    var back = i < cur;
+    pages[cur].classList.remove("on");
+    cur = i;
+    var p = pages[cur];
+    p.style.setProperty("--enter", back ? "-26px" : "26px");
+    void p.offsetWidth;
+    p.classList.add("on");
+    p.scrollTop = 0;
+    render();
+    if(!noPush){ try{ history.replaceState(null,"","#p"+(cur+1)); }catch(e){} }
+    try{ localStorage.setItem(KEY, String(cur)); }catch(e){}
+  }
+
+  function render(){
+    var p = pages[cur];
+    elNum.textContent = cur+1;
+    elPart.textContent = p.getAttribute("data-part");
+    elTitle.textContent = p.getAttribute("data-title");
+    bar.style.width = ((cur+1)/N*100) + "%";
+    prevB.disabled = edgeL.disabled = (cur === 0);
+    nextB.disabled = edgeR.disabled = (cur === N-1);
+    prevT.textContent = cur > 0 ? pages[cur-1].getAttribute("data-title") : "—";
+    nextT.textContent = cur < N-1 ? pages[cur+1].getAttribute("data-title") : "—";
+    dotEls.forEach(function(d,i){
+      d.className = i===cur ? "on" : (Math.abs(i-cur)<=1 ? "near" : "");
+    });
+    var od = dotEls[cur];
+    if(od && od.scrollIntoView) od.scrollIntoView({block:"nearest", inline:"center", behavior:"smooth"});
+  }
+
+  function next(){ if(cur < N-1) go(cur+1); }
+  function prev(){ if(cur > 0) go(cur-1); }
+
+  /* ── 오버레이 ── */
+  function openTOC(){ buildTOC(ovQ.value); ovTOC.classList.add("on"); setTimeout(function(){ ovQ.focus(); ovQ.select(); }, 40); }
+  function openHelp(){ ovHelp.classList.add("on"); }
+  function closeOv(){ ovTOC.classList.remove("on"); ovHelp.classList.remove("on"); deck.focus(); }
+  function ovOpen(){ return ovTOC.classList.contains("on") || ovHelp.classList.contains("on"); }
+
+  document.getElementById("btnOv").addEventListener("click", openTOC);
+  document.getElementById("btnHelp").addEventListener("click", openHelp);
+  document.getElementById("ovClose").addEventListener("click", closeOv);
+  document.getElementById("helpClose").addEventListener("click", closeOv);
+  ovQ.addEventListener("input", function(){ buildTOC(ovQ.value); });
+  [ovTOC, ovHelp].forEach(function(o){ o.addEventListener("click", function(e){ if(e.target === o) closeOv(); }); });
+
+  /* ── 테마 ── */
+  var btnTheme = document.getElementById("btnTheme");
+  function curTheme(){
+    var t = document.documentElement.getAttribute("data-theme");
+    if(t) return t;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  function toggleTheme(){
+    var nt = curTheme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", nt);
+    try{ localStorage.setItem(KEY+"-theme", nt); }catch(e){}
+  }
+  btnTheme.addEventListener("click", toggleTheme);
+  try{ var st = localStorage.getItem(KEY+"-theme"); if(st) document.documentElement.setAttribute("data-theme", st); }catch(e){}
+
+  /* ── 버튼 ── */
+  prevB.addEventListener("click", prev);
+  nextB.addEventListener("click", next);
+  edgeL.addEventListener("click", prev);
+  edgeR.addEventListener("click", next);
+
+  /* ── 키보드 ── */
+  document.addEventListener("keydown", function(e){
+    var tag = (e.target && e.target.tagName || "").toLowerCase();
+    var typing = tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable);
+
+    if(e.key === "Escape"){ if(ovOpen()){ e.preventDefault(); closeOv(); } return; }
+    if(typing){
+      if(e.key === "Enter" && ovTOC.classList.contains("on")){
+        var first = ovIn.querySelector(".ov-item");
+        if(first){ e.preventDefault(); first.click(); }
+      }
+      return;
+    }
+    if(ovOpen()) return;
+    if(e.metaKey || e.ctrlKey || e.altKey) return;
+
+    switch(e.key){
+      case "ArrowRight": case "PageDown": e.preventDefault(); next(); break;
+      case "ArrowLeft":  case "PageUp":   e.preventDefault(); prev(); break;
+      case " ": e.preventDefault(); e.shiftKey ? prev() : next(); break;
+      case "Home": e.preventDefault(); go(0); break;
+      case "End":  e.preventDefault(); go(N-1); break;
+      case "ArrowDown": pages[cur].scrollBy({top:120, behavior:"smooth"}); break;
+      case "ArrowUp":   pages[cur].scrollBy({top:-120, behavior:"smooth"}); break;
+      case "o": case "O": case "ㅐ": case "m": case "M": case "ㅡ": e.preventDefault(); openTOC(); break;
+      case "t": case "T": case "ㅅ": e.preventDefault(); toggleTheme(); break;
+      case "?": case "/": e.preventDefault(); openHelp(); break;
+      default:
+        if(/^[1-6]$/.test(e.key)){
+          var idx = parseInt(e.key,10) - 1;
+          if(parts[idx]){ e.preventDefault(); go(parts[idx].first); }
+        }
+    }
+  });
+
+  /* ── 스와이프 ── */
+  var tx=0, ty=0, tt=0;
+  deck.addEventListener("touchstart", function(e){
+    if(e.touches.length !== 1) return;
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY; tt = Date.now();
+  }, {passive:true});
+  deck.addEventListener("touchend", function(e){
+    if(!tt) return;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - tx, dy = t.clientY - ty, dt = Date.now() - tt;
+    tt = 0;
+    if(dt < 600 && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.8){
+      dx < 0 ? next() : prev();
+    }
+  }, {passive:true});
+
+  /* ── 시작 위치 ── */
+  var start = 0;
+  var m = /#p(\d+)/.exec(location.hash);
+  if(m){ start = Math.max(0, Math.min(N-1, parseInt(m[1],10) - 1)); }
+  else {
+    try{
+      var s = localStorage.getItem(KEY);
+      if(s !== null){ var v = parseInt(s,10); if(!isNaN(v) && v>0 && v<N) start = v; }
+    }catch(e){}
+  }
+  pages[0].classList.remove("on");
+  cur = start;
+  pages[cur].classList.add("on");
+  render();
+  buildTOC("");
+  deck.focus();
+
+  window.addEventListener("hashchange", function(){
+    var mm = /#p(\d+)/.exec(location.hash);
+    if(mm){ var i = parseInt(mm[1],10)-1; if(i !== cur) go(i, true); }
+  });
+})();
+</script>
+</body>
+</html>
