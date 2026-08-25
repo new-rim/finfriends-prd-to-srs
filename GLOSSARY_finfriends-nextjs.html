@@ -1,0 +1,614 @@
+<title>핀프렌즈 기술 용어집</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+:root{
+  --bg:#F2F4F6; --surface:#FFFFFF; --surface-2:#F9FAFB; --surface-3:#EEF1F4;
+  --text:#191F28; --text-2:#4E5968; --text-3:#8B95A1;
+  --border:#E5E8EB; --border-strong:#D5DAE0;
+  --accent:#3182F6; --accent-text:#1B64DA; --accent-weak:#E8F3FF;
+  --warn:#E0384A; --warn-weak:#FDEEF0;
+  --shadow:0 1px 2px rgba(25,31,40,.04), 0 4px 16px rgba(25,31,40,.05);
+  --radius:18px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1116; --surface:#171C23; --surface-2:#1D232B; --surface-3:#232A33;
+    --text:#EDF0F3; --text-2:#AEB7C2; --text-3:#7E8996;
+    --border:#282F38; --border-strong:#39424E;
+    --accent:#5C9DFF; --accent-text:#9CC3FF; --accent-weak:#15263D;
+    --warn:#FF7480; --warn-weak:#361E22;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 4px 18px rgba(0,0,0,.28);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1116; --surface:#171C23; --surface-2:#1D232B; --surface-3:#232A33;
+  --text:#EDF0F3; --text-2:#AEB7C2; --text-3:#7E8996;
+  --border:#282F38; --border-strong:#39424E;
+  --accent:#5C9DFF; --accent-text:#9CC3FF; --accent-weak:#15263D;
+  --warn:#FF7480; --warn-weak:#361E22;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 4px 18px rgba(0,0,0,.28);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-weight:400; line-height:1.6;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+.wrap{max-width:1120px; margin:0 auto; padding:0 20px}
+
+/* ── 상단 고정 바 ── */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter:saturate(1.6) blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.topbar-in{display:flex; align-items:center; gap:16px; padding:14px 20px; max-width:1120px; margin:0 auto}
+.brand{display:flex; align-items:baseline; gap:9px; flex-shrink:0}
+.brand b{font-size:16px; font-weight:700; letter-spacing:-.02em}
+.brand span{font-size:11px; color:var(--text-3); letter-spacing:.06em}
+.search{position:relative; flex:1; min-width:0}
+.search input{
+  width:100%; padding:11px 15px 11px 38px; font-size:14.5px;
+  font-family:inherit; color:var(--text);
+  background:var(--surface); border:1px solid var(--border); border-radius:13px;
+  outline:none; transition:border-color .15s, box-shadow .15s;
+}
+.search input::placeholder{color:var(--text-3)}
+.search input:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-weak)}
+.search svg{position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--text-3); pointer-events:none}
+.search kbd{
+  position:absolute; right:11px; top:50%; transform:translateY(-50%);
+  font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--text-3);
+  background:var(--surface-3); border-radius:5px; padding:2px 6px;
+  pointer-events:none;
+}
+.search .qclear{
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  width:24px; height:24px; display:grid; place-items:center; cursor:pointer;
+  font-family:inherit; font-size:15px; line-height:1; color:var(--text-3);
+  background:var(--surface-3); border:none; border-radius:50%; padding:0;
+}
+.search .qclear:hover{color:var(--text); background:var(--border)}
+.search .qclear:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+@media(max-width:640px){ .brand span{display:none} .search kbd{display:none} }
+
+/* ── 인트로 ── */
+.hero{padding:56px 0 8px}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.14em;
+  color:var(--accent-text); text-transform:uppercase; margin:0 0 14px;
+}
+h1{
+  margin:0 0 18px; font-size:clamp(30px,5vw,44px); font-weight:700;
+  letter-spacing:-.035em; line-height:1.25; text-wrap:balance;
+}
+.lede{max-width:60ch; font-size:16.5px; color:var(--text-2); margin:0 0 28px; line-height:1.75}
+.lede b{color:var(--text); font-weight:600}
+.stats{display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px}
+.stat{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:12px 18px; display:flex; align-items:baseline; gap:8px;
+}
+.stat b{font-size:20px; font-weight:700; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px; color:var(--text-3)}
+
+/* ── 섹션 ── */
+section{padding:44px 0}
+.sec-head{margin-bottom:20px}
+.sec-head h2{
+  margin:0 0 6px; font-size:22px; font-weight:700; letter-spacing:-.03em;
+}
+.sec-head p{margin:0; font-size:14px; color:var(--text-3)}
+
+/* ── 핵심 5 ── */
+.five{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px}
+.five-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:22px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:9px;
+}
+.five-card .t{font-size:16px; font-weight:700; letter-spacing:-.02em}
+.five-card .o{font-size:11.5px; color:var(--text-3)}
+.five-card .b{font-size:13.8px; color:var(--text-2); line-height:1.68; margin-top:2px}
+.five-card .b em{font-style:normal; color:var(--text); font-weight:600; background:var(--accent-weak); padding:1px 5px; border-radius:5px}
+
+/* ── 헷갈리는 짝 ── */
+.pairs{display:flex; flex-direction:column; gap:12px}
+.pair{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  box-shadow:var(--shadow); overflow:hidden;
+}
+.pair-q{
+  padding:16px 22px; font-size:14.5px; font-weight:600; color:var(--text);
+  border-bottom:1px solid var(--border); background:var(--surface-2);
+}
+.pair-body{display:grid; grid-template-columns:1fr 1fr}
+.pair-body > div{padding:20px 22px}
+.pair-body > div:first-child{border-right:1px solid var(--border)}
+@media(max-width:640px){
+  .pair-body{grid-template-columns:1fr}
+  .pair-body > div:first-child{border-right:none; border-bottom:1px solid var(--border)}
+}
+.pair-body h4{margin:0 0 8px; font-size:14px; font-weight:700; letter-spacing:-.01em}
+.pair-body p{margin:0; font-size:13.6px; color:var(--text-2); line-height:1.7}
+.pair-note{padding:14px 22px; font-size:13px; color:var(--text-3); border-top:1px solid var(--border); background:var(--surface-2)}
+
+/* ── 필터 ── */
+.filters{display:flex; gap:7px; overflow-x:auto; padding-bottom:6px; margin-bottom:18px; scrollbar-width:thin}
+.chip{
+  flex-shrink:0; font-family:inherit; font-size:13.5px; font-weight:500;
+  padding:8px 15px; border-radius:999px; cursor:pointer;
+  background:var(--surface); color:var(--text-2);
+  border:1px solid var(--border); transition:all .13s;
+}
+.chip:hover{border-color:var(--border-strong); color:var(--text)}
+.chip:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.chip[aria-pressed="true"]{background:var(--text); color:var(--bg); border-color:var(--text)}
+.count{font-size:13px; color:var(--text-3); margin-bottom:14px; font-variant-numeric:tabular-nums}
+
+/* ── 용어 카드 ── */
+#grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:12px}
+.term{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:20px 22px 18px; display:flex; flex-direction:column; gap:8px;
+  transition:border-color .13s, transform .13s;
+}
+.term:hover{border-color:var(--border-strong); transform:translateY(-1px)}
+.term-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+.term-k{font-size:16.5px; font-weight:700; letter-spacing:-.025em; line-height:1.35}
+.term-e{font-size:11.5px; color:var(--text-3); margin-top:3px; word-break:break-all}
+.core{
+  flex-shrink:0; font-size:10.5px; font-weight:600; letter-spacing:.02em;
+  padding:3px 8px; border-radius:7px; background:var(--accent-weak); color:var(--accent-text);
+}
+.term-d{font-size:14.5px; color:var(--text); line-height:1.7; font-weight:500}
+.term-x{
+  font-size:13.4px; color:var(--text-2); line-height:1.72;
+  background:var(--surface-2); border-radius:11px; padding:11px 13px;
+}
+.term-x b{color:var(--text); font-weight:600}
+.term-x .lbl{
+  display:block; font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  letter-spacing:.1em; color:var(--text-3); margin-bottom:5px;
+}
+.refs{display:flex; flex-wrap:wrap; gap:5px; margin-top:2px}
+.ref{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--text-3);
+  border:1px solid var(--border); border-radius:6px; padding:2px 6px;
+}
+#lookup{scroll-margin-top:76px}
+mark.hit{background:var(--accent-weak); color:var(--accent-text); border-radius:4px; padding:0 2px}
+.empty{padding:52px 20px; text-align:center; color:var(--text-3); font-size:14.5px}
+.empty p{margin:0 0 16px}
+
+/* ── 기호표 ── */
+.tablewrap{overflow-x:auto; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow)}
+table{border-collapse:collapse; width:100%; min-width:520px}
+th,td{text-align:left; padding:14px 20px; font-size:13.8px; border-bottom:1px solid var(--border)}
+th{font-size:12px; font-weight:600; color:var(--text-3); letter-spacing:.03em; background:var(--surface-2)}
+tr:last-child td{border-bottom:none}
+td:first-child{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--accent-text); white-space:nowrap; font-weight:500}
+td:nth-child(2){font-weight:600; white-space:nowrap}
+td:last-child{color:var(--text-2)}
+
+footer{padding:44px 0 64px; border-top:1px solid var(--border); margin-top:36px}
+footer p{margin:0 0 7px; font-size:13px; color:var(--text-3); line-height:1.7}
+@media(prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand"><b>핀프렌즈 기술 용어집</b><span class="mono">SRS-NEXTJS-001</span></div>
+    <div class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="용어 검색 — 예: 멱등, RLS, 콜드스타트" autocomplete="off" aria-label="용어 검색">
+      <kbd id="qkbd">/</kbd>
+      <button id="qclear" class="qclear" type="button" aria-label="검색어 지우기" hidden>&times;</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <p class="eyebrow">읽기 전에 필요한 말들</p>
+    <h1>기술 용어 때문에<br>문서가 안 읽히지 않도록</h1>
+    <p class="lede">
+      『SRS 기술 제약 반영판』에 나오는 용어를 <b>기획자 눈높이로</b> 풀어 썼습니다.
+      정의만 적지 않고 <b>이 문서에서 왜 그 말이 나왔는지</b>를 같이 적었습니다 —
+      용어를 외우는 게 목적이 아니라, 그 문단이 무슨 결정을 하고 있는지가 보이면 됩니다.
+    </p>
+    <div class="stats">
+      <div class="stat"><b id="n-total">0</b><span>개 용어</span></div>
+      <div class="stat"><b id="n-core">0</b><span>개는 꼭 알아야 함</span></div>
+      <div class="stat"><b>8</b><span>개 갈래</span></div>
+    </div>
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <h2>먼저 이 다섯 개만</h2>
+      <p>이 다섯 개를 알면 문서의 결정 대부분이 읽힙니다. 나머지는 필요할 때 찾아보면 됩니다.</p>
+    </div>
+    <div class="five">
+      <div class="five-card">
+        <div class="t">Server Action</div><div class="o mono">서버 액션</div>
+        <div class="b">버튼을 눌렀을 때 <b>서버에서</b> 도는 함수. 이 시스템의 <em>모든 저장</em>은 여기를 지납니다. 별 지급·동의·승인이 전부 이 문을 통과합니다.</div>
+      </div>
+      <div class="five-card">
+        <div class="t">RSC</div><div class="o mono">React Server Component</div>
+        <div class="b">서버에서 미리 만들어져 오는 화면 조각. 이 시스템의 <em>모든 조회</em>가 여기서 일어납니다. 나무·숲·소비 화면이 전부 이것입니다.</div>
+      </div>
+      <div class="five-card">
+        <div class="t">RLS</div><div class="o mono">Row Level Security</div>
+        <div class="b">데이터베이스가 <em>줄 단위로</em> 접근을 막는 기능. 코드가 실수해도 <b>남의 아이 데이터가 안 나옵니다.</b> 규제 요건을 코드 밖에 두는 수단.</div>
+      </div>
+      <div class="five-card">
+        <div class="t">멱등 키</div><div class="o mono">idempotency key</div>
+        <div class="b">같은 요청이 두 번 와도 <em>한 번만 처리</em>되게 하는 고유 번호. 오프라인 아이가 재연결했을 때 ⭐가 두 번 들어가는 걸 막습니다.</div>
+      </div>
+      <div class="five-card">
+        <div class="t">prebuild 게이트</div><div class="o mono">빌드 전 검사</div>
+        <div class="b">배포 직전에 자동으로 도는 검사 7종. <b>별↔저금통 전환 코드</b>가 발견되면 <em>배포가 실패</em>합니다. CI를 안 만들기로 했기 때문에 여기가 유일한 검문소입니다.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>가장 헷갈리는 짝</h2>
+      <p>비슷해 보이지만 문서에서 전혀 다른 자리에 있는 것들입니다.</p>
+    </div>
+    <div class="pairs">
+      <div class="pair">
+        <div class="pair-q">RSC와 Server Action은 둘 다 서버에서 도는데 뭐가 다른가?</div>
+        <div class="pair-body">
+          <div><h4>RSC — 읽기</h4><p>화면을 그릴 때 자동으로 돕니다. 사용자가 페이지를 열면 실행됩니다. <b>저장은 하지 않습니다.</b></p></div>
+          <div><h4>Server Action — 쓰기</h4><p>사용자가 버튼을 눌러야 돕니다. <b>저장·수정·삭제는 전부 여기서만</b> 일어납니다.</p></div>
+        </div>
+        <div class="pair-note">이 둘을 나눠 둔 이유 — 어디서 데이터가 바뀌는지가 한 곳으로 모여야, 「⭐가 두 번 들어갔다」 같은 문제를 찾을 자리가 생깁니다.</div>
+      </div>
+      <div class="pair">
+        <div class="pair-q">배치가 왜 두 군데(pg_cron · Vercel Cron)로 나뉘어 있나?</div>
+        <div class="pair-body">
+          <div><h4>pg_cron — 데이터베이스 안</h4><p>시간 제한이 없어서 <b>무거운 집계</b>를 맡습니다. 월간 숲 스냅샷, 별 원장 정산처럼 아이가 늘어날수록 오래 걸리는 일.</p></div>
+          <div><h4>Vercel Cron — 서버 쪽</h4><p><b>외부에 연락해야 하는 일</b>만 맡습니다. 푸시·문자 발송, 청구서 조회처럼 바깥을 두드려야 하는 일.</p></div>
+        </div>
+        <div class="pair-note">나누지 않으면 — 월간 집계가 아이 수백 명일 땐 잘 돌다가, 수천 명이 된 어느 달 1일에 시간 초과로 실패합니다. 그날 보호자가 보는 건 「다음 달부터 비교할 수 있어요」입니다.</div>
+      </div>
+      <div class="pair">
+        <div class="pair-q">동의 확인을 왜 네 군데서나 하나?</div>
+        <div class="pair-body">
+          <div><h4>빠른 검사 (Middleware)</h4><p>쿠키만 봅니다. <b>빠르지만 틀릴 수 있습니다</b> — 쿠키는 낡을 수 있으니까요.</p></div>
+          <div><h4>확정 검사 (화면·저장·DB)</h4><p>데이터베이스를 직접 봅니다. <b>정확하지만 느립니다.</b> 그래서 아동 영역 진입과 저장 시점에만 겁니다.</p></div>
+        </div>
+        <div class="pair-note">「100% 차단」은 한 겹으로는 증명할 수 없습니다. 세 겹을 다 우회한 경로가 있어도 마지막에 데이터베이스가 행을 주지 않습니다.</div>
+      </div>
+      <div class="pair">
+        <div class="pair-q">「캐시하지 않는다」가 왜 규제 요건이 되나?</div>
+        <div class="pair-body">
+          <div><h4>캐시란</h4><p>한 번 만든 화면을 저장해 뒀다 다시 쓰는 것. <b>빠르지만 값이 낡습니다.</b></p></div>
+          <div><h4>동의 상태는 예외</h4><p>동의가 철회됐는데 저장된 화면이 나오면 <b>동의 없이 아동 화면이 열립니다.</b> 그래서 이것만은 매번 새로 확인합니다.</p></div>
+        </div>
+        <div class="pair-note">성능 예산(1,250ms) 안에서 이 확인에 60ms를 고정으로 배정해 뒀습니다 — 「깎을 수 없는 칸」으로 표시된 이유입니다.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="lookup">
+    <div class="sec-head">
+      <h2>용어 찾아보기</h2>
+      <p>갈래를 눌러 좁히거나, 위 검색창에 아무 말이나 입력해 보세요.</p>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="count" id="count"></div>
+    <div id="grid"></div>
+    <div class="empty" id="empty" hidden>
+      <p id="empty-msg">찾는 말이 없습니다. 다른 표현으로 검색해 보세요.</p>
+      <button class="chip" id="empty-act" type="button">검색어 지우기</button>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>문서에 붙은 기호</h2>
+      <p>SRS 본문에서 계속 나오는 ID 규칙입니다. 이것만 알아도 어느 문단이 무슨 성격인지 구분됩니다.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>기호</th><th>이름</th><th>무슨 뜻인가</th></tr></thead>
+        <tbody>
+          <tr><td>C-TEC-001~007</td><td>발주 제약</td><td>바꿀 수 없는 전제. 설계로 뒤집는 대상이 아닙니다</td></tr>
+          <tr><td>C-TEC-008~018</td><td>파생 제약</td><td>위 7건을 지키려다 <b>따라 나온</b> 제약. 문서가 도출한 것</td></tr>
+          <tr><td>X-1 ~ X-8</td><td>제약 충돌</td><td>요구사항과 제약이 부딪힌 지점. X-8만 아직 <b>미해결</b></td></tr>
+          <tr><td>REQ-TEC · REQ-AI</td><td>신설 요구사항</td><td>이 문서가 새로 만든 요구사항 25건</td></tr>
+          <tr><td>REQ-FUNC · REQ-NF</td><td>승계 요구사항</td><td>기준 SRS에서 그대로 가져온 35건. 하나도 줄지 않았습니다</td></tr>
+          <tr><td>D-TEC-1 ~ 8</td><td>미결 항목</td><td>아직 외부 답을 기다리는 것. D-TEC-1은 일반 공개 가부가 걸려 있음</td></tr>
+          <tr><td>BAT-1 ~ 12</td><td>배치</td><td>사람이 누르지 않아도 주기적으로 도는 작업</td></tr>
+          <tr><td>AC · ACE</td><td>수용 기준</td><td>정상 경로 합격 기준 · 예외 경로 합격 기준</td></tr>
+          <tr><td>CON-*</td><td>제약</td><td>넘을 수 없는 경계. 요구사항과 부딪히면 <b>제약이 이깁니다</b></td></tr>
+          <tr><td>sp</td><td>스프린트</td><td>2주 단위 작업량. 1sp = 2주치</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>출처</b> · <span class="mono">SRS_finfriends-nextjs-v1_0.md</span> (SRS-FINFRIENDS-NEXTJS-001)</p>
+    <p>설명은 이해를 위해 단순화했습니다. 정확한 판정 기준과 수치는 항상 SRS 본문이 우선합니다.</p>
+  </footer>
+</div>
+
+<script>
+const CATS = [
+  ["all",  "전체"],
+  ["frame","앱의 뼈대"],
+  ["db",   "데이터베이스"],
+  ["ops",  "배포·운영"],
+  ["pwa",  "아이 기기"],
+  ["safe", "안전장치"],
+  ["ui",   "화면 스타일"],
+  ["ai",   "AI"],
+];
+
+const T = [
+/* ── 앱의 뼈대 ── */
+["Next.js","프레임워크","frame",1,"화면과 서버 로직을 한 프로젝트에 같이 담는 웹 개발 도구.","보통은 「앱 화면 만드는 프로젝트」와 「서버 만드는 프로젝트」가 따로입니다. Next.js는 그 둘을 <b>한 폴더에</b> 넣습니다. 제약 C-TEC-001이 요구하는 「단일 풀스택 프레임워크」가 이것입니다.",["§1.5","§3"]],
+["App Router","앱 라우터","frame",0,"폴더 구조가 곧 화면 주소가 되는 방식.","<b>폴더를 만들면 주소가 생깁니다.</b> app/tree 폴더를 만들면 /tree 주소가 됩니다. 그래서 「보호자·아동 화면 분리」를 폴더 구조로 강제할 수 있습니다.",["§3.2"]],
+["라우트 그룹","(guardian) · (child)","frame",1,"괄호로 묶은 폴더. 주소에는 안 나타나면서 그 안의 화면들에 공통 규칙을 씌운다.","아동 화면을 (child) 폴더 안에 넣으면, 그 폴더의 대문(layout)이 <b>동의 확인을 통과해야만</b> 안쪽 화면이 그려집니다. 조건문이 아니라 <b>폴더 구조가 분리를 강제</b>합니다 — 새 화면을 엉뚱한 곳에 두면 아예 대문 아래에 못 들어갑니다.",["§3.2","X-1"]],
+["RSC","React Server Component","frame",1,"서버에서 미리 만들어져 오는 화면 조각. 데이터베이스를 직접 읽을 수 있다.","이 시스템의 <b>모든 조회</b>가 여기서 일어납니다. 성장 나무·월간 숲·소비 내역이 전부 RSC입니다. 브라우저가 아니라 서버에서 그려지므로 DB 접속 정보가 사용자에게 노출되지 않습니다.",["§3.1","§5.1"]],
+["Client Component","클라이언트 컴포넌트","frame",0,"브라우저에서 도는 화면 조각. 버튼 클릭 같은 상호작용 담당.","<b>데이터베이스에 직접 못 갑니다.</b> 사용자 기기에서 도는 코드라 DB 비밀번호를 줄 수 없기 때문입니다. 저장이 필요하면 반드시 Server Action을 부릅니다.",["§3.1"]],
+["Server Action","서버 액션","frame",1,"버튼을 눌렀을 때 서버에서 도는 함수. 이 시스템의 모든 저장이 여기를 지난다.","코드는 서버에 있는데 <b>브라우저에서 함수처럼 부릅니다.</b> 별도 API 서버를 안 만들어도 되는 이유가 이것입니다(제약 C-TEC-002). 대신 <b>외부 시스템은 이걸 부를 수 없어서</b>, 제휴사 결제 통보는 Route Handler로 따로 받습니다.",["§3.1","§6.1.1"]],
+["Route Handler","라우트 핸들러","frame",1,"주소 하나에 대응하는 서버 함수. 외부 시스템이 우리를 부를 때 쓰는 문.","제휴사가 「결제가 일어났다」고 알려 주는 입구, 정해진 시각에 자동 실행되는 입구가 여기입니다. <b>로그인한 사람이 없는 상태로 들어오는 문</b>이라, 인증 대신 서명 검증을 씁니다.",["§3.1","§6.1.2"]],
+["Middleware","미들웨어","frame",0,"모든 요청이 화면에 닿기 전에 먼저 지나가는 검문소.","우리는 여기서 <b>「로그인 쿠키가 있나」까지만</b> 봅니다. 데이터베이스를 부르지 않습니다 — 모든 요청에 DB 왕복을 얹으면 화면 응답 예산이 여기서만 100ms 가까이 날아가기 때문입니다.",["§3.1","§8.1"]],
+["Node 런타임 / Edge 런타임","runtime","frame",0,"코드가 도는 환경. Edge는 사용자와 가깝고 빠르지만 할 수 있는 게 제한적이다.","Edge는 사용자 근처에서 돌아 빠르지만 <b>데이터베이스에 접속할 수 없습니다.</b> 그래서 미들웨어(Edge)는 쿠키만 보고, DB가 필요한 일은 전부 Node 쪽에서 합니다.",["§3.1"]],
+["스트리밍","streaming","frame",0,"화면을 다 만든 뒤 한 번에 보내지 않고, 만들어진 순서대로 조금씩 흘려보내는 것.","응답 시간이 예산을 넘길 때 <b>「나무 뼈대를 먼저 보내고 조건 상세는 나중에」</b> 조정하는 수단으로 씁니다. 사용자는 빈 화면을 덜 봅니다.",["§8.1"]],
+["하이드레이션","hydration","frame",0,"서버가 보낸 HTML에 브라우저가 나중에 「동작」을 입히는 과정.","화면은 먼저 보이는데 버튼이 잠깐 안 눌리는 순간이 이 구간입니다. 첫 페인트 예산에 포함됩니다.",["§8.1"]],
+["캐시 · 재검증","cache · revalidateTag","frame",1,"한 번 만든 화면을 저장해 뒀다 재사용하는 것 / 저장해 둔 걸 「이제 낡았다」고 표시하는 것.","<b>이 문서에서 가장 조심하는 개념 중 하나입니다.</b> 빠르지만 값이 낡습니다. 별 잔액·승인 대기·동의 상태는 캐시를 <b>금지</b>하고, 나무·숲은 「이 아이 것만」 골라서 낡음 표시를 합니다. 「전부 다시 그려라」를 한 줄 쓰면 800ms 예산이 통째로 날아갑니다.",["§6.4","§8.2","REQ-TEC-016"]],
+["noStore()","캐시 금지 표시","frame",0,"「이 화면은 절대 저장해 두지 마라」는 표시.","동의 상태처럼 <b>낡으면 안 되는 것</b>에 붙입니다. 규제 요건(동의를 캐시하지 않는다)을 코드로 옮긴 것이 이 한 줄입니다.",["§3.3"]],
+["낙관적 UI","useOptimistic","frame",0,"서버 응답을 기다리지 않고 「성공했을 것」이라 치고 화면을 먼저 바꾸는 기법.","체감은 즉시 반응하는 것처럼 보입니다. 다만 이 문서는 <b>이걸 지표로 쓰지 않습니다</b> — 낙관적 표시를 재면 실제로 실패한 건까지 성공으로 세게 됩니다.",["§8.2"]],
+["트랜잭션 래퍼","withGuardian()","frame",0,"모든 데이터베이스 접근이 반드시 지나가는 단 하나의 입구.","「지금 접속한 보호자는 누구」를 여기서 <b>세션에서만</b> 읽어 DB에 알려 줍니다. 인자로 받지 않는 이유는, 인자로 받으면 누군가 남의 보호자 ID를 넣을 수 있기 때문입니다.",["§6.3"]],
+
+/* ── 데이터베이스 ── */
+["PostgreSQL","포스트그레스","db",0,"데이터를 표 형태로 저장하는 프로그램. 이 시스템의 유일한 저장소.","줄여서 「포스트그레스」라고 부릅니다. 이 문서에서 <b>규제 요건을 지키는 마지막 방어선</b> 역할까지 맡습니다.",["§6.2"]],
+["Supabase","수파베이스","db",1,"PostgreSQL을 대신 운영해 주는 서비스. 로그인 기능도 함께 준다.","직접 서버를 사고 설치하지 않아도 됩니다(제약 C-TEC-003). 대신 <b>해외 사업자</b>라는 점이 미해결 항목 X-8·D-TEC-1의 원인입니다.",["§1.5","§14"]],
+["Prisma","프리즈마","db",1,"코드에서 데이터베이스를 다루기 쉽게 해 주는 도구.","schema.prisma 파일 하나가 <b>DB 설계도 원본</b>이 됩니다. SRS §6.2의 긴 코드 블록이 그 파일입니다 — 표와 칸 이름이 전부 거기 적혀 있습니다.",["§6.2"]],
+["스키마","schema","db",1,"데이터베이스의 설계도. 어떤 표가 있고 각 표에 어떤 칸이 있는가.","「스키마에 좌표 필드가 없다」는 말은 <b>위치정보를 저장할 자리 자체가 없다</b>는 뜻입니다. 막아 둔 게 아니라 존재하지 않는 구조입니다.",["§6.2","CON-REG-03"]],
+["마이그레이션","migration","db",1,"설계도를 바꾸는 작업 기록. 「이 칸을 추가했다」를 순서대로 쌓아 둔 것.","<b>배포와 함께 도는 가장 위험한 작업</b>입니다. 코드는 되돌릴 수 있지만 마이그레이션은 같이 안 되돌아갑니다.",["§10.4","REQ-TEC-015"]],
+["DDL","표 구조 변경 명령","db",0,"표를 만들고 바꾸고 지우는 명령. DROP COLUMN(칸 삭제) 같은 것.","「파괴적 DDL」은 <b>있던 걸 없애는</b> 명령입니다. 한 배포에 넣지 못하게 게이트로 막습니다.",["§6.6"]],
+["expand-contract","2단계 스키마 변경","db",1,"설계도를 바꿀 때 두 번에 나눠서 하는 방법.","① 새 칸을 <b>추가만</b> 한다(옛 코드도 계속 살아 있음) → ② 나중 배포에서 옛 칸을 지운다. 한 번에 하면 <b>아직 안 바뀐 옛 버전 서버가 전부 죽습니다</b> — 무중단 배포에서는 새 버전과 옛 버전이 잠깐 같이 돌기 때문입니다.",["REQ-TEC-015","§10.4"]],
+["트랜잭션","transaction","db",1,"여러 작업을 「전부 되거나 전부 안 되거나」로 묶는 것.","승인·별 지급·실천 인정·기록을 <b>한 묶음</b>으로 처리합니다. 중간에 서버가 꺼져도 반쪽 상태가 남지 않습니다. 서버리스에서는 「나중에 마저 하기」가 성립하지 않아서 이게 필수입니다.",["§6.1.1","§6.5"]],
+["RLS","Row Level Security","db",1,"데이터베이스가 줄(행) 하나하나에 접근 권한을 거는 기능.","<b>코드가 실수해도 남의 아이 데이터가 안 나옵니다.</b> 보호자 A의 접속으로 보호자 B의 아이를 조회하면 오류가 아니라 <b>빈 결과</b>가 돌아옵니다. 규제 요건을 애플리케이션 코드 밖에 두는 수단입니다.",["§6.3","REQ-TEC-005"]],
+["롤","role","db",0,"데이터베이스 사용자 계정.","이 문서는 두 개를 씁니다 — <b>요청용</b>(RLS 적용, 권한 좁음)과 <b>배치용</b>(RLS 우회, 집계 전용). 하나로 쓰면 RLS가 무력화됩니다.",["§6.3","C-TEC-012"]],
+["BYPASSRLS","RLS 우회 권한","db",0,"RLS를 무시할 수 있는 특권.","요청용 롤에는 <b>이 권한을 주지 않습니다.</b> 주는 순간 2차 방어선이 사라집니다.",["§6.3"]],
+["SECURITY DEFINER","권한 위임 함수","db",0,"함수를 만든 사람의 권한으로 도는 함수.","개인정보 구역을 <b>함수 3개로만</b> 열어 둘 때 씁니다. 표를 직접 못 보게 하고 정해진 동작만 허용하는 방식입니다.",["§6.3"]],
+["SET LOCAL","이번 거래 한정 설정","db",0,"「이번 거래 동안만 이 값을 기억해」라고 데이터베이스에 알려 주는 것.","「지금 접속한 보호자는 누구」를 RLS에 전달하는 수단입니다. <b>거래가 끝나면 자동으로 지워집니다</b> — 다음 요청에 값이 새지 않습니다.",["§6.3"]],
+["커넥션 풀러 · Supavisor","connection pooler","db",1,"데이터베이스 접속선을 여러 요청이 돌려 쓰게 해 주는 중개소.","서버리스는 요청마다 서버가 새로 켜지는데, 그때마다 새 접속을 만들면 <b>금방 한도가 찹니다.</b> 풀러가 접속선을 모아 두고 빌려줍니다. 포트 6543이 이 경로입니다.",["C-TEC-011","§6.2"]],
+["transaction 모드","트랜잭션 모드","db",0,"풀러가 「거래 하나 끝날 때마다」 접속선을 회수하는 방식.","가장 아껴 쓰는 방식이지만, 대신 <b>거래 밖에서는 아무것도 기억하지 않습니다.</b> 그래서 모든 쿼리를 거래 안에 넣는 규칙이 생겼습니다.",["§6.3"]],
+["prepared statement","미리 등록한 질의","db",0,"자주 쓰는 질의를 데이터베이스에 미리 등록해 두는 최적화.","풀러의 transaction 모드에서는 <b>쓸 수 없습니다.</b> 접속선이 계속 바뀌어서 등록해 둔 게 남아 있지 않기 때문입니다.",["C-TEC-011"]],
+["advisory lock","작업 표식","db",1,"「이 아이에 대해서는 지금 나만 작업한다」고 데이터베이스에 거는 표식.","서버가 동시에 여러 개 뜨는 환경에서 <b>같은 아이에게 별을 동시에 주면 잔액이 어긋납니다.</b> 이 표식이 그 순간만 순서를 만들어 줍니다. 아이 단위로만 걸어서 다른 아이는 안 기다립니다.",["§6.5","X-6"]],
+["UNIQUE 제약","고유값 규칙","db",1,"「이 값은 표 안에 딱 하나만」이라는 규칙.","같은 멱등 키로 두 번 저장하려 하면 <b>데이터베이스가 거부합니다.</b> 코드가 아니라 DB가 막기 때문에 우회할 방법이 없습니다.",["§6.5"]],
+["인덱스","index","db",0,"찾는 속도를 위해 만드는 색인.","책 뒤의 「찾아보기」와 같습니다. 없으면 표를 처음부터 끝까지 훑어야 합니다.",["§6.2"]],
+["파티셔닝","partitioning","db",0,"큰 표를 주 단위 같은 기준으로 여러 조각으로 나눠 두는 것.","이벤트 기록은 계속 쌓이기만 합니다. 주 단위로 잘라 두면 <b>이번 주 것만 뒤지면 되니까</b> 느려지지 않습니다.",["REQ-TEC-020"]],
+["pg_cron","DB 안 알람","db",1,"데이터베이스 안에서 정해진 시각에 도는 알람.","<b>실행 시간 제한이 없습니다.</b> 그래서 월간 숲 스냅샷·별 원장 정산처럼 아이가 늘수록 오래 걸리는 일을 여기서 돌립니다. 서버 쪽에서 돌리면 어느 날 시간 초과로 실패합니다.",["§11","X-5"]],
+["pg_net","DB의 바깥 연락 수단","db",0,"데이터베이스가 외부 주소를 두드릴 수 있게 해 주는 기능.","DB는 「불일치를 발견」해도 <b>알릴 수단이 없습니다.</b> pg_net으로 우리 서버를 두드려 발송만 맡깁니다. 이게 없으면 감지는 되는데 아무도 모르는 상태가 됩니다.",["§6.1.2","§11"]],
+["PITR","시점 복구","db",0,"특정 시점으로 데이터베이스를 되돌리는 백업 방식.","「어제 오후 3시 상태로」가 가능한 백업입니다. 아동 데이터 복구 요건과 연결됩니다.",["D-TEC-4"]],
+["pii 스키마","개인정보 구역","db",1,"개인정보만 따로 모아 둔 데이터베이스 구역.","요청용 계정에 <b>접근 권한을 아예 안 줍니다.</b> 그래서 학습 기록과 개인정보를 「합쳐서 조회」하는 것이 <b>문법적으로 불가능</b>합니다 — 규약이 아니라 권한으로 막은 것입니다.",["§6.3","REQ-NF-009"]],
+
+/* ── 배포·운영 ── */
+["Vercel","버셀","ops",1,"코드를 올리면 알아서 배포해 주는 서비스.","제약 C-TEC-007이 「Git Push만으로 배포」를 요구합니다. 편한 대신 <b>사람이 승인을 누르는 단계가 없어서</b>, 설정 하나하나가 릴리스 통제 수단이 됩니다.",["§10"]],
+["서버리스","serverless","ops",1,"서버를 상시 켜 두지 않고, 요청이 올 때만 잠깐 켜서 처리하고 끄는 방식.","서버 관리가 없어지는 대신 두 가지가 따라옵니다 — <b>처음 켜질 때 느리고</b>(콜드스타트), <b>같은 순간에 여러 개가 동시에 뜹니다</b>(동시성 문제).",["§8","X-6"]],
+["콜드스타트","cold start","ops",1,"꺼져 있던 서버가 처음 켜질 때 생기는 추가 지연.","<b>트래픽이 적을수록 자주 일어납니다.</b> 즉 초기 사용자일수록 느린 화면을 봅니다. 성장 나무 응답 예산 1,250ms 중 250ms를 여기에 배정해 뒀습니다.",["§8.1"]],
+["리전","icn1 · ap-northeast-2","ops",1,"서버와 데이터베이스가 물리적으로 있는 지역.","둘 다 <b>서울</b>입니다(icn1=Vercel 서울, ap-northeast-2=Supabase 서울). 아동 개인정보가 어디에 있는지 특정할 수 있어야 하기 때문에 고정했습니다.",["C-TEC-016"]],
+["CI/CD","자동 검사·배포 파이프라인","ops",1,"코드를 자동으로 검사하고 배포하는 별도 장치.","제약 C-TEC-007이 <b>「CI/CD 설정 없이」</b>를 요구합니다. 그래서 원래 CI가 하던 규제 검사를 <b>빌드 스크립트로 옮겼습니다</b>(충돌 X-2).",["X-2"]],
+["prebuild","빌드 직전 스크립트","ops",1,"빌드가 시작되기 직전에 자동으로 실행되는 스크립트.","CI를 안 만들기로 했으므로 <b>여기가 유일한 검문소</b>입니다. 배포할 때도, 개발자가 로컬에서 빌드할 때도 똑같이 걸립니다 — CI보다 오히려 넓게 막힙니다.",["§6.6","X-2"]],
+["게이트","gate","ops",1,"통과하지 못하면 진행이 막히는 검사.","이 문서는 7종을 걸어 뒀습니다. 예를 들어 <b>별↔저금통 전환 코드가 발견되면 배포가 실패</b>합니다. 기능 스위치로 끄는 방식은 인정하지 않습니다 — 스위치는 켜질 수 있으니까요.",["§6.6"]],
+["Preview 배포","미리보기 배포","ops",1,"브랜치를 올릴 때마다 자동으로 만들어지는 임시 사이트.","편리하지만 <b>가장 위험한 설정 실수의 자리</b>입니다. 이게 운영 데이터베이스를 가리키면, 검토도 안 끝난 코드가 실제 아동 데이터에 접근합니다.",["REQ-TEC-014"]],
+["배포 보호","deployment protection","ops",0,"임시 사이트 주소에 로그인 없이 못 들어오게 막는 설정.","Preview 주소는 기본적으로 <b>주소만 알면 누구나</b> 들어갑니다. 아동 데이터가 있는 화면이라면 반드시 켜야 합니다.",["§10.3"]],
+["환경 변수 · 시크릿","env · secret","ops",0,"코드 밖에 두는 설정값. DB 주소, API 키 같은 것.","코드에 적으면 저장소에 그대로 남습니다. 밖에 두고 <b>운영용과 미리보기용을 분리</b>하는 것이 이 문서의 요구사항입니다.",["§10.2"]],
+["Cron","정기 실행","ops",0,"정해진 시각에 자동으로 실행하는 것.","「매일 새벽 3시」, 「5분마다」처럼. 이 문서는 <b>외부에 연락해야 하는 일만</b> 여기서 돌립니다.",["§11"]],
+["배치","batch","ops",1,"사람이 누르지 않아도 주기적으로 도는 작업.","나무 승급 판정, 미접속 알림, 별 원장 정산 같은 것들. 총 12건입니다. <b>어느 하나가 멈추면 어떤 지표가 안 나오는지</b>가 문서에 같이 적혀 있습니다.",["§11"]],
+["하트비트","heartbeat","ops",1,"「나 아직 살아 있다」는 신호.","배치가 두 군데로 나뉘어 있어서 <b>한쪽이 조용히 멈춘 상태</b>가 가장 흔한 장애입니다. 실패 알림은 오는데 「아무것도 안 온 것」은 알림이 안 오니까요.",["REQ-TEC-017"]],
+["DLQ","실패 보관함","ops",0,"처리에 실패한 메시지를 버리지 않고 모아 두는 곳.","제휴사 결제 통보 처리가 실패해도 <b>버리지 않고 여기 쌓아 두고</b> 나중에 우리 배치가 다시 처리합니다.",["§6.1.2","REQ-TEC-018"]],
+["프로브","probe","ops",0,"살아 있는지 주기적으로 두드려 보는 것.","5분마다 두드려서 응답이 오는지 봅니다. 월 가용성 숫자가 여기서 나옵니다.",["BAT-12"]],
+["p95","95백분위","ops",1,"100번 중 95번은 이 시간 안에 끝난다는 뜻.","평균보다 정직한 지표입니다. 평균이 좋아도 <b>느린 5%가 실제 불만</b>이 됩니다. 「p95 ≤ 1,250ms」는 「100명 중 95명은 1.25초 안에 화면을 본다」는 뜻입니다.",["§4.2","§8"]],
+["SLA · SLO","가용성 약속 · 목표","ops",0,"제공자가 약속한 가용성 / 우리가 잡은 목표 가용성.","<b>우리 가용성은 제휴사보다 높을 수 없습니다.</b> 결제가 안 되면 우리 서비스도 못 쓰는 것이니까요. 그래서 목표를 상수로 박지 않고 「둘 중 낮은 값」으로 계산합니다.",["§8.3","CON-ARC-03"]],
+["무중단 배포 · 롤백","zero-downtime · rollback","ops",1,"서비스를 끊지 않고 새 버전으로 바꾸는 것 / 문제 생기면 이전 버전으로 되돌리는 것.","<b>롤백은 코드만 되돌립니다.</b> 데이터베이스 변경은 같이 안 돌아옵니다. 그래서 「코드를 되돌려도 DB가 앞서 있어도 동작하는 상태」를 항상 유지해야 합니다.",["§10.4"]],
+["로그 드레인","log drain","ops",0,"서버 기록을 외부 저장소로 흘려보내 오래 보관하는 것.","플랫폼 기본 보관 기간은 짧습니다. 감사에 쓰려면 따로 빼 두어야 합니다.",["REQ-TEC-017"]],
+
+/* ── 아이 기기 ── */
+["PWA","설치형 웹앱","pwa",1,"웹사이트인데 홈 화면에 설치되어 앱처럼 쓰이는 것.","앱스토어를 거치지 않습니다. 네이티브 앱을 안 만들기로 했으므로(제약 C-TEC-001) <b>아이·보호자가 쓰는 형태가 이것</b>입니다. 대신 푸시·오프라인 기능이 <b>웹 표준이 허용하는 범위</b>로 제한됩니다.",["C-TEC-008","§6.7"]],
+["Service Worker","서비스 워커","pwa",0,"브라우저 뒤에서 도는 작은 프로그램.","화면이 꺼져 있어도 돕니다. <b>오프라인 처리와 푸시 수신</b>을 담당합니다.",["§6.7"]],
+["IndexedDB","브라우저 안 데이터베이스","pwa",1,"브라우저 안에 있는 작은 데이터베이스.","오프라인일 때 아이의 실천 기록을 <b>여기 쌓아 뒀다가</b> 연결되면 보냅니다. 두 OS 모두 지원하므로 <b>「기록이 사라지지 않는다」는 어느 기기에서든 성립</b>합니다.",["§6.7","REQ-NF-003"]],
+["Web Push","웹 푸시","pwa",1,"웹에서 보내는 푸시 알림.","<b>iOS는 홈 화면에 설치된 상태에서만</b> 동작합니다. 미설치 사용자에게는 푸시 채널 자체가 없어서, 지표를 「발송률」이 아니라 <b>「전달 시도」</b>로 바꿨습니다(충돌 X-3).",["X-3","REQ-TEC-009"]],
+["VAPID","푸시 인증 열쇠","pwa",0,"Web Push를 보낼 때 「우리가 보낸 게 맞다」를 증명하는 열쇠 한 쌍.","이게 없으면 아무나 우리 이름으로 푸시를 보낼 수 있습니다.",["§10.2"]],
+["Background Sync","백그라운드 전송","pwa",1,"앱이 꺼져 있어도 연결이 돌아오면 알아서 밀린 걸 보내는 기능.","<b>iOS는 지원하지 않습니다.</b> 그래서 iOS는 「다음에 앱을 열었을 때 즉시 보냄」으로 나눴습니다(충돌 X-4). 다만 <b>기록 손실 0건·중복 0건은 양쪽 다 성립</b>합니다 — 갈리는 건 반영 시점뿐입니다.",["X-4","§6.7"]],
+["포그라운드 · 백그라운드","foreground · background","pwa",0,"앱이 화면에 떠 있는 상태 / 뒤로 물러난 상태.","iOS에서 오프라인 기록이 전송되는 시점이 「다시 포그라운드로 올라올 때」입니다.",["§6.7"]],
+["매니페스트","manifest","pwa",0,"「이 웹사이트는 이런 앱입니다」를 적은 파일. 이름·아이콘 등.","이 파일이 있어야 <b>홈 화면에 설치</b>가 가능해집니다.",["REQ-TEC-008"]],
+
+/* ── 안전장치 ── */
+["멱등성 · 멱등 키","idempotency","safe",1,"같은 요청을 몇 번 보내도 결과가 한 번 한 것과 같게 만드는 성질, 그리고 그걸 위한 고유 번호.","<b>이 문서에서 가장 자주 나오는 안전장치입니다.</b> 오프라인이던 아이가 재연결해 같은 기록을 두 번 보내도 ⭐는 한 번만 들어갑니다. 키를 <b>클라이언트(아이 기기)가 만드는</b> 점이 중요합니다 — 서버가 만들면 재시도할 때마다 새 키가 되어 중복을 못 막습니다.",["C-TEC-010","§6.5"]],
+["UUID","고유 식별 번호","safe",0,"세상에서 겹치지 않도록 만든 긴 번호.","「550e8400-e29b-...」 같은 형태. 멱등 키와 모든 표의 ID로 씁니다.",["§6.2"]],
+["웹훅","webhook","safe",1,"상대 시스템이 사건이 생겼을 때 우리 주소를 먼저 두드려 알려 주는 방식.","우리가 「결제 있었나요?」 하고 계속 물어보는 게 아니라, <b>제휴사가 「결제 있었어요」 하고 알려 줍니다.</b> Server Action은 외부에서 못 부르므로 이 입구는 Route Handler로 따로 만듭니다.",["REQ-TEC-018","§3.4"]],
+["HMAC 서명","위조 방지 도장","safe",1,"메시지에 붙이는 도장. 비밀 키를 아는 쪽만 만들 수 있다.","웹훅 입구에는 <b>로그인한 사람이 없습니다.</b> 그래서 「제휴사가 보낸 게 맞다」를 이 도장으로 확인합니다. 도장이 안 맞으면 저장하지 않습니다.",["REQ-TEC-018"]],
+["폴백","fallback","safe",1,"1순위가 안 될 때 2순위로 넘어가는 것.","알림은 <b>푸시 → 앱 내 배너 → 문자</b> 순으로 내려갑니다. 푸시를 차단한 보호자를 「연락 불가」로 두지 않기 위한 설계입니다.",["ACE-7.1","REQ-TEC-009"]],
+["스키마 검증","zod","safe",0,"들어온 값이 약속한 모양인지 확인하는 도구.","Server Action은 <b>사실상 공개된 입구</b>입니다. 검증 없는 값은 그대로 외부 입력이므로 반드시 모양을 확인합니다.",["§6.4"]],
+["정적 분석","static analysis","safe",1,"코드를 실행하지 않고 읽어서 규칙 위반을 찾는 것.","게이트가 하는 일이 이것입니다. <b>실행해 보지 않아도</b> 「전환 함수가 있다」, 「좌표 필드가 생겼다」를 잡아냅니다.",["§6.6"]],
+["원자적","atomic","safe",1,"쪼개지지 않는. 중간에 끊긴 상태가 생기지 않는다.","승인·별 지급·실천 인정·기록을 <b>한 덩어리</b>로 처리한다는 뜻입니다. 서버가 중간에 꺼져도 반쪽 상태가 남지 않습니다.",["§6.5"]],
+["동시성","concurrency","safe",1,"여러 요청이 같은 순간에 같은 데이터를 건드리는 상황.","서버가 동시에 여러 개 뜨는 환경에서는 <b>같은 아이의 별을 두 서버가 동시에 계산</b>할 수 있습니다. 그러면 잔액이 어긋납니다 — 허용 오차 0인 요구사항이 여기서 깨집니다.",["X-6","§6.5"]],
+["PII","개인식별정보","safe",1,"개인을 알아볼 수 있는 정보.","이 문서는 PII를 <b>별도 구역에 격리</b>하고, 일반 조회 계정에 접근 권한을 아예 주지 않습니다.",["REQ-NF-009","§6.3"]],
+["국외이전","cross-border transfer","safe",1,"개인정보가 해외로 나가는 것.","리전을 서울로 고정해도 <b>사업자가 국외 법인이라는 사실은 남습니다.</b> 이 문서에서 유일하게 <b>닫지 못한 항목</b>(X-8 · D-TEC-1)이며, 일반 공개 가부가 여기 걸려 있습니다.",["X-8","D-TEC-1"]],
+
+/* ── 화면 스타일 ── */
+["Tailwind CSS","테일윈드","ui",1,"클래스 이름을 붙여서 스타일을 지정하는 방식.","별도 스타일 파일을 만들지 않고 <b>화면 코드 안에서</b> 여백·글자 크기를 지정합니다. 제약 C-TEC-004가 요구하는 「일관된 디자인 코드」의 수단입니다.",["C-TEC-004","§6.8"]],
+["shadcn/ui","섀드시엔 유아이","ui",1,"버튼·카드 같은 완성된 화면 부품 모음.","라이브러리처럼 설치하는 게 아니라 <b>코드를 내 프로젝트로 복사해 옵니다.</b> 그래서 나중에 자유롭게 고칠 수 있고, 반대로 <b>일괄 업데이트 대상이 아닙니다.</b>",["C-TEC-004","§6.8"]],
+["디자인 토큰","design token","ui",0,"색·간격 같은 값을 이름으로 정의해 두고 그 이름만 쓰는 것.","아동 화면과 보호자 화면의 분위기를 <b>이름값만 바꿔서</b> 나눕니다.",["§6.8"]],
+["CSS-in-JS","자바스크립트 안의 스타일","ui",0,"자바스크립트 코드 안에 스타일을 적는 방식.","이 문서에서는 <b>금지</b>합니다. 스타일이 들어갈 수 있는 곳을 하나로 줄여야 일관성이 강제되기 때문입니다.",["C-TEC-018"]],
+
+/* ── AI ── */
+["Vercel AI SDK","AI 표준 인터페이스","ai",1,"여러 AI 모델을 같은 방식으로 부를 수 있게 해 주는 도구.","제약 C-TEC-005가 요구합니다. <b>자체 AI 서버를 만들지 않고</b> 외부 API를 부르는 형태가 됩니다.",["C-TEC-005"]],
+["Gemini","제미나이","ai",0,"구글의 AI 모델. 이 시스템의 기본 모델.","환경 변수 하나만 바꾸면 다른 모델로 교체되도록 만듭니다 — 코드는 안 바뀝니다.",["C-TEC-006","REQ-AI-002"]],
+["프롬프트","prompt","ai",1,"AI에게 주는 지시문.","이 문서는 프롬프트에 넣을 수 있는 것을 <b>화이트리스트로 제한</b>합니다 — 아이 이름·금액·가맹점명은 넣을 수 없고, 넣으면 <b>빌드가 실패</b>합니다.",["C-TEC-017","REQ-AI-003"]],
+["구조화 출력","generateObject","ai",0,"AI 답변을 자유 문장이 아니라 정해진 모양으로 받는 기능.","모양이 안 맞으면 <b>저장하지 않습니다.</b> 이상한 값이 데이터베이스에 들어가는 걸 막습니다.",["REQ-AI-005"]],
+["프로바이더 레지스트리","provider registry","ai",0,"어떤 AI 모델을 쓸지 이름표로 등록해 두는 곳.","모델 이름을 코드에 직접 적지 않고 여기 등록해서, <b>환경 변수만 바꿔 교체</b>할 수 있게 합니다.",["REQ-AI-002"]],
+];
+
+const CATNAME = Object.fromEntries(CATS);
+let active = "all";
+const grid     = document.getElementById("grid");
+const empty    = document.getElementById("empty");
+const emptyMsg = document.getElementById("empty-msg");
+const emptyAct = document.getElementById("empty-act");
+const countEl  = document.getElementById("count");
+const qEl      = document.getElementById("q");
+const qClear   = document.getElementById("qclear");
+const qKbd     = document.getElementById("qkbd");
+const lookup   = document.getElementById("lookup");
+const fw       = document.getElementById("filters");
+
+document.getElementById("n-total").textContent = T.length;
+document.getElementById("n-core").textContent = T.filter(t => t[3]).length;
+
+/* ── 검색 색인 ──
+   설명문에는 <b> 같은 태그가 섞여 있어서 그대로 훑으면 "b" 한 글자에 81건이 걸린다.
+   태그를 걷어낸 것과, 띄어쓰기·가운뎃점까지 지운 것 두 벌을 미리 만들어 둔다.
+   뒤엣것 덕분에 「멱등키」로도 「멱등 키」가, 「서버액션」으로도 「서버 액션」이 걸린다. */
+const stripTags = s => s.replace(/<[^>]*>/g, " ");
+const flatten   = s => s.replace(/[\s·・.,\-_/()]/g, "");
+const IDX = T.map(t => {
+  const raw = stripTags([t[0], t[1], t[4], t[5], t[6].join(" ")].join(" ")).toLowerCase();
+  return { raw: raw, flat: flatten(raw) };
+});
+
+/* 필터 칩 */
+CATS.forEach(([key, label]) => {
+  const b = document.createElement("button");
+  b.className = "chip";
+  b.type = "button";
+  b.textContent = key === "all" ? label : label + " " + T.filter(t => t[2] === key).length;
+  b.setAttribute("aria-pressed", String(key === "all"));
+  b.onclick = () => setCat(key, true);
+  fw.appendChild(b);
+});
+
+function setCat(key, persist){
+  active = key;
+  [...fw.children].forEach((c, i) => c.setAttribute("aria-pressed", String(CATS[i][0] === key)));
+  if (persist) { try { localStorage.setItem("ff-glossary-cat", key); } catch (e) {} }
+  render();
+}
+
+function esc(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+
+/* 용어 이름에서 일치한 부분만 표시. 이스케이프 전 원문 기준으로 잘라야 위치가 안 밀린다. */
+function mark(text, q){
+  if (!q) return esc(text);
+  const low = text.toLowerCase();
+  let out = "", i = 0, k;
+  while ((k = low.indexOf(q, i)) !== -1) {
+    out += esc(text.slice(i, k)) + '<mark class="hit">' + esc(text.slice(k, k + q.length)) + "</mark>";
+    i = k + q.length;
+  }
+  return out + esc(text.slice(i));
+}
+
+function render(){
+  const typed = qEl.value.trim();
+  const q  = typed.toLowerCase();
+  const qf = flatten(q);
+
+  const rows = [];
+  T.forEach((t, i) => {
+    if (active !== "all" && t[2] !== active) return;
+    if (q && !(IDX[i].raw.includes(q) || (qf && IDX[i].flat.includes(qf)))) return;
+    rows.push(t);
+  });
+
+  const scope = active === "all" ? "" : "「" + CATNAME[active] + "」 안에서 ";
+  countEl.textContent = typed
+    ? scope + "「" + typed + "」 검색 결과 " + rows.length + "개"
+    : rows.length + "개";
+
+  qClear.hidden = !typed;
+  if (qKbd) qKbd.hidden = !!typed;
+
+  empty.hidden = rows.length > 0;
+  if (rows.length === 0) {
+    if (active !== "all") {
+      emptyMsg.textContent = "「" + CATNAME[active] + "」 갈래에는 없습니다.";
+      emptyAct.textContent = "전체에서 다시 찾기";
+      emptyAct.onclick = () => setCat("all", true);
+    } else {
+      emptyMsg.textContent = "찾는 말이 없습니다. 다른 표현으로 검색해 보세요.";
+      emptyAct.textContent = "검색어 지우기";
+      emptyAct.onclick = clearQuery;
+    }
+  }
+
+  grid.innerHTML = rows.map(t => `
+    <article class="term">
+      <div class="term-top">
+        <div>
+          <div class="term-k">${mark(t[0], q)}</div>
+          <div class="term-e mono">${mark(t[1], q)}</div>
+        </div>
+        ${t[3] ? '<span class="core">꼭 알기</span>' : ''}
+      </div>
+      <p class="term-d">${t[4]}</p>
+      <div class="term-x"><span class="lbl mono">쉽게 말하면</span>${t[5]}</div>
+      <div class="refs">${t[6].map(r => `<span class="ref">${esc(r)}</span>`).join("")}</div>
+    </article>`).join("");
+}
+
+/* 검색창은 맨 위에 고정돼 있는데 결과 목록은 세 화면 아래에 있다.
+   검색을 시작하면 결과가 있는 곳까지 한 번 데려다준다. */
+let revealed = false;
+function reveal(){
+  if (!qEl.value.trim()) { revealed = false; return; }
+  if (revealed) return;
+  revealed = true;
+  const top = lookup.getBoundingClientRect().top;
+  if (top < 0 || top > window.innerHeight * 0.5) {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    lookup.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  }
+}
+
+function clearQuery(){
+  qEl.value = "";
+  revealed = false;
+  render();
+  qEl.focus();
+}
+
+qEl.addEventListener("input", () => {
+  /* 갈래 선택은 localStorage에 남아 다음 방문에도 되살아난다.
+     그 상태로 검색하면 다른 갈래의 용어가 통째로 걸러져 「검색이 안 되는」 것처럼 보인다.
+     그래서 검색어를 입력하는 순간 갈래를 전체로 되돌린다(저장값은 건드리지 않는다). */
+  if (qEl.value.trim() && active !== "all") setCat("all", false);
+  else render();
+  reveal();
+});
+qClear.addEventListener("click", clearQuery);
+
+document.addEventListener("keydown", e => {
+  if (e.isComposing) return;                       /* 한글 조합 중에는 가로채지 않는다 */
+  if (e.key === "/" && document.activeElement !== qEl) { e.preventDefault(); qEl.focus(); }
+  if (e.key === "Escape" && document.activeElement === qEl) { clearQuery(); qEl.blur(); }
+});
+
+try {
+  const saved = localStorage.getItem("ff-glossary-cat");
+  if (saved && CATNAME[saved]) {
+    active = saved;
+    [...fw.children].forEach((c, i) => c.setAttribute("aria-pressed", String(CATS[i][0] === saved)));
+  }
+} catch (e) {}
+
+render();
+</script>
