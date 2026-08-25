@@ -7,16 +7,16 @@ assignees: ''
 ---
 
 <!--
-라벨 규약 — 프런트매터에 고정 라벨을 두지 않는다. 139건의 유형이 서로 다르기 때문이다.
-  type:       design | frontend | backend | db | infra | batch | test
-  epic:       E1 ~ E20 (개발) · design-system 등 (UI/UX)
+라벨 규약 — 프런트매터에 고정 라벨을 두지 않는다. 153건의 유형이 서로 다르기 때문이다.
+  type:       태스크 표의 「유형」 칸과 같은 값 — db | contract | mock | feature/query | feature/command | ui | test | infra | sec
+  epic:       E1 ~ E21 (개발) · design-system 등 (UI/UX)
   complexity: H | M | L
   특수:        gate:regulatory (규제 강제 태스크) · blocked:D-TEC-N (미결 항목에 막힌 태스크)
 마일스톤 — B0 · B1 · B2 · B3 · B4 · B5 · 조건부 · 검증
 -->
 
 ## 🎯 Summary
-- 기능명: [FR-047] 미션 승인 — 승인·⭐기입·실천 인정·이벤트 4건 원자 처리
+- 기능명: [FR-056] 미션 승인 — 승인·⭐기입·실천 인정·이벤트 4건 원자 처리
 - 목적: 보호자의 승인 한 번으로 별 지급과 실천 인정이 끊김 없이 함께 확정되게 한다.
 
 ## 🔗 References (Spec & Context)
@@ -67,5 +67,5 @@ Scenario 3: 동일 멱등 키 재호출
 
 ## 🚧 Dependencies & Blockers
 > 💡 이슈 생성 전에는 `FR-###`로 적고, 생성 후 `tasks/_index.md`의 매핑으로 `#번호`를 일괄 치환한다.
-- Depends on: FR-040 (별 지급 경로) · FR-046 (미션 생성·완료 보고) · FR-029 (판정 순수 함수)
-- Blocks: FR-048 (거절) · FR-049 (일괄 승인) · FR-050 (승인 대기 화면)
+- Depends on: FR-031 (Mission 계약) · FR-049 (별 지급 경로) · FR-055 (미션 생성·완료 보고) · FR-029 (판정 순수 함수)
+- Blocks: FR-057 (거절) · FR-058 (일괄 승인) · FR-060 (승인 대기 화면)
