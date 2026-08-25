@@ -3,6 +3,7 @@
 **기준 문서:** `TASKS_finfriends-nextjs-v3_0.md` (개정 3.0 · FR 46 + UX 9 = 55건)
 **작성 순서:** `REPORT_task-extraction-review.md` (개정 3.0) §4 — **9 Stage**
 **이슈 템플릿:** `.github/ISSUE_TEMPLATE/feature-task.md`
+**한 줄 요약:** `tasks/_summary.md` — 작성된 이슈를 한 화면에서 훑을 때
 
 ---
 
