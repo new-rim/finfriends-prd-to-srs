@@ -1,6 +1,6 @@
 ---
 name: "[Contract] FR-008: 도메인 계약 6종"
-about: Stage 2 · 개정 3.0 FR-008 (개정 2.0 FR-030~035 흡수)
+about: Stage 2 · 개정 3.0 FR-008 (개정 2.0 FR-023~035 흡수)
 title: "[Contract] FR-008: 도메인 계약 6종 — Server Action 20종의 입력 스키마·반환 타입·실패 분기"
 labels: "type:contract, epic:E5, complexity:M, milestone:B0"
 assignees: ''
@@ -8,7 +8,7 @@ assignees: ''
 
 <!--
 Stage 2 · 5건 중 3번. Stage 2 내부 선행: FR-006(골격) — 골격이 정한 형식 위에 도메인별 내용을 채운다.
-흡수: 개정 2.0의 FR-030 · FR-031 · FR-032 · FR-033 · FR-034 · FR-035 (6건)
+흡수: 개정 2.0의 FR-023 · FR-024 · FR-025 · FR-026 · FR-027 · FR-028 (6건)
 -->
 
 ## 🎯 Summary
@@ -16,7 +16,7 @@ Stage 2 · 5건 중 3번. Stage 2 내부 선행: FR-006(골격) — 골격이 �
 - **기능명:** SRS §6.1.1의 **Server Action 20종**을 6개 도메인으로 묶어, 각각의 **zod 입력 스키마 · 반환 타입 · 실패 분기 · 무효화 태그**를 확정한다.
 - **목적:** 방법론이 말한 *"계약이 먼저다 — 이것이 있어야 백엔드와 프론트엔드가 병렬로 움직인다"* 의 실물이다. 계약이 없으면 **각 Command 착수 시점에 즉흥 결정**되고, 프론트가 참조할 것이 생기지 않는다.
 - **왜 한 이슈인가:** 6개 도메인 계약은 **같은 골격(FR-006)을 공유하고 같은 날 확정되는 편이 낫다.** 하나씩 확정하면 나중 도메인이 앞 도메인의 형태를 따라가며 흔들린다.
-- **⚠️ 공개 REST API가 없다** — 계약의 산출물은 **DTO·HTTP 에러 코드가 아니라** zod 스키마 + 반환 타입 + 실패 분기다. HTTP 상태 코드 규약은 **Route Handler에만**(FR-024 · FR-030 · FR-035) 적용한다.
+- **⚠️ 공개 REST API가 없다** — 계약의 산출물은 **DTO·HTTP 에러 코드가 아니라** zod 스키마 + 반환 타입 + 실패 분기다. HTTP 상태 코드 규약은 **Route Handler에만**(FR-019 · FR-023 · FR-028) 적용한다.
 
 ## 🔗 References (Spec & Context)
 
@@ -33,24 +33,24 @@ Stage 2 · 5건 중 3번. Stage 2 내부 선행: FR-006(골격) — 골격이 �
 
 각 계약은 **입력 zod 스키마 · 반환 타입 · 실패 분기 · 무효화 태그** 4가지를 산출한다.
 
-- [ ] **(구 FR-030) C-01 Onboarding·Consent·Card — 액션 5종**
+- [ ] **(구 FR-023) C-01 Onboarding·Consent·Card — 액션 5종**
       `saveOnboardingStep` · `submitConsent` · `requestPartnerCard` · `selectChildProfile` · `terminatePartnerCard`
       *실패 분기:* 외부 API 실패 시 **입력값 24h 보존**(ACE-8.1) · 해지 시 **전액 환불** 확인
       *특이:* `selectChildProfile`은 **DB 쓰기가 없고 멱등 키도 없다**(서명 쿠키 갱신만) — 골격의 예외로 명시
-- [ ] **(구 FR-031) C-02 Mission — 액션 5종**
+- [ ] **(구 FR-024) C-02 Mission — 액션 5종**
       `createMission` · `reportMissionDone` · `approveMission` · `rejectMission` · `bulkApproveMissions`
       *반환:* `approveMission`은 **승인·⭐기입·실천 인정·이벤트 4건이 한 트랜잭션**에서 확정된 결과를 반환
       *특이:* `bulkApproveMissions`는 **멱등이 건별**이고 **원자성도 건 단위**다 — 일괄이지만 전부-아니면-전무가 아니다
-- [ ] **(구 FR-032) C-03 Learning — 액션 2종**
+- [ ] **(구 FR-025) C-03 Learning — 액션 2종**
       `completeLearningTopic` · `submitQuizAnswer` · 무효화 태그 `tree:{childId}` · `stars:{childId}`
-- [ ] **(구 FR-033) C-04 Reward — 액션 2종 + 내부 경로**
+- [ ] **(구 FR-026) C-04 Reward — 액션 2종 + 내부 경로**
       `redeemAvatarItem` · `updateWishlistSaving` + **`grantStar` 내부 경로 시그니처**
       *실패 분기:* 잔액 부족 시 **전체 롤백** · `SPEC_PENDING` 품목은 쿼리에서 제외
       *특이:* **차감도 지급과 같은 원장 경로**를 탄다 — 별도 경로를 만들면 게이트 G1이 못 잡는 전환 경로가 생긴다
-- [ ] **(구 FR-034) C-05 Plan·Retro — 액션 3종**
+- [ ] **(구 FR-027) C-05 Plan·Retro — 액션 3종**
       `createPlanCard` · `submitRetrospective` · `approveRetroSentenceDraft`(ops)
       *반환:* **갈래 판정 결과**를 `plan_met` · `category_met` **두 값으로 분리**해 반환(AC-5.3 · 5.4 · ACE-4.2)
-- [ ] **(구 FR-035) C-06 Notification·Offline — 액션 3종**
+- [ ] **(구 FR-028) C-06 Notification·Offline — 액션 3종**
       `registerPushSubscription` · `updateNotifyWindow` · `flushOfflineQueue`
       *특이:* `flushOfflineQueue`는 **배열 멱등** — 항목마다 각자의 키로 순차 처리하고 **부분 실패를 허용**한다
 - [ ] 6개 계약 전체를 **한 곳에서 export**해 프론트가 타입만 import하면 되게 한다
@@ -100,7 +100,7 @@ Stage 2 · 5건 중 3번. Stage 2 내부 선행: FR-006(골격) — 골격이 �
 ## 🚧 Dependencies & Blockers
 
 - **Depends on:** FR-002(스키마 — 반환 타입이 모델을 가리킨다) · FR-006(골격 — 계약이 올라탈 형식)
-- **Blocks (직접 12건):** FR-010 · FR-012 · FR-014 · FR-015 · FR-017 · FR-020 · FR-022 · FR-025 · FR-027 · FR-034 · FR-039 · FR-042
+- **Blocks (직접 12건):** FR-010 · FR-012 · FR-013 · FR-014 · FR-015 · FR-017 · FR-018 · FR-020 · FR-021 · FR-027 · FR-031 · FR-034
 - **간접 19건**
 - **차단 항목:** 없음
 

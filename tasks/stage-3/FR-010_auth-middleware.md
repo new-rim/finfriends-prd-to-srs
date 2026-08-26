@@ -1,6 +1,6 @@
 ---
 name: "[Sec] FR-010: 인증·미들웨어·프로필 선택"
-about: Stage 3 · 개정 3.0 FR-010 (개정 2.0 FR-039·040·043 흡수)
+about: Stage 3 · 개정 3.0 FR-010 (개정 2.0 FR-031·040·043 흡수)
 title: "[Sec] FR-010: 보호자 전용 인증 — Supabase Auth · middleware · 아동 프로필 서명 쿠키"
 labels: "type:sec, type:feature/command, epic:E6, complexity:M, milestone:B1, gate:regulatory"
 assignees: ''
@@ -8,7 +8,7 @@ assignees: ''
 
 <!--
 Stage 3 · 5건 중 2번. Stage 3 내부 선행 없음 — FR-005와 병렬 착수 가능. FR-011을 막는다.
-흡수: 개정 2.0의 FR-039(Auth 연결) · FR-040(middleware) · FR-043(selectChildProfile) — 3건
+흡수: 개정 2.0의 FR-031(Auth 연결) · FR-032(middleware) · UI-009(selectChildProfile) — 3건
 -->
 
 ## 🎯 Summary
@@ -31,18 +31,18 @@ Stage 3 · 5건 중 2번. Stage 3 내부 선행 없음 — FR-005와 병렬 착�
 
 ## ✅ Task Breakdown (실행 계획)
 
-**(구 FR-039) Supabase Auth 보호자 연결**
+**(구 FR-031) Supabase Auth 보호자 연결**
 - [ ] 보호자 가입·로그인 경로 — Supabase Auth 사용자와 `GuardianAccount.authUserId` 연결
 - [ ] 🔴 **아동 자격증명 필드를 만들지 않는다** — 비밀번호·소셜·매직링크 어느 것도 아동에게 부여하지 않는다
 - [ ] 세션 쿠키 발급·갱신 규약
 
-**(구 FR-040) `middleware.ts`**
+**(구 FR-032) `middleware.ts`**
 - [ ] 세션 쿠키 **서명·만료 검증** — Edge에서 돌므로 **DB 접근 없이** 쿠키만 본다
-- [ ] 라우트 그룹 분기 — `(public)`은 통과 · `(guardian)`·`(child)`는 세션 필수 · `(ops)`는 역할 검사(실제 검사는 FR-042)
+- [ ] 라우트 그룹 분기 — `(public)`은 통과 · `(guardian)`·`(child)`는 세션 필수 · `(ops)`는 역할 검사(실제 검사는 FR-034)
 - [ ] 실패 시 `(public)/login`으로 **302 리다이렉트**
 - [ ] ⚠️ **미들웨어는 동의를 판정하지 않는다** — 쿠키는 낡을 수 있다. 동의 확정 판정은 FR-011의 `(child)/layout.tsx`가 한다
 
-**(구 FR-043) `selectChildProfile`**
+**(구 UI-009) `selectChildProfile`**
 - [ ] 보호자 세션 아래에서 **아동 프로필을 고르는 서명 쿠키** 발급
 - [ ] 🔴 쿠키는 **서명**되어야 한다 — 서명이 없으면 보호자가 남의 `child_id`를 넣을 수 있다
 - [ ] FR-008 C-01 계약대로 — **DB 쓰기 없음 · 멱등 키 없음**(골격의 명시된 예외)
@@ -85,7 +85,7 @@ Stage 3 · 5건 중 2번. Stage 3 내부 선행 없음 — FR-005와 병렬 착�
 ## 🚧 Dependencies & Blockers
 
 - **Depends on:** FR-001(플랫폼 · Auth 환경 변수) · FR-002(스키마 `GuardianAccount`·`ChildAccount`) · FR-008(C-01 계약)
-- **Blocks (직접 3건):** FR-011(동의 게이트) · FR-013(온보딩·공개 화면) · FR-042(AI 경계 — `(ops)` 역할 검사)
+- **Blocks (직접 3건):** FR-011(동의 게이트) · UI-001(온보딩·공개 화면) · FR-034(AI 경계 — `(ops)` 역할 검사)
 - **간접 6건**
 - **차단 항목:** 없음
 

@@ -1,14 +1,14 @@
 ---
 name: "[Feature/Command] FR-012: 온보딩 액션 3종"
-about: Stage 4 · 개정 3.0 FR-012 (개정 2.0 FR-044~046 흡수)
+about: Stage 4 · 개정 3.0 FR-012 (개정 2.0 FR-035~046 흡수)
 title: "[Feature/Command] FR-012: 보호자 온보딩 — 단계 커밋 · 동의 기록 · 카드 신청 실패 보존"
 labels: "type:feature/command, epic:E7, complexity:H, milestone:B1, gate:regulatory, blocked:D-TEC-2"
 assignees: ''
 ---
 
 <!--
-Stage 4 · 5건 중 1번. Stage 4 내부 선행 없음 — FR-014와 병렬 착수 가능.
-흡수: 개정 2.0의 FR-044(saveOnboardingStep) · FR-045(submitConsent) · FR-046(requestPartnerCard) — 3건
+Stage 4 · 5건 중 1번. Stage 4 내부 선행 없음 — FR-013와 병렬 착수 가능.
+흡수: 개정 2.0의 FR-035(saveOnboardingStep) · FR-036(submitConsent) · FR-037(requestPartnerCard) — 3건
 -->
 
 ## 🎯 Summary
@@ -30,23 +30,23 @@ Stage 4 · 5건 중 1번. Stage 4 내부 선행 없음 — FR-014와 병렬 착�
 
 ## ✅ Task Breakdown (실행 계획)
 
-**(구 FR-044) `saveOnboardingStep`**
+**(구 FR-035) `saveOnboardingStep`**
 - [ ] FR-006 골격 5단계를 그대로 탄다 — zod 검증 → 동의 재확인 → 기입 → 이벤트 → 재검증
 - [ ] 🔴 **매 단계 커밋** — 세션 메모리·클라이언트 상태에 두지 않는다
 - [ ] `onboarding_drafts`에 **24h 보존** · 재진입 시 직전 단계 복원
 - [ ] `onboarding_step` 이벤트 적재 (같은 트랜잭션) · 무효화 태그 `guardian:{id}`
 
-**(구 FR-045) `submitConsent`**
+**(구 FR-036) `submitConsent`**
 - [ ] 🔴 동의 기록에 **동의 버전**을 함께 저장 — 문구가 바뀌면 어느 버전에 동의했는지가 규제 증거다
 - [ ] `ConsentState` PENDING → COMPLETED 상태 전이
 - [ ] 이벤트 적재 · 무효화 태그 `consent:{guardianId}`
 - [ ] ⚠️ **동의 판정은 하지 않는다** — 판정 지점은 FR-011의 `(child)/layout.tsx` 하나뿐이다. 이 액션은 **기록만** 한다
 
-**(구 FR-046) `requestPartnerCard`**
+**(구 FR-037) `requestPartnerCard`**
 - [ ] 제휴사 카드 발급 API 호출 (Server Action 내 `fetch` · `PARTNER_API_KEY`)
 - [ ] 성공 시 `PARTNER_CARDS` 행 생성 · 무효화 태그 `card:{childId}`
 - [ ] 🔴 **실패 시 입력값을 DB에 24시간 보존** — 재진입 시 **재입력 항목 0건**(ACE-8.1)
-- [ ] 오류 사유를 **사용자 언어로** 표시할 수 있는 형태로 반환 (화면은 FR-013 · 디자인은 UX-002)
+- [ ] 오류 사유를 **사용자 언어로** 표시할 수 있는 형태로 반환 (화면은 UI-001 · 디자인은 UX-002)
 - [ ] 외부 호출 실패와 우리 쪽 실패를 **구분**해 반환 — 재시도 가능 여부가 다르다
 - [ ] 본인인증 호출 **1.2회/건 초과 시 알림** 대상으로 계측 (REQ-NF-016)
 
@@ -77,9 +77,9 @@ Stage 4 · 5건 중 1번. Stage 4 내부 선행 없음 — FR-014와 병렬 착�
 
 - 🔴 **규제:** 동의 기록에 **버전 포함** (REQ-NF-008) — 문구 변경 이력과 대조 가능해야 한다
 - 🔴 **신뢰:** 카드 신청 실패 시 입력값 **24h 보존** — 보호자가 처음부터 다시 입력하면 온보딩 이탈로 직결된다(AC-8.3 이탈률 ≤ 30%)
-- **경계:** 제휴사 호출은 **Server Action 내 `fetch`** — 웹훅(FR-024)과 방향이 반대다
+- **경계:** 제휴사 호출은 **Server Action 내 `fetch`** — 웹훅(FR-019)과 방향이 반대다
 - **멱등:** 3종 모두 `idempotencyKey` 필수 (FR-008 C-01)
-- **범위:** 화면은 FR-013, 동의 판정은 FR-011이 한다
+- **범위:** 화면은 UI-001, 동의 판정은 FR-011이 한다
 
 ## 🏁 Definition of Done (DoD)
 
@@ -97,7 +97,7 @@ Stage 4 · 5건 중 1번. Stage 4 내부 선행 없음 — FR-014와 병렬 착�
 > 💡 이슈 생성 전에는 `FR-###`로 적고, 생성 후 `tasks/_index.md`의 매핑으로 `#번호`를 일괄 치환한다.
 
 - **Depends on:** FR-006(골격) · FR-008(C-01 계약)
-- **Blocks (직접 2건):** FR-013(온보딩·공개 화면) · FR-025(제휴사 웹훅 수신·매칭)
+- **Blocks (직접 2건):** UI-001(온보딩·공개 화면) · FR-020(제휴사 웹훅 수신·매칭)
 - **간접 12건**
 - **차단 항목:**
   - **D-TEC-2** — 제휴사 계약 조건. 카드 발급 API 스펙이 확정돼야 `requestPartnerCard`의 **성공 경로**를 완성할 수 있다. **실패 보존 경로는 지금 만들 수 있다**

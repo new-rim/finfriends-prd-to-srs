@@ -1,6 +1,6 @@
 ---
 name: "[Sec] FR-011: 동의 게이트 판정·Action 재확인"
-about: Stage 3 · 개정 3.0 FR-011 (개정 2.0 FR-041·042 흡수)
+about: Stage 3 · 개정 3.0 FR-011 (개정 2.0 FR-033·042 흡수)
 title: "[Sec] FR-011: 동의 게이트 — (child)/layout.tsx 확정 판정 · noStore · Action 재확인"
 labels: "type:sec, epic:E6, complexity:H, milestone:B1, gate:regulatory"
 assignees: ''
@@ -8,7 +8,7 @@ assignees: ''
 
 <!--
 Stage 3 · 5건 중 3번. Stage 3 내부 선행: FR-010.
-흡수: 개정 2.0의 FR-041(layout 확정 판정) · FR-042(Action 래퍼 재확인) — 2건
+흡수: 개정 2.0의 FR-033(layout 확정 판정) · FR-034(Action 래퍼 재확인) — 2건
 -->
 
 ## 🎯 Summary
@@ -29,14 +29,14 @@ Stage 3 · 5건 중 3번. Stage 3 내부 선행: FR-010.
 
 ## ✅ Task Breakdown (실행 계획)
 
-**(구 FR-041) `(child)/layout.tsx` — 2겹째 · 유일한 확정 판정 지점**
+**(구 FR-033) `(child)/layout.tsx` — 2겹째 · 유일한 확정 판정 지점**
 - [ ] 🔴 **`noStore()`** 를 레이아웃 최상단에 — 이 응답을 캐시 대상에서 제외한다. **이것이 없으면 나머지가 전부 무의미하다**
 - [ ] 요청용 클라이언트로 `consent_state = COMPLETED` **DB 조회** (FR-003의 `withGuardian`)
 - [ ] 미완이면 **차단 화면** 렌더 — **아동 라우트 렌더 자체가 일어나지 않는다**
-- [ ] `app_events`에 **`consent_gate_blocked`** 적재 → 트리거가 규제 알림 큐로 (실제 알림 라우팅은 FR-040)
+- [ ] `app_events`에 **`consent_gate_blocked`** 적재 → 트리거가 규제 알림 큐로 (실제 알림 라우팅은 FR-032)
 - [ ] 차단 화면은 UX-002의 디자인을 따른다
 
-**(구 FR-042) Server Action 래퍼 — 3겹째**
+**(구 FR-034) Server Action 래퍼 — 3겹째**
 - [ ] `assertConsentCompleted(tx)` — FR-006 골격의 **②단계 자리**를 실제 구현으로 채운다
 - [ ] 🔴 **트랜잭션 안에서 조회 · 캐시 금지** — 쓰기는 Server Action으로 직접 들어올 수 있으므로 읽기 경로 차단만으로는 부족하다
 - [ ] 실패 시 **쓰기 거부 + 감사 로그**
@@ -77,7 +77,7 @@ Stage 3 · 5건 중 3번. Stage 3 내부 선행: FR-010.
 
 - 🔴 **규제:** 동의 상태 **캐시 금지** (CON-REG-01 · REQ-TEC-006). `noStore()`가 빠지면 정적 최적화가 동의 상태를 굳힌다
 - 🔴 **규제:** 동의 미완 진입 **100% 차단** (REQ-NF-008) — 부분 차단은 미충족이다
-- **관측:** `consent_gate_blocked`는 **즉시 알림 · 30분 내 확인** 대상이다 (REQ-NF-017 — 라우팅은 FR-040)
+- **관측:** `consent_gate_blocked`는 **즉시 알림 · 30분 내 확인** 대상이다 (REQ-NF-017 — 라우팅은 FR-032)
 - **경계:** 확정 판정 지점은 **`(child)/layout.tsx` 하나뿐**이다. 다른 곳에서 동의를 판정하면 지점이 늘어나 REQ-TEC-006의 「4개」가 깨진다
 - **성능:** 매 요청 DB 조회가 §8.1 예산에 들어간다 — **캐시로 줄일 수 없는 비용**임을 예산에 반영한다
 
@@ -95,7 +95,7 @@ Stage 3 · 5건 중 3번. Stage 3 내부 선행: FR-010.
 ## 🚧 Dependencies & Blockers
 
 - **Depends on:** FR-003(`withGuardian`·RLS) · FR-006(골격 ②단계 자리) · FR-010(미들웨어 — 1겹째)
-- **Blocks (직접 3건):** FR-016(학습·아동 온보딩 화면) · FR-040(관측 — 즉시 알림 라우팅) · FR-046(기능 E2E)
+- **Blocks (직접 3건):** UI-002(학습·아동 온보딩 화면) · FR-032(관측 — 즉시 알림 라우팅) · FR-037(기능 E2E)
 - **간접 2건**
 - **차단 항목:** 없음
 - **UX 선행:** `UX-002`(차단 화면 디자인)
