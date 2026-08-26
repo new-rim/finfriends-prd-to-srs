@@ -1,0 +1,2039 @@
+[
+ {
+  "id": "FR-001",
+  "file": "tasks/stage-1/FR-001_platform-setup.md",
+  "title": "[Infra] FR-001: 플랫폼 셋업 — 배포 단위 1개 · 리전 고정 · 환경 스코프 분리",
+  "labels": [
+   "blocked:D-TEC-3",
+   "blocked:D-TEC-4",
+   "build:B0",
+   "complexity:H",
+   "critical-path",
+   "epic:E1",
+   "lane:P",
+   "type:infra"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-07",
+  "target": "2026-09-17",
+  "es": 0,
+  "ef": 9,
+  "dur": 9,
+  "slack": 0,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 7,
+  "ac": 1,
+  "downstream": 44,
+  "deps": [
+   "UX-001"
+  ],
+  "blocked": [
+   "T-2",
+   "D-TEC-4"
+  ],
+  "critical": true,
+  "parts": [
+   [
+    "FR-001a",
+    6,
+    0,
+    6,
+    0
+   ],
+   [
+    "FR-001b",
+    3,
+    6,
+    9,
+    2
+   ]
+  ],
+  "num": 1
+ },
+ {
+  "id": "FR-002",
+  "file": "tasks/stage-1/FR-002_prisma-schema.md",
+  "title": "[DB] FR-002: Prisma 스키마 — app·pii 다중 스키마 · 모델 전수",
+  "labels": [
+   "blocked:T-3",
+   "build:B0",
+   "complexity:H",
+   "critical-path",
+   "epic:E2",
+   "lane:P",
+   "type:db"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-11",
+  "target": "2026-09-17",
+  "es": 4,
+  "ef": 9,
+  "dur": 5,
+  "slack": 0,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 1,
+  "ac": 0,
+  "downstream": 43,
+  "deps": [
+   "FR-001"
+  ],
+  "blocked": [
+   "T-3",
+   "D-TEC-4"
+  ],
+  "critical": true,
+  "parts": [
+   [
+    "FR-002",
+    5,
+    4,
+    9,
+    0
+   ]
+  ],
+  "num": 3
+ },
+ {
+  "id": "FR-003",
+  "file": "tasks/stage-1/FR-003_data-access-layer.md",
+  "title": "[DB] FR-003: 데이터 접근 계층 — 2클라이언트 · RLS 2계층 · pii 권한 회수",
+  "labels": [
+   "blocked:T-3",
+   "build:B0",
+   "complexity:H",
+   "critical-path",
+   "epic:E2",
+   "gate:regulatory",
+   "lane:P",
+   "type:db",
+   "type:sec"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-16",
+  "target": "2026-09-22",
+  "es": 7,
+  "ef": 12,
+  "dur": 10,
+  "slack": 0,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 8,
+  "ac": 3,
+  "downstream": 40,
+  "deps": [
+   "FR-002"
+  ],
+  "blocked": [
+   "T-3"
+  ],
+  "critical": true,
+  "parts": [
+   [
+    "FR-003a",
+    5,
+    7,
+    12,
+    0
+   ],
+   [
+    "FR-003b",
+    5,
+    7,
+    12,
+    0
+   ]
+  ],
+  "num": 4
+ },
+ {
+  "id": "FR-004",
+  "file": "tasks/stage-1/FR-004_star-ledger-atomic-write.md",
+  "title": "[DB] FR-004: 별 원장 원자 기입 — advisory lock + 단일 INSERT + UNIQUE(idempotency_key)",
+  "labels": [
+   "build:B0",
+   "complexity:H",
+   "epic:E2",
+   "gate:regulatory",
+   "lane:P",
+   "slack-tight",
+   "type:db"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-16",
+  "target": "2026-09-23",
+  "es": 7,
+  "ef": 13,
+  "dur": 6,
+  "slack": 1,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 1,
+  "ac": 2,
+  "downstream": 33,
+  "deps": [
+   "FR-002"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-004",
+    6,
+    7,
+    13,
+    1
+   ]
+  ],
+  "num": 5
+ },
+ {
+  "id": "FR-005",
+  "file": "tasks/stage-3/FR-005_prebuild-gates.md",
+  "title": "[Infra] FR-005: prebuild 게이트 7종 — 빌드가 유일한 규제 강제 지점",
+  "labels": [
+   "build:B0",
+   "complexity:H",
+   "epic:E3",
+   "gate:regulatory",
+   "lane:P",
+   "slack-tight",
+   "type:infra",
+   "type:sec"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-09-23",
+  "target": "2026-10-08",
+  "es": 12,
+  "ef": 24,
+  "dur": 12,
+  "slack": 4,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 8,
+  "ac": 8,
+  "downstream": 13,
+  "deps": [
+   "FR-001",
+   "FR-002",
+   "FR-003"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-005",
+    12,
+    12,
+    24,
+    4
+   ]
+  ],
+  "num": 8
+ },
+ {
+  "id": "FR-006",
+  "file": "tasks/stage-2/FR-006_server-action-skeleton.md",
+  "title": "[Contract] FR-006: Server Action 공통 골격 — 5단계 실행 규칙 · 멱등 키 · 캐시 태그",
+  "labels": [
+   "build:B0",
+   "complexity:H",
+   "epic:E4",
+   "gate:regulatory",
+   "lane:D",
+   "slack-tight",
+   "type:contract"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-21",
+  "target": "2026-09-29",
+  "es": 10,
+  "ef": 17,
+  "dur": 7,
+  "slack": 1,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 3,
+  "ac": 1,
+  "downstream": 32,
+  "deps": [
+   "FR-001",
+   "FR-003",
+   "FR-004"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-006",
+    7,
+    10,
+    17,
+    1
+   ]
+  ],
+  "num": 7
+ },
+ {
+  "id": "FR-007",
+  "file": "tasks/stage-2/FR-007_domain-pure-functions.md",
+  "title": "[Contract] FR-007: domain/ 순수 판정 함수 — 나무 승급·정체·계획 대조·WPA",
+  "labels": [
+   "build:B0",
+   "complexity:H",
+   "epic:E4",
+   "lane:D",
+   "slack-flex",
+   "type:contract"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-18",
+  "target": "2026-09-25",
+  "es": 9,
+  "ef": 15,
+  "dur": 6,
+  "slack": 7,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 1,
+  "ac": 2,
+  "downstream": 20,
+  "deps": [
+   "FR-002"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-007",
+    6,
+    9,
+    15,
+    7
+   ]
+  ],
+  "num": 6
+ },
+ {
+  "id": "FR-008",
+  "file": "tasks/stage-2/FR-008_domain-contracts.md",
+  "title": "[Contract] FR-008: 도메인 계약 6종 — Server Action 20종의 입력 스키마·반환 타입·실패 분기",
+  "labels": [
+   "build:B0",
+   "complexity:M",
+   "epic:E5",
+   "lane:D",
+   "slack-tight",
+   "type:contract"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-24",
+  "target": "2026-09-28",
+  "es": 13,
+  "ef": 16,
+  "dur": 5,
+  "slack": 3,
+  "lane": "D",
+  "cx": "M",
+  "absorb": 6,
+  "ac": 0,
+  "downstream": 30,
+  "deps": [
+   "FR-002",
+   "FR-006"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-008a",
+    3,
+    13,
+    16,
+    3
+   ],
+   [
+    "FR-008b",
+    2,
+    13,
+    15,
+    3
+   ]
+  ],
+  "num": 10
+ },
+ {
+  "id": "FR-009",
+  "file": "tasks/stage-2/FR-009_mocks.md",
+  "title": "[Mock] FR-009: Mock 3종 — 웹훅 픽스처 · 화면 시드 · 배치 산출값 스텁",
+  "labels": [
+   "build:B0",
+   "complexity:M",
+   "critical-path",
+   "epic:E5",
+   "lane:P",
+   "type:mock"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-23",
+  "target": "2026-09-28",
+  "es": 12,
+  "ef": 16,
+  "dur": 4,
+  "slack": 0,
+  "lane": "P",
+  "cx": "M",
+  "absorb": 3,
+  "ac": 0,
+  "downstream": 20,
+  "deps": [
+   "FR-002",
+   "FR-003"
+  ],
+  "blocked": [],
+  "critical": true,
+  "parts": [
+   [
+    "FR-009",
+    4,
+    12,
+    16,
+    0
+   ]
+  ],
+  "num": 9
+ },
+ {
+  "id": "FR-010",
+  "file": "tasks/stage-3/FR-010_auth-middleware.md",
+  "title": "[Sec] FR-010: 보호자 전용 인증 — Supabase Auth · middleware · 아동 프로필 서명 쿠키",
+  "labels": [
+   "build:B1",
+   "complexity:M",
+   "epic:E6",
+   "gate:regulatory",
+   "lane:P",
+   "slack-flex",
+   "type:feature-command",
+   "type:sec"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-29",
+  "target": "2026-10-05",
+  "es": 16,
+  "ef": 21,
+  "dur": 5,
+  "slack": 9,
+  "lane": "P",
+  "cx": "M",
+  "absorb": 3,
+  "ac": 1,
+  "downstream": 10,
+  "deps": [
+   "FR-001",
+   "FR-002",
+   "FR-008"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-010",
+    5,
+    16,
+    21,
+    9
+   ]
+  ],
+  "num": 11
+ },
+ {
+  "id": "FR-011",
+  "file": "tasks/stage-3/FR-011_consent-gate.md",
+  "title": "[Sec] FR-011: 동의 게이트 — (child)/layout.tsx 확정 판정 · noStore · Action 재확인",
+  "labels": [
+   "build:B1",
+   "complexity:H",
+   "epic:E6",
+   "gate:regulatory",
+   "lane:P",
+   "slack-flex",
+   "type:sec"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-10-06",
+  "target": "2026-10-14",
+  "es": 21,
+  "ef": 28,
+  "dur": 7,
+  "slack": 9,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 2,
+  "ac": 3,
+  "downstream": 5,
+  "deps": [
+   "FR-003",
+   "FR-006",
+   "FR-010"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-011",
+    7,
+    21,
+    28,
+    9
+   ]
+  ],
+  "num": 18
+ },
+ {
+  "id": "FR-012",
+  "file": "tasks/stage-4/FR-012_onboarding-actions.md",
+  "title": "[Feature/Command] FR-012: 보호자 온보딩 — 단계 커밋 · 동의 기록 · 카드 신청 실패 보존",
+  "labels": [
+   "blocked:D-TEC-2",
+   "build:B1",
+   "complexity:H",
+   "epic:E7",
+   "gate:regulatory",
+   "lane:D",
+   "slack-tight",
+   "type:feature-command"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-09-30",
+  "target": "2026-10-09",
+  "es": 17,
+  "ef": 25,
+  "dur": 8,
+  "slack": 1,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 3,
+  "ac": 3,
+  "downstream": 19,
+  "deps": [
+   "FR-006",
+   "FR-008"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-012",
+    8,
+    17,
+    25,
+    1
+   ]
+  ],
+  "num": 13
+ },
+ {
+  "id": "FR-013",
+  "file": "tasks/stage-4/FR-013_grant-star.md",
+  "title": "[Feature/Command] FR-013: grantStar 내부 지급 경로 — 트리거 8종 · 학습/실천 경로 분리",
+  "labels": [
+   "build:B2",
+   "complexity:H",
+   "epic:E8",
+   "gate:regulatory",
+   "lane:D",
+   "slack-tight",
+   "type:feature-command"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-09-30",
+  "target": "2026-10-07",
+  "es": 17,
+  "ef": 23,
+  "dur": 6,
+  "slack": 4,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 1,
+  "ac": 1,
+  "downstream": 15,
+  "deps": [
+   "FR-004",
+   "FR-006",
+   "FR-008"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-013",
+    6,
+    17,
+    23,
+    4
+   ]
+  ],
+  "num": 14
+ },
+ {
+  "id": "FR-014",
+  "file": "tasks/stage-4/FR-014_learning-quiz.md",
+  "title": "[Feature/Command] FR-014: 학습 — 원고 DB 적재·조회 · 이수 기록 · 퀴즈 정답 수 갱신",
+  "labels": [
+   "build:B2",
+   "complexity:M",
+   "epic:E8",
+   "lane:D",
+   "slack-flex",
+   "type:feature-command",
+   "type:feature-query"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-10-08",
+  "target": "2026-10-13",
+  "es": 23,
+  "ef": 27,
+  "dur": 4,
+  "slack": 23,
+  "lane": "D",
+  "cx": "M",
+  "absorb": 3,
+  "ac": 0,
+  "downstream": 1,
+  "deps": [
+   "FR-002",
+   "FR-007",
+   "FR-008",
+   "FR-013"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-014",
+    4,
+    23,
+    27,
+    23
+   ]
+  ],
+  "num": 21
+ },
+ {
+  "id": "FR-015",
+  "file": "tasks/stage-4/FR-015_mission-loop.md",
+  "title": "[Feature/Command] FR-015: 미션 루프 — 생성·완료 보고·승인(원자 4건)·거절·일괄 승인",
+  "labels": [
+   "build:B3",
+   "complexity:H",
+   "epic:E9",
+   "gate:regulatory",
+   "lane:D",
+   "slack-flex",
+   "type:feature-command"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-10-08",
+  "target": "2026-10-20",
+  "es": 23,
+  "ef": 32,
+  "dur": 9,
+  "slack": 15,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 4,
+  "ac": 5,
+  "downstream": 2,
+  "deps": [
+   "FR-006",
+   "FR-007",
+   "FR-008",
+   "FR-013"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-015",
+    9,
+    23,
+    32,
+    15
+   ]
+  ],
+  "num": 22
+ },
+ {
+  "id": "FR-016",
+  "file": "tasks/stage-6/FR-016_approvals-query.md",
+  "title": "[Feature/Query] FR-016: 승인 대기 조회 — 「승인 대기 N건」 집계 · 상태 3종 구별 · 일괄 후보",
+  "labels": [
+   "build:B3",
+   "complexity:M",
+   "epic:E9",
+   "lane:D",
+   "slack-flex",
+   "type:feature-query"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-21",
+  "target": "2026-10-27",
+  "es": 32,
+  "ef": 37,
+  "dur": 5,
+  "slack": 15,
+  "lane": "D",
+  "cx": "M",
+  "absorb": 1,
+  "ac": 4,
+  "downstream": 1,
+  "deps": [
+   "FR-007",
+   "FR-015"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-016",
+    5,
+    32,
+    37,
+    15
+   ]
+  ],
+  "num": 34
+ },
+ {
+  "id": "FR-017",
+  "file": "tasks/stage-4/FR-017_reward-actions.md",
+  "title": "[Feature/Command] FR-017: 보상 — 위시리스트 단계 보상 · 아바타 교환(차감도 같은 원장 경로)",
+  "labels": [
+   "build:B3",
+   "complexity:M",
+   "epic:E10",
+   "gate:regulatory",
+   "lane:D",
+   "slack-flex",
+   "type:feature-command"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-10-08",
+  "target": "2026-10-12",
+  "es": 23,
+  "ef": 26,
+  "dur": 3,
+  "slack": 27,
+  "lane": "D",
+  "cx": "M",
+  "absorb": 2,
+  "ac": 0,
+  "downstream": 1,
+  "deps": [
+   "FR-002",
+   "FR-008",
+   "FR-013"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-017",
+    3,
+    23,
+    26,
+    27
+   ]
+  ],
+  "num": 23
+ },
+ {
+  "id": "FR-018",
+  "file": "tasks/stage-5/FR-018_plan-card-action.md",
+  "title": "[Feature/Command] FR-018: createPlanCard — 어디서·업종·얼마까지 저장",
+  "labels": [
+   "build:B4",
+   "complexity:M",
+   "epic:E11",
+   "lane:D",
+   "slack-tight",
+   "type:feature-command"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-30",
+  "target": "2026-10-05",
+  "es": 17,
+  "ef": 21,
+  "dur": 4,
+  "slack": 1,
+  "lane": "D",
+  "cx": "M",
+  "absorb": 1,
+  "ac": 1,
+  "downstream": 13,
+  "deps": [
+   "FR-006",
+   "FR-008"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-018",
+    4,
+    17,
+    21,
+    1
+   ]
+  ],
+  "num": 15
+ },
+ {
+  "id": "FR-019",
+  "file": "tasks/stage-2/FR-019_partner-webhook-contract.md",
+  "title": "[Contract] FR-019: 웹훅 수신 공통 — HMAC 서명 검증 · 타임스탬프 5분 창 · 200 응답 규약",
+  "labels": [
+   "blocked:D-TEC-2",
+   "build:B4",
+   "complexity:H",
+   "critical-path",
+   "epic:E11",
+   "gate:regulatory",
+   "lane:D",
+   "type:contract"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-29",
+  "target": "2026-10-06",
+  "es": 16,
+  "ef": 22,
+  "dur": 6,
+  "slack": 0,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 1,
+  "ac": 1,
+  "downstream": 19,
+  "deps": [
+   "FR-001",
+   "FR-002",
+   "FR-009"
+  ],
+  "blocked": [
+   "T-1"
+  ],
+  "critical": true,
+  "parts": [
+   [
+    "FR-019",
+    6,
+    16,
+    22,
+    0
+   ]
+  ],
+  "num": 12
+ },
+ {
+  "id": "FR-020",
+  "file": "tasks/stage-5/FR-020_partner-webhook-matching.md",
+  "title": "[Feature/Command] FR-020: 웹훅 수신 · 결제↔계획 매칭 · DLQ · 카드 상태 · 해지",
+  "labels": [
+   "blocked:D-TEC-2",
+   "build:B4",
+   "complexity:H",
+   "critical-path",
+   "epic:E11",
+   "lane:D",
+   "type:feature-command"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-10-07",
+  "target": "2026-10-20",
+  "es": 22,
+  "ef": 32,
+  "dur": 10,
+  "slack": 0,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 5,
+  "ac": 6,
+  "downstream": 12,
+  "deps": [
+   "FR-007",
+   "FR-008",
+   "FR-012",
+   "FR-018",
+   "FR-019"
+  ],
+  "blocked": [
+   "T-1"
+  ],
+  "critical": true,
+  "parts": [
+   [
+    "FR-020",
+    10,
+    22,
+    32,
+    0
+   ]
+  ],
+  "num": 20
+ },
+ {
+  "id": "FR-021",
+  "file": "tasks/stage-5/FR-021_retrospective.md",
+  "title": "[Feature/Command] FR-021: 회고 — 문장 풀 비복원 배정 · 두 갈래 판정 · ⭐ 기입 분기",
+  "labels": [
+   "build:B5",
+   "complexity:H",
+   "critical-path",
+   "epic:E12",
+   "lane:D",
+   "type:feature-command"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-14",
+  "target": "2026-10-23",
+  "es": 27,
+  "ef": 35,
+  "dur": 8,
+  "slack": 0,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 2,
+  "ac": 5,
+  "downstream": 7,
+  "deps": [
+   "FR-002",
+   "FR-008",
+   "FR-013",
+   "FR-020"
+  ],
+  "blocked": [],
+  "critical": true,
+  "parts": [
+   [
+    "FR-021",
+    8,
+    27,
+    35,
+    0
+   ]
+  ],
+  "num": 29
+ },
+ {
+  "id": "FR-022",
+  "file": "tasks/stage-6/FR-022_retro-queue-query.md",
+  "title": "[Feature/Query] FR-022: 미완 회고 큐 조회 · 큐 3건 초과 시 요약 회고 병합",
+  "labels": [
+   "build:B5",
+   "complexity:M",
+   "epic:E12",
+   "lane:D",
+   "slack-flex",
+   "type:feature-query"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-26",
+  "target": "2026-10-29",
+  "es": 35,
+  "ef": 39,
+  "dur": 4,
+  "slack": 10,
+  "lane": "D",
+  "cx": "M",
+  "absorb": 1,
+  "ac": 1,
+  "downstream": 1,
+  "deps": [
+   "FR-021"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-022",
+    4,
+    35,
+    39,
+    10
+   ]
+  ],
+  "num": 39
+ },
+ {
+  "id": "FR-023",
+  "file": "tasks/stage-3/FR-023_batch-infrastructure.md",
+  "title": "[Infra] FR-023: 배치 기반 설비 — 하트비트 · pg_net 진입점 · 등록 목록 대조",
+  "labels": [
+   "blocked:D-TEC-7",
+   "build:B0",
+   "complexity:M",
+   "epic:E13",
+   "lane:P",
+   "slack-tight",
+   "type:contract",
+   "type:infra"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-10-09",
+  "target": "2026-10-14",
+  "es": 24,
+  "ef": 28,
+  "dur": 4,
+  "slack": 4,
+  "lane": "P",
+  "cx": "M",
+  "absorb": 3,
+  "ac": 0,
+  "downstream": 11,
+  "deps": [
+   "FR-001",
+   "FR-002",
+   "FR-005",
+   "FR-019"
+  ],
+  "blocked": [
+   "T-4"
+  ],
+  "critical": false,
+  "parts": [
+   [
+    "FR-023",
+    4,
+    24,
+    28,
+    4
+   ]
+  ],
+  "num": 24
+ },
+ {
+  "id": "FR-024",
+  "file": "tasks/stage-8/FR-024_batch-audit-reconcile.md",
+  "title": "[Infra] FR-024: pg_cron 점검 배치 — 파티션 선행 생성 · 원장 정산 · 권한 스캔 · 계측 건강성 · 문장 풀",
+  "labels": [
+   "blocked:D-TEC-7",
+   "build:B5",
+   "complexity:H",
+   "critical-path",
+   "epic:E14",
+   "gate:regulatory",
+   "lane:P",
+   "type:infra",
+   "type:sec"
+  ],
+  "milestone": "M4 검증·릴리스 게이트",
+  "start": "2026-10-26",
+  "target": "2026-11-05",
+  "es": 35,
+  "ef": 44,
+  "dur": 9,
+  "slack": 0,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 5,
+  "ac": 4,
+  "downstream": 1,
+  "deps": [
+   "FR-003",
+   "FR-004",
+   "FR-021",
+   "FR-023"
+  ],
+  "blocked": [
+   "T-4"
+  ],
+  "critical": true,
+  "parts": [
+   [
+    "FR-024",
+    9,
+    35,
+    44,
+    0
+   ]
+  ],
+  "num": 40
+ },
+ {
+  "id": "FR-025",
+  "file": "tasks/stage-5/FR-025_bat1-tree-judgment.md",
+  "title": "[Feature/Command] FR-025: BAT-1 (pg_cron) 나무 승급·정체 판정 · stall_days 산출",
+  "labels": [
+   "blocked:D-TEC-7",
+   "build:B5",
+   "complexity:H",
+   "epic:E14",
+   "lane:D",
+   "slack-tight",
+   "type:feature-command"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-15",
+  "target": "2026-10-22",
+  "es": 28,
+  "ef": 34,
+  "dur": 6,
+  "slack": 4,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 1,
+  "ac": 1,
+  "downstream": 2,
+  "deps": [
+   "FR-007",
+   "FR-023"
+  ],
+  "blocked": [
+   "T-4"
+  ],
+  "critical": false,
+  "parts": [
+   [
+    "FR-025",
+    6,
+    28,
+    34,
+    4
+   ]
+  ],
+  "num": 30
+ },
+ {
+  "id": "FR-026",
+  "file": "tasks/stage-5/FR-026_aggregation-batches.md",
+  "title": "[Feature/Command] FR-026: 집계 배치 — WPA 주간 · 주간 지표 · 월간 숲 스냅샷 · 월간 업종별",
+  "labels": [
+   "blocked:D-TEC-7",
+   "build:B5",
+   "complexity:H",
+   "epic:E14",
+   "lane:D",
+   "slack-tight",
+   "type:feature-command"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-21",
+  "target": "2026-11-03",
+  "es": 32,
+  "ef": 42,
+  "dur": 10,
+  "slack": 1,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 4,
+  "ac": 7,
+  "downstream": 2,
+  "deps": [
+   "FR-003",
+   "FR-007",
+   "FR-020",
+   "FR-023"
+  ],
+  "blocked": [
+   "T-4"
+  ],
+  "critical": false,
+  "parts": [
+   [
+    "FR-026",
+    10,
+    32,
+    42,
+    1
+   ]
+  ],
+  "num": 35
+ },
+ {
+  "id": "FR-027",
+  "file": "tasks/stage-5/FR-027_notification-channels.md",
+  "title": "[Feature/Command] FR-027: 알림 — 구독 등록 · Web Push · 채널 폴백 · SMS · 앱 삭제 분기",
+  "labels": [
+   "blocked:D-TEC-8",
+   "build:B5",
+   "complexity:H",
+   "epic:E15",
+   "lane:D",
+   "slack-flex",
+   "type:feature-command"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-09-30",
+  "target": "2026-10-13",
+  "es": 17,
+  "ef": 27,
+  "dur": 10,
+  "slack": 18,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 5,
+  "ac": 5,
+  "downstream": 2,
+  "deps": [
+   "FR-006",
+   "FR-008"
+  ],
+  "blocked": [
+   "D-TEC-8"
+  ],
+  "critical": false,
+  "parts": [
+   [
+    "FR-027",
+    10,
+    17,
+    27,
+    18
+   ]
+  ],
+  "num": 16
+ },
+ {
+  "id": "FR-028",
+  "file": "tasks/stage-3/FR-028_vercel-cron-base.md",
+  "title": "[Infra] FR-028: Vercel Cron 기반 — CRON_SECRET 인증 · 가용성 프로브 · 원가 집계",
+  "labels": [
+   "blocked:D-TEC-3",
+   "build:B5",
+   "complexity:M",
+   "epic:E16",
+   "lane:P",
+   "slack-flex",
+   "type:contract",
+   "type:infra"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-10-15",
+  "target": "2026-10-20",
+  "es": 28,
+  "ef": 32,
+  "dur": 4,
+  "slack": 13,
+  "lane": "P",
+  "cx": "M",
+  "absorb": 3,
+  "ac": 0,
+  "downstream": 2,
+  "deps": [
+   "FR-001",
+   "FR-023"
+  ],
+  "blocked": [
+   "T-2"
+  ],
+  "critical": false,
+  "parts": [
+   [
+    "FR-028",
+    4,
+    28,
+    32,
+    13
+   ]
+  ],
+  "num": 31
+ },
+ {
+  "id": "FR-029",
+  "file": "tasks/stage-5/FR-029_inactivity-dlq.md",
+  "title": "[Feature/Command] FR-029: BAT-2 미접속 알림 발송(오탐 0건) · 웹훅 DLQ 재처리",
+  "labels": [
+   "build:B5",
+   "complexity:H",
+   "epic:E16",
+   "lane:D",
+   "slack-flex",
+   "type:feature-command"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-21",
+  "target": "2026-10-29",
+  "es": 32,
+  "ef": 39,
+  "dur": 7,
+  "slack": 13,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 2,
+  "ac": 3,
+  "downstream": 1,
+  "deps": [
+   "FR-020",
+   "FR-027",
+   "FR-028"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-029",
+    7,
+    32,
+    39,
+    13
+   ]
+  ],
+  "num": 36
+ },
+ {
+  "id": "FR-030",
+  "file": "tasks/stage-6/FR-030_growth-tree-query.md",
+  "title": "[Feature/Query] FR-030: 성장 나무 병렬 4쿼리 — 배치 산출값 읽기 전용 · p95 예산 배분",
+  "labels": [
+   "build:B5",
+   "complexity:H",
+   "epic:E17",
+   "lane:D",
+   "slack-tight",
+   "type:feature-query"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-23",
+  "target": "2026-10-29",
+  "es": 34,
+  "ef": 39,
+  "dur": 5,
+  "slack": 4,
+  "lane": "D",
+  "cx": "H",
+  "absorb": 1,
+  "ac": 0,
+  "downstream": 1,
+  "deps": [
+   "FR-006",
+   "FR-025"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-030",
+    5,
+    34,
+    39,
+    4
+   ]
+  ],
+  "num": 38
+ },
+ {
+  "id": "FR-031",
+  "file": "tasks/stage-5/FR-031_pwa-offline.md",
+  "title": "[Infra] FR-031: PWA 셸 · IndexedDB 오프라인 큐 · flush · iOS 포그라운드 분기",
+  "labels": [
+   "build:B3",
+   "complexity:H",
+   "epic:E18",
+   "lane:P",
+   "slack-flex",
+   "type:feature-command",
+   "type:infra"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-09-30",
+  "target": "2026-10-09",
+  "es": 17,
+  "ef": 25,
+  "dur": 8,
+  "slack": 28,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 4,
+  "ac": 3,
+  "downstream": 1,
+  "deps": [
+   "FR-001",
+   "FR-006",
+   "FR-008"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-031",
+    8,
+    17,
+    25,
+    28
+   ]
+  ],
+  "num": 17
+ },
+ {
+  "id": "FR-032",
+  "file": "tasks/stage-8/FR-032_observability.md",
+  "title": "[Infra] FR-032: 관측 — 로그 외부 드레인 · 규제 이벤트 30분 SLA · 배치 침묵 감지",
+  "labels": [
+   "blocked:D-TEC-3",
+   "build:B6",
+   "complexity:H",
+   "epic:E19",
+   "gate:regulatory",
+   "lane:P",
+   "slack-flex",
+   "type:infra"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-15",
+  "target": "2026-10-23",
+  "es": 28,
+  "ef": 35,
+  "dur": 7,
+  "slack": 9,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 3,
+  "ac": 2,
+  "downstream": 2,
+  "deps": [
+   "FR-001",
+   "FR-011",
+   "FR-023"
+  ],
+  "blocked": [
+   "T-2"
+  ],
+  "critical": false,
+  "parts": [
+   [
+    "FR-032",
+    7,
+    28,
+    35,
+    9
+   ]
+  ],
+  "num": 32
+ },
+ {
+  "id": "FR-033",
+  "file": "tasks/stage-8/FR-033_budget-instrumentation.md",
+  "title": "[Infra] FR-033: 구간 계측 — 서버/DB/재검증/렌더 타이밍 · 예산 초과 보고 경로",
+  "labels": [
+   "build:B6",
+   "complexity:M",
+   "epic:E19",
+   "lane:P",
+   "slack-flex",
+   "type:infra"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-26",
+  "target": "2026-10-29",
+  "es": 35,
+  "ef": 39,
+  "dur": 4,
+  "slack": 17,
+  "lane": "P",
+  "cx": "M",
+  "absorb": 2,
+  "ac": 1,
+  "downstream": 0,
+  "deps": [
+   "FR-003",
+   "FR-006",
+   "FR-032"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-033",
+    4,
+    35,
+    39,
+    17
+   ]
+  ],
+  "num": 41
+ },
+ {
+  "id": "FR-034",
+  "file": "tasks/stage-8/FR-034_ai-ops-tool.md",
+  "title": "[Sec] FR-034: 운영자 전용 AI — (ops) 경계 · 프롬프트 화이트리스트 · 초안 생성 · 승인 상태기계",
+  "labels": [
+   "blocked:D-TEC-6",
+   "build:conditional",
+   "complexity:H",
+   "epic:E20",
+   "gate:regulatory",
+   "lane:P",
+   "slack-flex",
+   "type:feature-command",
+   "type:infra",
+   "type:sec"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-06",
+  "target": "2026-10-28",
+  "es": 21,
+  "ef": 38,
+  "dur": 10,
+  "slack": 15,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 5,
+  "ac": 6,
+  "downstream": 2,
+  "deps": [
+   "FR-001",
+   "FR-008",
+   "FR-010",
+   "FR-021"
+  ],
+  "blocked": [
+   "D-TEC-6"
+  ],
+  "critical": false,
+  "parts": [
+   [
+    "FR-034a",
+    7,
+    21,
+    28,
+    22
+   ],
+   [
+    "FR-034b",
+    3,
+    35,
+    38,
+    15
+   ]
+  ],
+  "num": 19
+ },
+ {
+  "id": "FR-035",
+  "file": "tasks/stage-9/FR-035_gate-violation-injection.md",
+  "title": "[Infra] FR-035: 게이트 7종 위반 주입 테스트 — 7/7 빌드 실패 확인 (RG-T1)",
+  "labels": [
+   "build:verify",
+   "complexity:H",
+   "epic:E21",
+   "gate:regulatory",
+   "lane:P",
+   "slack-flex",
+   "type:infra"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-09",
+  "target": "2026-10-21",
+  "es": 24,
+  "ef": 33,
+  "dur": 9,
+  "slack": 23,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 1,
+  "ac": 8,
+  "downstream": 0,
+  "deps": [
+   "FR-005"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-035",
+    9,
+    24,
+    33,
+    23
+   ]
+  ],
+  "num": 25
+ },
+ {
+  "id": "FR-036",
+  "file": "tasks/stage-9/FR-036_cross-cutting-verification.md",
+  "title": "[Infra] FR-036: 횡단 검증 — RLS·권한 · 동시성 부하 · 배치 · 배포 환경 감사 (RG-T2·T3)",
+  "labels": [
+   "build:verify",
+   "complexity:H",
+   "critical-path",
+   "epic:E21",
+   "gate:regulatory",
+   "lane:P",
+   "type:infra",
+   "type:sec"
+  ],
+  "milestone": "M4 검증·릴리스 게이트",
+  "start": "2026-11-06",
+  "target": "2026-11-23",
+  "es": 44,
+  "ef": 56,
+  "dur": 12,
+  "slack": 0,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 4,
+  "ac": 12,
+  "downstream": 0,
+  "deps": [
+   "FR-001",
+   "FR-003",
+   "FR-004",
+   "FR-005",
+   "FR-006",
+   "FR-024",
+   "FR-026",
+   "FR-032"
+  ],
+  "blocked": [],
+  "critical": true,
+  "parts": [
+   [
+    "FR-036",
+    12,
+    44,
+    56,
+    0
+   ]
+  ],
+  "num": 46
+ },
+ {
+  "id": "FR-037",
+  "file": "tasks/stage-9/FR-037_feature-e2e.md",
+  "title": "[Test] FR-037: 기능 E2E — 동의 게이트 · 오프라인 2 OS · 웹훅 · 채널 폴백 · AI 경계",
+  "labels": [
+   "build:verify",
+   "complexity:H",
+   "epic:E21",
+   "lane:P",
+   "slack-flex",
+   "type:test"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-12",
+  "target": "2026-11-04",
+  "es": 25,
+  "ef": 43,
+  "dur": 15,
+  "slack": 13,
+  "lane": "P",
+  "cx": "H",
+  "absorb": 5,
+  "ac": 15,
+  "downstream": 0,
+  "deps": [
+   "FR-009",
+   "FR-011",
+   "FR-019",
+   "FR-020",
+   "FR-027",
+   "FR-029",
+   "FR-031",
+   "FR-034"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "FR-037b",
+    3,
+    25,
+    28,
+    28
+   ],
+   [
+    "FR-037d",
+    2,
+    27,
+    29,
+    27
+   ],
+   [
+    "FR-037a",
+    3,
+    28,
+    31,
+    25
+   ],
+   [
+    "FR-037e",
+    3,
+    38,
+    41,
+    15
+   ],
+   [
+    "FR-037c",
+    4,
+    39,
+    43,
+    13
+   ]
+  ],
+  "num": 26
+ },
+ {
+  "id": "UX-001",
+  "file": "tasks/stage-1/UX-001_design-system.md",
+  "title": "[UI/UX] UX-001: 디자인 시스템 — 토큰·테마·컴포넌트·접근성·아동 문구",
+  "labels": [
+   "build:B0",
+   "lane:X",
+   "slack-flex",
+   "type:ui-ux"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-07",
+  "target": "2026-09-09",
+  "es": 0,
+  "ef": 3,
+  "dur": 3,
+  "slack": 5,
+  "lane": "X",
+  "cx": "M",
+  "absorb": 1,
+  "ac": 0,
+  "downstream": 45,
+  "deps": [],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "UX-001",
+    3,
+    0,
+    3,
+    5
+   ]
+  ],
+  "num": 2
+ },
+ {
+  "id": "UX-002",
+  "file": "tasks/stage-7/UX-002_guardian-onboarding.md",
+  "title": "[UI/UX] UX-002: 보호자 온보딩·동의 — 디자인 + 온보딩·공개 화면",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-flex",
+   "type:ui-ux"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-10-12",
+  "target": "2026-10-19",
+  "es": 25,
+  "ef": 31,
+  "dur": 6,
+  "slack": 25,
+  "lane": "X",
+  "cx": "H",
+  "absorb": 2,
+  "ac": 2,
+  "downstream": 7,
+  "deps": [
+   "FR-001",
+   "FR-010",
+   "FR-012",
+   "UX-001"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "UX-002",
+    6,
+    25,
+    31,
+    25
+   ]
+  ],
+  "num": 27
+ },
+ {
+  "id": "UX-003",
+  "file": "tasks/stage-7/UX-003_child-learning.md",
+  "title": "[UI/UX] UX-003: 아동 온보딩·학습 — 디자인 + 학습·퀴즈 화면",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-flex",
+   "type:ui-ux"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-15",
+  "target": "2026-10-22",
+  "es": 28,
+  "ef": 34,
+  "dur": 6,
+  "slack": 22,
+  "lane": "X",
+  "cx": "H",
+  "absorb": 2,
+  "ac": 2,
+  "downstream": 0,
+  "deps": [
+   "FR-011",
+   "FR-014",
+   "UX-001"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "UX-003",
+    6,
+    28,
+    34,
+    22
+   ]
+  ],
+  "num": 33
+ },
+ {
+  "id": "UX-004",
+  "file": "tasks/stage-7/UX-004_growth-delivery.md",
+  "title": "[UI/UX] UX-004: 성장 나무·월간 숲·소비 내역 — 디자인 + 전달 화면 전체",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-tight",
+   "type:ui-ux"
+  ],
+  "milestone": "M4 검증·릴리스 게이트",
+  "start": "2026-11-04",
+  "target": "2026-11-20",
+  "es": 42,
+  "ef": 55,
+  "dur": 13,
+  "slack": 1,
+  "lane": "X",
+  "cx": "H",
+  "absorb": 3,
+  "ac": 13,
+  "downstream": 0,
+  "deps": [
+   "FR-001",
+   "FR-006",
+   "FR-026",
+   "FR-030",
+   "UX-001"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "UX-004",
+    13,
+    42,
+    55,
+    1
+   ]
+  ],
+  "num": 45
+ },
+ {
+  "id": "UX-005",
+  "file": "tasks/stage-7/UX-005_approvals.md",
+  "title": "[UI/UX] UX-005: 승인 대기 — 디자인 + 승인 대기 화면",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-flex",
+   "type:ui-ux"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-28",
+  "target": "2026-11-02",
+  "es": 37,
+  "ef": 41,
+  "dur": 4,
+  "slack": 15,
+  "lane": "X",
+  "cx": "M",
+  "absorb": 2,
+  "ac": 1,
+  "downstream": 0,
+  "deps": [
+   "FR-001",
+   "FR-016",
+   "UX-001"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "UX-005",
+    4,
+    37,
+    41,
+    15
+   ]
+  ],
+  "num": 42
+ },
+ {
+  "id": "UX-006",
+  "file": "tasks/stage-7/UX-006_plan-retro.md",
+  "title": "[UI/UX] UX-006: 계획 카드·두 갈래 회고 — 디자인 + 화면 2종",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-flex",
+   "type:ui-ux"
+  ],
+  "milestone": "M4 검증·릴리스 게이트",
+  "start": "2026-10-30",
+  "target": "2026-11-09",
+  "es": 39,
+  "ef": 46,
+  "dur": 7,
+  "slack": 10,
+  "lane": "X",
+  "cx": "H",
+  "absorb": 3,
+  "ac": 2,
+  "downstream": 0,
+  "deps": [
+   "FR-001",
+   "FR-018",
+   "FR-022",
+   "UX-001"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "UX-006",
+    7,
+    39,
+    46,
+    10
+   ]
+  ],
+  "num": 44
+ },
+ {
+  "id": "UX-007",
+  "file": "tasks/stage-7/UX-007_reward.md",
+  "title": "[UI/UX] UX-007: 아바타·옷장·위시리스트 — 디자인 + 보상 화면",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-flex",
+   "type:ui-ux"
+  ],
+  "milestone": "M2 기능 — 인증·온보딩·별·학습·미션·웹훅",
+  "start": "2026-10-13",
+  "target": "2026-10-15",
+  "es": 26,
+  "ef": 29,
+  "dur": 3,
+  "slack": 27,
+  "lane": "X",
+  "cx": "M",
+  "absorb": 2,
+  "ac": 0,
+  "downstream": 0,
+  "deps": [
+   "FR-017",
+   "UX-001"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "UX-007",
+    3,
+    26,
+    29,
+    27
+   ]
+  ],
+  "num": 28
+ },
+ {
+  "id": "UX-008",
+  "file": "tasks/stage-8/UX-008_ops-console.md",
+  "title": "[UI/UX] UX-008: 운영자 콘솔 — 디자인 + AI 초안 검토 화면",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-flex",
+   "type:ui-ux"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-29",
+  "target": "2026-11-02",
+  "es": 38,
+  "ef": 41,
+  "dur": 3,
+  "slack": 15,
+  "lane": "X",
+  "cx": "M",
+  "absorb": 2,
+  "ac": 0,
+  "downstream": 0,
+  "deps": [
+   "FR-034",
+   "UX-001"
+  ],
+  "blocked": [
+   "D-TEC-6"
+  ],
+  "critical": false,
+  "parts": [
+   [
+    "UX-008",
+    3,
+    38,
+    41,
+    15
+   ]
+  ],
+  "num": 43
+ },
+ {
+  "id": "UX-009",
+  "file": "tasks/stage-7/UX-009_card-lock.md",
+  "title": "[UI/UX] UX-009: 카드 없는 체험 잠금 화면",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-flex",
+   "type:ui-ux"
+  ],
+  "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
+  "start": "2026-10-21",
+  "target": "2026-10-26",
+  "es": 32,
+  "ef": 36,
+  "dur": 4,
+  "slack": 20,
+  "lane": "X",
+  "cx": "M",
+  "absorb": 1,
+  "ac": 1,
+  "downstream": 0,
+  "deps": [
+   "FR-020",
+   "UX-001"
+  ],
+  "blocked": [
+   "T-1"
+  ],
+  "critical": false,
+  "parts": [
+   [
+    "UX-009",
+    4,
+    32,
+    36,
+    20
+   ]
+  ],
+  "num": 37
+ }
+]

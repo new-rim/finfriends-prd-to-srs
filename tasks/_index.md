@@ -12,6 +12,7 @@
 | 항목 | 규칙 |
 | --- | --- |
 | **위치** | `tasks/stage-N/{FR|UX}-###_slug.md` — **Stage별 하위 폴더.** `UX-*`도 배정된 Stage 폴더에 있다 |
+| **GitHub** | 46건 전건이 이슈 **#1~#46**으로 등록되어 있다 (§2). 본문 머리에 착수·완료·여유·선행·후속이 붙어 있다 |
 | **한 파일 = 한 이슈** | 파일 전문이 GitHub 이슈 본문이 된다. 프런트매터의 `title`·`labels`를 그대로 쓴다 |
 | **참조 표기** | 이슈 생성 **전에는** `FR-###`로 적는다. 생성 **후에** 아래 §2 매핑으로 `#번호`를 일괄 치환한다 |
 | **근거 인용** | `References` 절의 링크는 SRS 절 번호를 가리킨다. **작업 시작 전 반드시 읽는다** |
@@ -32,65 +33,64 @@
 | **9** | `[Infra]`·`[Test]` 검증 설비 | 3 | ✅ **작성 완료** |
 | | **합계** | **46** | |
 
-> **UI/UX 트랙 9건**(`UX-001` ~ `UX-009`)은 별도 레인이며 `tasks/ux/`에 있다 — 개정 3.1에서 **디자인과 화면 구현을 한 이슈로 합쳤다.** `UX-001`만 FR 선행이 없고, 그것이 **`FR-001`을 막는다.**
+> **UI/UX 트랙 9건**(`UX-001` ~ `UX-009`)은 각자 배정된 `tasks/stage-N/`에 있다 — 개정 3.1에서 **디자인과 화면 구현을 한 이슈로 합쳤다.** `UX-001`만 FR 선행이 없고, 그것이 **`FR-001`을 막는다.**
 
 ## 2. FR-### ↔ GitHub 이슈 번호 매핑
 
-> 이슈 생성 후 채운다. 채워진 뒤 전 스크립트에서 `FR-###` → `#번호`를 일괄 치환한다.
+> **2026-08-26 전건 생성 완료.** 46건이 `new-rim/finfriends-prd-to-srs`에 등록되어 있다.
+> 일정·마일스톤은 `FASTTRACK_finfriends-nextjs-v1_0.md` §6 압축 편성을 따른다 (기준일 2026-09-07 · 주말 제외).
 
-| Task ID | 파일 | 이슈 번호 |
-| --- | --- | :-: |
-| `FR-001` | `stage-1/FR-001_platform-setup.md` | *(미생성)* |
-| `FR-002` | `stage-1/FR-002_prisma-schema.md` | *(미생성)* |
-| `FR-003` | `stage-1/FR-003_data-access-layer.md` | *(미생성)* |
-| `FR-004` | `stage-1/FR-004_star-ledger-atomic-write.md` | *(미생성)* |
-| `FR-006` | `stage-2/FR-006_server-action-skeleton.md` | *(미생성)* |
-| `FR-007` | `stage-2/FR-007_domain-pure-functions.md` | *(미생성)* |
-| `FR-008` | `stage-2/FR-008_domain-contracts.md` | *(미생성)* |
-| `FR-009` | `stage-2/FR-009_mocks.md` | *(미생성)* |
-| `FR-019` | `stage-2/FR-019_partner-webhook-contract.md` | *(미생성)* |
-| `FR-005` | `stage-3/FR-005_prebuild-gates.md` | *(미생성)* |
-| `FR-010` | `stage-3/FR-010_auth-middleware.md` | *(미생성)* |
-| `FR-011` | `stage-3/FR-011_consent-gate.md` | *(미생성)* |
-| `FR-023` | `stage-3/FR-023_batch-infrastructure.md` | *(미생성)* |
-| `FR-028` | `stage-3/FR-028_vercel-cron-base.md` | *(미생성)* |
-| `FR-012` | `stage-4/FR-012_onboarding-actions.md` | *(미생성)* |
-| `FR-013` | `stage-4/FR-013_grant-star.md` | *(미생성)* |
-| `FR-014` | `stage-4/FR-014_learning-quiz.md` | *(미생성)* |
-| `FR-015` | `stage-4/FR-015_mission-loop.md` | *(미생성)* |
-| `FR-017` | `stage-4/FR-017_reward-actions.md` | *(미생성)* |
-| `FR-018` | `stage-5/FR-018_plan-card-action.md` | *(미생성)* |
-| `FR-020` | `stage-5/FR-020_partner-webhook-matching.md` | *(미생성)* |
-| `FR-021` | `stage-5/FR-021_retrospective.md` | *(미생성)* |
-| `FR-025` | `stage-5/FR-025_bat1-tree-judgment.md` | *(미생성)* |
-| `FR-026` | `stage-5/FR-026_aggregation-batches.md` | *(미생성)* |
-| `FR-027` | `stage-5/FR-027_notification-channels.md` | *(미생성)* |
-| `FR-029` | `stage-5/FR-029_inactivity-dlq.md` | *(미생성)* |
-| `FR-031` | `stage-5/FR-031_pwa-offline.md` | *(미생성)* |
-| `FR-016` | `stage-6/FR-016_approvals-query.md` | *(미생성)* |
-| `FR-022` | `stage-6/FR-022_retro-queue-query.md` | *(미생성)* |
-| `FR-030` | `stage-6/FR-030_growth-tree-query.md` | *(미생성)* |
-| `FR-024` | `stage-8/FR-024_batch-audit-reconcile.md` | *(미생성)* |
-| `FR-032` | `stage-8/FR-032_observability.md` | *(미생성)* |
-| `FR-033` | `stage-8/FR-033_budget-instrumentation.md` | *(미생성)* |
-| `FR-034` | `stage-8/FR-034_ai-ops-tool.md` | *(미생성)* |
-| `FR-035` | `stage-9/FR-035_gate-violation-injection.md` | *(미생성)* |
-| `FR-036` | `stage-9/FR-036_cross-cutting-verification.md` | *(미생성)* |
-| `FR-037` | `stage-9/FR-037_feature-e2e.md` | *(미생성)* |
+| 이슈 | Task ID | 파일 | 마일스톤 | 착수 ~ 완료 | 여유 |
+| :-: | --- | --- | :-: | :-: | :-: |
+| #1 | `FR-001` | `stage-1/FR-001_platform-setup.md` | M1 | 2026-09-07 ~ 2026-09-17 | 🔴 임계 |
+| #2 | `UX-001` | `stage-1/UX-001_design-system.md` | M1 | 2026-09-07 ~ 2026-09-09 | 5일 |
+| #3 | `FR-002` | `stage-1/FR-002_prisma-schema.md` | M1 | 2026-09-11 ~ 2026-09-17 | 🔴 임계 |
+| #4 | `FR-003` | `stage-1/FR-003_data-access-layer.md` | M1 | 2026-09-16 ~ 2026-09-22 | 🔴 임계 |
+| #5 | `FR-004` | `stage-1/FR-004_star-ledger-atomic-write.md` | M1 | 2026-09-16 ~ 2026-09-23 | 🟡 1일 |
+| #6 | `FR-007` | `stage-2/FR-007_domain-pure-functions.md` | M1 | 2026-09-18 ~ 2026-09-25 | 7일 |
+| #7 | `FR-006` | `stage-2/FR-006_server-action-skeleton.md` | M1 | 2026-09-21 ~ 2026-09-29 | 🟡 1일 |
+| #8 | `FR-005` | `stage-3/FR-005_prebuild-gates.md` | M2 | 2026-09-23 ~ 2026-10-08 | 🟡 4일 |
+| #9 | `FR-009` | `stage-2/FR-009_mocks.md` | M1 | 2026-09-23 ~ 2026-09-28 | 🔴 임계 |
+| #10 | `FR-008` | `stage-2/FR-008_domain-contracts.md` | M1 | 2026-09-24 ~ 2026-09-28 | 🟡 3일 |
+| #11 | `FR-010` | `stage-3/FR-010_auth-middleware.md` | M1 | 2026-09-29 ~ 2026-10-05 | 9일 |
+| #12 | `FR-019` | `stage-2/FR-019_partner-webhook-contract.md` | M1 | 2026-09-29 ~ 2026-10-06 | 🔴 임계 |
+| #13 | `FR-012` | `stage-4/FR-012_onboarding-actions.md` | M2 | 2026-09-30 ~ 2026-10-09 | 🟡 1일 |
+| #14 | `FR-013` | `stage-4/FR-013_grant-star.md` | M2 | 2026-09-30 ~ 2026-10-07 | 🟡 4일 |
+| #15 | `FR-018` | `stage-5/FR-018_plan-card-action.md` | M1 | 2026-09-30 ~ 2026-10-05 | 🟡 1일 |
+| #16 | `FR-027` | `stage-5/FR-027_notification-channels.md` | M2 | 2026-09-30 ~ 2026-10-13 | 18일 |
+| #17 | `FR-031` | `stage-5/FR-031_pwa-offline.md` | M2 | 2026-09-30 ~ 2026-10-09 | 28일 |
+| #18 | `FR-011` | `stage-3/FR-011_consent-gate.md` | M2 | 2026-10-06 ~ 2026-10-14 | 9일 |
+| #19 | `FR-034` | `stage-8/FR-034_ai-ops-tool.md` | M3 | 2026-10-06 ~ 2026-10-28 | 15일 |
+| #20 | `FR-020` | `stage-5/FR-020_partner-webhook-matching.md` | M2 | 2026-10-07 ~ 2026-10-20 | 🔴 임계 |
+| #21 | `FR-014` | `stage-4/FR-014_learning-quiz.md` | M2 | 2026-10-08 ~ 2026-10-13 | 23일 |
+| #22 | `FR-015` | `stage-4/FR-015_mission-loop.md` | M2 | 2026-10-08 ~ 2026-10-20 | 15일 |
+| #23 | `FR-017` | `stage-4/FR-017_reward-actions.md` | M2 | 2026-10-08 ~ 2026-10-12 | 27일 |
+| #24 | `FR-023` | `stage-3/FR-023_batch-infrastructure.md` | M2 | 2026-10-09 ~ 2026-10-14 | 🟡 4일 |
+| #25 | `FR-035` | `stage-9/FR-035_gate-violation-injection.md` | M3 | 2026-10-09 ~ 2026-10-21 | 23일 |
+| #26 | `FR-037` | `stage-9/FR-037_feature-e2e.md` | M3 | 2026-10-12 ~ 2026-11-04 | 13일 |
+| #27 | `UX-002` | `stage-7/UX-002_guardian-onboarding.md` | M2 | 2026-10-12 ~ 2026-10-19 | 25일 |
+| #28 | `UX-007` | `stage-7/UX-007_reward.md` | M2 | 2026-10-13 ~ 2026-10-15 | 27일 |
+| #29 | `FR-021` | `stage-5/FR-021_retrospective.md` | M3 | 2026-10-14 ~ 2026-10-23 | 🔴 임계 |
+| #30 | `FR-025` | `stage-5/FR-025_bat1-tree-judgment.md` | M3 | 2026-10-15 ~ 2026-10-22 | 🟡 4일 |
+| #31 | `FR-028` | `stage-3/FR-028_vercel-cron-base.md` | M2 | 2026-10-15 ~ 2026-10-20 | 13일 |
+| #32 | `FR-032` | `stage-8/FR-032_observability.md` | M3 | 2026-10-15 ~ 2026-10-23 | 9일 |
+| #33 | `UX-003` | `stage-7/UX-003_child-learning.md` | M3 | 2026-10-15 ~ 2026-10-22 | 22일 |
+| #34 | `FR-016` | `stage-6/FR-016_approvals-query.md` | M3 | 2026-10-21 ~ 2026-10-27 | 15일 |
+| #35 | `FR-026` | `stage-5/FR-026_aggregation-batches.md` | M3 | 2026-10-21 ~ 2026-11-03 | 🟡 1일 |
+| #36 | `FR-029` | `stage-5/FR-029_inactivity-dlq.md` | M3 | 2026-10-21 ~ 2026-10-29 | 13일 |
+| #37 | `UX-009` | `stage-7/UX-009_card-lock.md` | M3 | 2026-10-21 ~ 2026-10-26 | 20일 |
+| #38 | `FR-030` | `stage-6/FR-030_growth-tree-query.md` | M3 | 2026-10-23 ~ 2026-10-29 | 🟡 4일 |
+| #39 | `FR-022` | `stage-6/FR-022_retro-queue-query.md` | M3 | 2026-10-26 ~ 2026-10-29 | 10일 |
+| #40 | `FR-024` | `stage-8/FR-024_batch-audit-reconcile.md` | M4 | 2026-10-26 ~ 2026-11-05 | 🔴 임계 |
+| #41 | `FR-033` | `stage-8/FR-033_budget-instrumentation.md` | M3 | 2026-10-26 ~ 2026-10-29 | 17일 |
+| #42 | `UX-005` | `stage-7/UX-005_approvals.md` | M3 | 2026-10-28 ~ 2026-11-02 | 15일 |
+| #43 | `UX-008` | `stage-8/UX-008_ops-console.md` | M3 | 2026-10-29 ~ 2026-11-02 | 15일 |
+| #44 | `UX-006` | `stage-7/UX-006_plan-retro.md` | M4 | 2026-10-30 ~ 2026-11-09 | 10일 |
+| #45 | `UX-004` | `stage-7/UX-004_growth-delivery.md` | M4 | 2026-11-04 ~ 2026-11-20 | 🟡 1일 |
+| #46 | `FR-036` | `stage-9/FR-036_cross-cutting-verification.md` | M4 | 2026-11-06 ~ 2026-11-23 | 🔴 임계 |
 
-### UI/UX 트랙 — `tasks/ux/` 8파일
-
-| Task ID | 파일 | 이슈 번호 |
-| --- | --- | :-: |
-| `UX-001` | `stage-1/UX-001_design-system.md` | *(미생성)* |
-| `UX-002` | `stage-7/UX-002_guardian-onboarding.md` | *(미생성)* |
-| `UX-003` | `stage-7/UX-003_child-learning.md` | *(미생성)* |
-| `UX-004` | `stage-7/UX-004_growth-delivery.md` | *(미생성)* |
-| `UX-005` | `stage-7/UX-005_approvals.md` | *(미생성)* |
-| `UX-006` | `stage-7/UX-006_plan-retro.md` | *(미생성)* |
-| `UX-007` | `stage-7/UX-007_reward.md` | *(미생성)* |
-| `UX-008` | `stage-8/UX-008_ops-console.md` | *(미생성)* |
-| `UX-009` | `stage-7/UX-009_card-lock.md` | *(미생성)* |
+**마일스톤 4종** — `M1 기반`(~2026-10-06 · 12건) · `M2 기능`(~2026-10-20 · 14건) · `M3 전달·운영`(~2026-11-04 · 16건) · `M4 검증·릴리스`(~2026-11-23 · 4건).
+**라벨 56종** — `type:*` · `epic:*` · `lane:{P|D|X}` · `complexity:{H|M}` · `build:B0~B6` · `blocked:*` · `gate:regulatory` · `critical-path` / `slack-tight` / `slack-flex`.
 
 ## 3. Stage 1 요약
 
