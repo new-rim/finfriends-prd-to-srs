@@ -1952,6 +1952,44 @@
   "num": 45
  },
  {
+  "id": "UX-005d",
+  "file": "tasks/stage-0/UX-005d_approvals-spec.md",
+  "title": "[UI/UX] UX-005d: 승인 대기 — 디자인 + 승인 대기 화면",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-flex",
+   "type:ui-ux"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-14",
+  "target": "2026-09-15",
+  "es": 5,
+  "ef": 7,
+  "dur": 2,
+  "slack": 49,
+  "lane": "X",
+  "cx": "M",
+  "absorb": 0,
+  "ac": 0,
+  "downstream": 1,
+  "deps": [
+   "UX-001"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "UX-005d",
+    2,
+    5,
+    7,
+    49
+   ]
+  ],
+  "num": null
+ },
+ {
   "id": "UX-005",
   "file": "tasks/stage-7/UX-005_approvals.md",
   "title": "[UI/UX] UX-005: 승인 대기 — 디자인 + 승인 대기 화면",
@@ -1963,11 +2001,11 @@
   ],
   "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
   "start": "2026-10-28",
-  "target": "2026-11-02",
+  "target": "2026-10-29",
   "es": 37,
-  "ef": 41,
-  "dur": 4,
-  "slack": 15,
+  "ef": 39,
+  "dur": 2,
+  "slack": 17,
   "lane": "X",
   "cx": "M",
   "absorb": 2,
@@ -1976,17 +2014,18 @@
   "deps": [
    "FR-001",
    "FR-016",
-   "UX-001"
+   "UX-001",
+   "UX-005d"
   ],
   "blocked": [],
   "critical": false,
   "parts": [
    [
     "UX-005",
-    4,
+    2,
     37,
-    41,
-    15
+    39,
+    17
    ]
   ],
   "num": 42
