@@ -1792,6 +1792,44 @@
   "num": 27
  },
  {
+  "id": "UX-003d",
+  "file": "tasks/stage-0/UX-003d_child-learning-spec.md",
+  "title": "[UI/UX] UX-003d: 아동 온보딩·학습 — 디자인 + 학습·퀴즈 화면",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-flex",
+   "type:ui-ux"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-10",
+  "target": "2026-09-11",
+  "es": 3,
+  "ef": 5,
+  "dur": 2,
+  "slack": 51,
+  "lane": "X",
+  "cx": "H",
+  "absorb": 0,
+  "ac": 0,
+  "downstream": 1,
+  "deps": [
+   "UX-001"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "UX-003d",
+    2,
+    3,
+    5,
+    51
+   ]
+  ],
+  "num": null
+ },
+ {
   "id": "UX-003",
   "file": "tasks/stage-7/UX-003_child-learning.md",
   "title": "[UI/UX] UX-003: 아동 온보딩·학습 — 디자인 + 학습·퀴즈 화면",
@@ -1803,11 +1841,11 @@
   ],
   "milestone": "M3 전달·운영 — 회고·배치·알림·조회·화면",
   "start": "2026-10-15",
-  "target": "2026-10-22",
+  "target": "2026-10-20",
   "es": 28,
-  "ef": 34,
-  "dur": 6,
-  "slack": 22,
+  "ef": 32,
+  "dur": 4,
+  "slack": 24,
   "lane": "X",
   "cx": "H",
   "absorb": 2,
@@ -1816,17 +1854,18 @@
   "deps": [
    "FR-011",
    "FR-014",
-   "UX-001"
+   "UX-001",
+   "UX-003d"
   ],
   "blocked": [],
   "critical": false,
   "parts": [
    [
     "UX-003",
-    6,
+    4,
     28,
-    34,
-    22
+    32,
+    24
    ]
   ],
   "num": 33

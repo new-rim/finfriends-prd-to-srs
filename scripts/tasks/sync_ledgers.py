@@ -55,8 +55,10 @@ def sync_index(D, total):
     t = new
 
     # Stage 표 — Stage 0 행과 합계
-    row0 = ('| **0** | `[UI/UX]` **디자인 명세 %d건** — `UX-002d`~`UX-009d` '
-            '*(FR 선행 없음)* | %d | 🆕 **UXUI 통합 단계** |' % (len(D), len(D)))
+    ids = sorted(o['id'] for o in D)
+    span = '`%s`' % ids[0] if len(ids) == 1 else '`%s`~`%s`' % (ids[0], ids[-1])
+    row0 = ('| **0** | `[UI/UX]` **디자인 명세 %d건** — %s *(FR 선행 없음)* | %d '
+            '| 🆕 **UXUI 통합 단계** |' % (len(D), span, len(D)))
     if re.search(r'^\| \*\*0\*\* \|', t, flags=re.M):
         t = re.sub(r'^\| \*\*0\*\* \|.*$', row0, t, flags=re.M)
     elif D:
