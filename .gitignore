@@ -3,3 +3,10 @@
 
 # 저작권 있는 유료 표준 문서 — 공개 저장소에 포함하지 않음
 29148-2018-ISOIECIEEE.pdf
+
+# 에이전트 하네스 — 개인 설정·세션 산출물
+.claude/settings.local.json
+.claude/RESUME.md
+
+# 스크립트가 생성하는 GitHub Node ID 캐시
+scripts/github/project.json
