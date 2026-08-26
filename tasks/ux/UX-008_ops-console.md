@@ -1,8 +1,8 @@
 ---
-name: "[UI] UI-009: 운영자 콘솔 화면"
-about: Stage 8 · 개정 3.0 UI-009 (개정 2.0 FR-120 흡수)
-title: "[UI] UI-009: (ops) AI 초안 검토·승인 · 문장 풀 잔여율 화면"
-labels: "type:ui, epic:E20, complexity:M, milestone:조건부, blocked:D-TEC-6"
+name: "[UI/UX] UX-008: 운영자 콘솔 — 디자인 + AI 초안 검토 화면"
+about: Stage 8 · 개정 3.0 UX-008 (개정 2.0 FR-120 흡수)
+title: "[UI/UX] UX-008: 운영자 콘솔 — 디자인 + AI 초안 검토 화면"
+labels: "type:ui-ux, milestone:design-then-build"
 assignees: ''
 ---
 
@@ -44,7 +44,7 @@ Stage 8 · 5건 중 5번 (마지막). Stage 8 내부 선행: FR-034.
 
 ## 🧪 Acceptance Criteria (BDD/GWT)
 
-> §8 배분표가 AC를 배분하지 않은 이슈다. REQ-AI-004의 정식 판정은 `FR-034`, 디자인 검수는 `UX-009`가 한다.
+> §8 배분표가 AC를 배분하지 않은 이슈다. REQ-AI-004의 정식 판정은 `FR-034`, 디자인 검수는 `UX-008`가 한다.
 
 **Scenario 1: 승인 전후 구별**
 - **Given:** `DRAFT`와 `APPROVED`가 섞인 문장 목록
@@ -92,7 +92,7 @@ Stage 8 · 5건 중 5번 (마지막). Stage 8 내부 선행: FR-034.
 - **Blocks:** 없음 — 말단 이슈
 - **차단 항목:**
   - **D-TEC-6** — Gemini 데이터 처리 조건. `AI_ENABLED=false` 유지 시 **초안 검토 화면은 불필요**하나 **문장 풀 관리 화면은 여전히 필요**하다
-- 🔴 **UX 선행:** `UX-009` — 운영자 콘솔 · AI 초안 검토 · 문장 풀 잔여율
+- 🔴 **UX 선행:** `UX-008` — 운영자 콘솔 · AI 초안 검토 · 문장 풀 잔여율
 
 ## ⚠️ AI를 끄더라도 절반은 남는다
 

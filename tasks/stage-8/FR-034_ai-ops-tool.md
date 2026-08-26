@@ -7,7 +7,7 @@ assignees: ''
 ---
 
 <!--
-Stage 8 · 5건 중 4번. Stage 8 내부 선행 없음 — FR-024 · FR-032과 병렬 착수 가능. UI-009을 막는다.
+Stage 8 · 5건 중 4번. Stage 8 내부 선행 없음 — FR-024 · FR-032과 병렬 착수 가능. UX-008을 막는다.
 조건부 이슈 — AI_ENABLED=false가 기본값이며, false여도 기준 SRS 요구사항 35건은 하나도 손실되지 않는다.
 흡수: 개정 2.0의 FR-115((ops) 경계) · FR-116(프로바이더 레지스트리) · FR-117(프롬프트 화이트리스트) ·
       FR-118(retro-draft API) · FR-119(승인 상태기계) — 5건
@@ -115,7 +115,7 @@ Stage 8 · 5건 중 4번. Stage 8 내부 선행 없음 — FR-024 · FR-032과 �
 ## 🚧 Dependencies & Blockers
 
 - **Depends on:** FR-001(플랫폼·환경 변수) · FR-008(C-05 계약 — `approveRetroSentenceDraft`) · FR-010(역할 검사) · FR-021(문장 풀 · `reviewState`)
-- **Blocks (직접 2건):** UI-009(운영자 콘솔 화면) · FR-037(기능 E2E — AI 경계 테스트)
+- **Blocks (직접 2건):** UX-008(운영자 콘솔 화면) · FR-037(기능 E2E — AI 경계 테스트)
 - **간접 0건**
 - **차단 항목:**
   - **D-TEC-6** — Gemini API의 **데이터 처리 조건** 미확정. 미해소 시 **`AI_ENABLED=false` 유지 · 기능 손실 0건**. 이 이슈 전체를 뒤로 미룰 수 있다

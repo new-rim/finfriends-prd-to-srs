@@ -1,8 +1,8 @@
 ---
-name: "[UI] UI-001: 온보딩·공개 화면"
-about: Stage 7 · 개정 3.0 UI-001 (개정 2.0 FR-047·048 흡수)
-title: "[UI] UI-001: (guardian)/onboarding/[step] 재개 처리 · (public) 랜딩·로그인·동의 안내"
-labels: "type:ui, epic:E7, complexity:M, milestone:B1"
+name: "[UI/UX] UX-002: 보호자 온보딩·동의 — 디자인 + 온보딩·공개 화면"
+about: Stage 7 · 개정 3.0 UX-002 (개정 2.0 FR-047·048 흡수)
+title: "[UI/UX] UX-002: 보호자 온보딩·동의 — 디자인 + 온보딩·공개 화면"
+labels: "type:ui-ux, milestone:design-then-build"
 assignees: ''
 ---
 

@@ -1,8 +1,8 @@
 ---
-name: "[UI] UI-006: 카드 없는 체험 잠금 화면"
-about: Stage 7 · 개정 3.0 UI-006 (개정 2.0 FR-073 흡수)
-title: "[UI] UI-006: 카드 없는 체험 — PARTNER_CARDS.state 기반 컴포넌트 단위 잠금"
-labels: "type:ui, epic:E11, complexity:M, milestone:B4"
+name: "[UI/UX] UX-009: 카드 없는 체험 잠금 화면"
+about: Stage 7 · 개정 3.0 UX-009 (개정 2.0 FR-073 흡수)
+title: "[UI/UX] UX-009: 카드 없는 체험 잠금 화면"
+labels: "type:ui-ux, milestone:design-then-build"
 assignees: ''
 ---
 

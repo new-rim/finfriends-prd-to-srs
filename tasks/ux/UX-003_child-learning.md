@@ -1,8 +1,8 @@
 ---
-name: "[UI] UI-002: 학습·아동 온보딩 화면"
-about: Stage 7 · 개정 3.0 UI-002 (개정 2.0 FR-053·054 흡수)
-title: "[UI] UI-002: (child)/learn/[topic] 학습·퀴즈 · (child)/onboarding 첫 보상 루프 5분"
-labels: "type:ui, epic:E8, complexity:M, milestone:B2"
+name: "[UI/UX] UX-003: 아동 온보딩·학습 — 디자인 + 학습·퀴즈 화면"
+about: Stage 7 · 개정 3.0 UX-003 (개정 2.0 FR-053·054 흡수)
+title: "[UI/UX] UX-003: 아동 온보딩·학습 — 디자인 + 학습·퀴즈 화면"
+labels: "type:ui-ux, milestone:design-then-build"
 assignees: ''
 ---
 
@@ -73,7 +73,7 @@ Stage 7 · 8건 중 2번. Stage 7 내부 선행 없음 — 8건 전부 병렬 �
 - 🔴 **접근성:** 아동 화면 터치 타깃 ≥ 44px · 대비 4.5:1 — 성인 기준으로 만들면 아동이 못 누른다
 - **문구:** 4영역 명칭은 **UX-001의 아동용 체계와 동일**해야 한다(CON-REG-02)
 - **원고:** 화면이 원고를 갖지 않는다 — `FR-014`가 DB에서 조회한 것을 그린다(런타임 변경 가능성 유지)
-- **범위:** 이수·퀴즈 로직은 FR-014, 승급 판정은 FR-007, 나무 표시는 UI-008
+- **범위:** 이수·퀴즈 로직은 FR-014, 승급 판정은 FR-007, 나무 표시는 UX-004
 
 ## 🏁 Definition of Done (DoD)
 

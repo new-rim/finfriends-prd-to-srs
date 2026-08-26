@@ -1,6 +1,6 @@
 ---
 name: "[Contract] FR-006: Action 공통 골격·멱등 키·캐시 태그"
-about: Stage 2 · 개정 3.0 FR-006 (개정 2.0 UI-006~028 흡수)
+about: Stage 2 · 개정 3.0 FR-006 (개정 2.0 UX-009~028 흡수)
 title: "[Contract] FR-006: Server Action 공통 골격 — 5단계 실행 규칙 · 멱등 키 · 캐시 태그"
 labels: "type:contract, epic:E4, complexity:H, milestone:B0, gate:regulatory"
 assignees: ''
@@ -8,7 +8,7 @@ assignees: ''
 
 <!--
 Stage 2 · 5건 중 1번. Stage 2 내부 선행 없음 — FR-007 · FR-009와 병렬 착수 가능.
-흡수: 개정 2.0의 UI-006 · FR-021 · FR-022 (3건)
+흡수: 개정 2.0의 UX-009 · FR-021 · FR-022 (3건)
 -->
 
 ## 🎯 Summary
@@ -30,7 +30,7 @@ Stage 2 · 5건 중 1번. Stage 2 내부 선행 없음 — FR-007 · FR-009와 �
 
 ## ✅ Task Breakdown (실행 계획)
 
-**(구 UI-006) 공통 골격 — 5단계**
+**(구 UX-009) 공통 골격 — 5단계**
 - [ ] **① 입력 검증** — zod 스키마 필수. Server Action은 **공개 엔드포인트**이므로 검증 없는 인자는 그대로 외부 입력이다
 - [ ] **② 동의 재확인** — `withGuardian()` 트랜잭션 **안에서** 조회 · **캐시 금지**(REQ-TEC-006). 실제 `assertConsentCompleted`는 FR-011이 만들며, 여기서는 **호출 지점만** 골격에 뚫는다
 - [ ] **③ 원자 기입** — FR-004의 `grantStarAtomically`를 호출하는 자리. 단일 트랜잭션 · 왕복 없음
@@ -88,7 +88,7 @@ Stage 2 · 5건 중 1번. Stage 2 내부 선행 없음 — FR-007 · FR-009와 �
 > 💡 이슈 생성 전에는 `FR-###`로 적고, 생성 후 `tasks/_index.md`의 매핑으로 `#번호`를 일괄 치환한다.
 
 - **Depends on:** FR-001(플랫폼) · FR-003(트랜잭션 래퍼 `withGuardian`) · FR-004(원자 기입 SQL)
-- **Blocks (직접 12건):** FR-008(도메인 계약) · FR-011 · FR-012 · FR-013 · FR-015 · FR-018 · FR-027 · FR-030 · UI-008 · FR-031 · FR-033 · FR-036
+- **Blocks (직접 12건):** FR-008(도메인 계약) · FR-011 · FR-012 · FR-013 · FR-015 · FR-018 · FR-027 · FR-030 · UX-004 · FR-031 · FR-033 · FR-036
 - **간접 21건** — 사실상 모든 쓰기 이슈가 이 아래에 있다
 - **차단 항목:** 없음
 

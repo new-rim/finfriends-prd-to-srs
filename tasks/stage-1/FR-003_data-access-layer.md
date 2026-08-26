@@ -1,6 +1,6 @@
 ---
 name: "[Sec] FR-003: 데이터 접근 계층 전체"
-about: Stage 1 · 개정 3.0 FR-003 (개정 2.0 FR-009~014 · UI-002 · FR-015 흡수)
+about: Stage 1 · 개정 3.0 FR-003 (개정 2.0 FR-009~014 · UX-003 · FR-015 흡수)
 title: "[DB] FR-003: 데이터 접근 계층 — 2클라이언트 · RLS 2계층 · pii 권한 회수"
 labels: "type:db, type:sec, epic:E2, complexity:H, milestone:B0, gate:regulatory, blocked:T-3"
 assignees: ''
@@ -8,7 +8,7 @@ assignees: ''
 
 <!--
 Stage 1 · 4건 중 3번. 주 유형 [DB] · 부 유형 [Sec].
-흡수: 개정 2.0의 FR-009 · FR-010 · FR-011 · FR-012 · UI-001 · FR-013 · UI-002 · FR-015 (8건)
+흡수: 개정 2.0의 FR-009 · FR-010 · FR-011 · FR-012 · UX-002 · FR-013 · UX-003 · FR-015 (8건)
 -->
 
 ## 🎯 Summary
@@ -42,11 +42,11 @@ Stage 1 · 4건 중 3번. 주 유형 [DB] · 부 유형 [Sec].
 - [ ] **(구 FR-013)** `pii` 접근 함수 3종 — `upsert_identity` · `get_identity_ref` · `verify_owner` · 각각에만 `GRANT EXECUTE TO app_request`
 
 **실행 규약**
-- [ ] **(구 UI-001)** `withGuardian()` 트랜잭션 래퍼 — **보호자 id를 세션에서만 취득**하고 인자로 받지 않는다
-- [ ] **(구 UI-001)** 래퍼 안에서 `set_config('app.guardian_id', …, true)` — `SET LOCAL`이 트랜잭션 밖으로 새지 않음을 풀러 모드에서 확인
+- [ ] **(구 UX-002)** `withGuardian()` 트랜잭션 래퍼 — **보호자 id를 세션에서만 취득**하고 인자로 받지 않는다
+- [ ] **(구 UX-002)** 래퍼 안에서 `set_config('app.guardian_id', …, true)` — `SET LOCAL`이 트랜잭션 밖으로 새지 않음을 풀러 모드에서 확인
 
 **계측 · 마이그레이션**
-- [ ] **(구 UI-002)** `app_events` **주차 파티셔닝** · 적재 유틸 · 필수 필드 `NOT NULL`
+- [ ] **(구 UX-003)** `app_events` **주차 파티셔닝** · 적재 유틸 · 필수 필드 `NOT NULL`
 - [ ] **(구 FR-015)** **expand-contract 마이그레이션 절차 수립** — 최소 2배포 분할 · 파괴적 DDL 금지 · 「코드를 되돌려도 DB가 앞서 있어도 동작」 상태 유지
 
 ## 🧪 Acceptance Criteria (BDD/GWT)

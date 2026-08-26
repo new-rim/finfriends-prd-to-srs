@@ -1,0 +1,1783 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>태스크 읽는 PM · 핀프렌즈 태스크 리스트 v3.0 학습 해설서</title>
+<meta name="description" content="SRS가 55개 이슈로 쪼개진 방식을 PM의 눈으로 해체한 해설서. 표 읽는 법 → 쪼개는 규칙 → 순서와 병목 → 완료 판정 → 남은 위험.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+
+/* ══════════════════ 토큰 ══════════════════ */
+:root{
+  --bg:#F2F4F6; --surface:#FFFFFF; --surface-2:#F9FAFB; --surface-3:#EEF1F4;
+  --text:#191F28; --text-2:#4E5968; --text-3:#8B95A1;
+  --border:#E5E8EB; --border-strong:#D5DAE0;
+  --accent:#3182F6; --accent-text:#1B64DA; --accent-weak:#E8F3FF;
+  --good:#0F8A4D; --good-text:#0B6E3D; --good-weak:#E4F6EC;
+  --warn:#B4690E; --warn-text:#8F5209; --warn-weak:#FDF2E0;
+  --bad:#E0384A;  --bad-text:#C22133;  --bad-weak:#FDEEF0;
+  --violet:#7C4DDA; --violet-text:#6237BC; --violet-weak:#F0EAFD;
+  --shadow:0 1px 2px rgba(25,31,40,.04), 0 6px 22px rgba(25,31,40,.06);
+  --shadow-lg:0 2px 6px rgba(25,31,40,.06), 0 18px 50px rgba(25,31,40,.12);
+  --radius:16px;
+  --hue:var(--accent); --hue-text:var(--accent-text); --hue-weak:var(--accent-weak);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1116; --surface:#171C23; --surface-2:#1D232B; --surface-3:#232A33;
+    --text:#EDF0F3; --text-2:#AEB7C2; --text-3:#7E8996;
+    --border:#282F38; --border-strong:#39424E;
+    --accent:#5C9DFF; --accent-text:#9CC3FF; --accent-weak:#15263D;
+    --good:#3ECC85; --good-text:#7FE3B0; --good-weak:#10291D;
+    --warn:#E9A94A; --warn-text:#F3C782; --warn-weak:#2E2415;
+    --bad:#FF7480;  --bad-text:#FFA3AC;  --bad-weak:#361E22;
+    --violet:#A98BF0; --violet-text:#C4AEF7; --violet-weak:#221A38;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 24px rgba(0,0,0,.3);
+    --shadow-lg:0 2px 8px rgba(0,0,0,.4), 0 20px 56px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1116; --surface:#171C23; --surface-2:#1D232B; --surface-3:#232A33;
+  --text:#EDF0F3; --text-2:#AEB7C2; --text-3:#7E8996;
+  --border:#282F38; --border-strong:#39424E;
+  --accent:#5C9DFF; --accent-text:#9CC3FF; --accent-weak:#15263D;
+  --good:#3ECC85; --good-text:#7FE3B0; --good-weak:#10291D;
+  --warn:#E9A94A; --warn-text:#F3C782; --warn-weak:#2E2415;
+  --bad:#FF7480;  --bad-text:#FFA3AC;  --bad-weak:#361E22;
+  --violet:#A98BF0; --violet-text:#C4AEF7; --violet-weak:#221A38;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 24px rgba(0,0,0,.3);
+  --shadow-lg:0 2px 8px rgba(0,0,0,.4), 0 20px 56px rgba(0,0,0,.45);
+}
+
+/* 파트별 색 */
+.page[data-p="0"]{--hue:var(--text-2); --hue-text:var(--text-2); --hue-weak:var(--surface-3)}
+.page[data-p="1"]{--hue:var(--accent); --hue-text:var(--accent-text); --hue-weak:var(--accent-weak)}
+.page[data-p="2"]{--hue:var(--good);   --hue-text:var(--good-text);   --hue-weak:var(--good-weak)}
+.page[data-p="3"]{--hue:var(--warn);   --hue-text:var(--warn-text);   --hue-weak:var(--warn-weak)}
+.page[data-p="4"]{--hue:var(--bad);    --hue-text:var(--bad-text);    --hue-weak:var(--bad-weak)}
+.page[data-p="5"]{--hue:var(--violet); --hue-text:var(--violet-text); --hue-weak:var(--violet-weak)}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  line-height:1.65; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow:hidden;
+}
+.mono,code{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+code{font-size:.9em; background:var(--surface-3); padding:1px 6px; border-radius:5px; color:var(--text-2)}
+b,strong{font-weight:600; color:var(--text)}
+em{font-style:normal; font-weight:600; color:var(--hue-text); background:var(--hue-weak); padding:1px 6px; border-radius:5px}
+
+/* ══════════════════ 상단바 ══════════════════ */
+.top{
+  position:fixed; inset:0 0 auto 0; z-index:60; height:56px;
+  display:flex; align-items:center; gap:14px; padding:0 18px;
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter:saturate(1.6) blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.brand{display:flex; align-items:baseline; gap:9px; flex-shrink:0}
+.brand b{font-size:15px; font-weight:700; letter-spacing:-.03em}
+.brand span{font-size:10.5px; color:var(--text-3); letter-spacing:.08em; font-family:"IBM Plex Mono",monospace}
+.crumb{
+  flex:1; min-width:0; display:flex; align-items:center; gap:9px;
+  font-size:12.5px; color:var(--text-3); overflow:hidden; white-space:nowrap;
+}
+.crumb .pill{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.06em;
+  padding:3px 9px; border-radius:20px; background:var(--surface-3); color:var(--text-2); flex-shrink:0;
+}
+.crumb .ttl{color:var(--text-2); font-weight:500; overflow:hidden; text-overflow:ellipsis}
+.tools{display:flex; align-items:center; gap:6px; flex-shrink:0}
+.tbtn{
+  height:33px; min-width:33px; padding:0 10px; display:inline-flex; align-items:center; gap:6px;
+  justify-content:center; border:1px solid var(--border); background:var(--surface);
+  color:var(--text-2); border-radius:9px; cursor:pointer; font-family:inherit; font-size:12px; font-weight:500;
+  transition:background .15s, border-color .15s, color .15s;
+}
+.tbtn:hover{background:var(--surface-3); color:var(--text); border-color:var(--border-strong)}
+.tbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.tbtn kbd{font-size:10px; color:var(--text-3); background:var(--surface-3); border-radius:4px; padding:1px 5px}
+.counter{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--text-3); font-variant-numeric:tabular-nums; padding:0 4px}
+.counter b{color:var(--text); font-weight:600}
+@media(max-width:760px){ .brand span,.tbtn .lbl,.tbtn kbd{display:none} }
+
+/* 진행 바 */
+.prog{position:fixed; top:56px; left:0; right:0; height:2px; background:var(--border); z-index:60}
+.prog i{display:block; height:100%; background:var(--accent); width:0; transition:width .3s cubic-bezier(.2,.8,.2,1)}
+
+/* ══════════════════ 덱 ══════════════════ */
+.deck{position:fixed; inset:58px 0 62px 0; overflow:hidden}
+.page{
+  position:absolute; inset:0; overflow-y:auto; overflow-x:hidden;
+  padding:38px 24px 40px; opacity:0; visibility:hidden;
+  transform:translateX(var(--enter,26px));
+  transition:opacity .28s ease, transform .34s cubic-bezier(.2,.8,.2,1), visibility 0s .34s;
+  -webkit-overflow-scrolling:touch;
+}
+.page.on{opacity:1; visibility:visible; transform:none; transition:opacity .3s ease, transform .38s cubic-bezier(.2,.8,.2,1), visibility 0s}
+@media(prefers-reduced-motion:reduce){ .page{transition:opacity .01s; transform:none !important} }
+.page-in{max-width:1000px; margin:0 auto}
+.page:focus{outline:none}
+
+/* 페이지 헤더 */
+.ph{margin-bottom:26px}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--hue-text); margin:0 0 12px; display:flex; align-items:center; gap:9px;
+}
+.eyebrow::before{content:""; width:22px; height:2px; background:var(--hue); border-radius:2px; flex-shrink:0}
+.ph h2{margin:0 0 12px; font-size:clamp(24px,3.6vw,34px); font-weight:700; letter-spacing:-.035em; line-height:1.28; text-wrap:balance}
+.ph .dek{margin:0; font-size:15.5px; color:var(--text-2); line-height:1.72; max-width:74ch}
+.ph .dek b{color:var(--text)}
+
+/* 출처 */
+.src{
+  margin-top:30px; padding-top:14px; border-top:1px dashed var(--border-strong);
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--text-3); letter-spacing:.01em;
+}
+.src b{color:var(--text-2); font-weight:500}
+
+/* ══════════════════ 블록 ══════════════════ */
+.stack{display:flex; flex-direction:column; gap:16px}
+.grid{display:grid; gap:13px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:19px 20px; box-shadow:var(--shadow);
+}
+.card h3{margin:0 0 9px; font-size:15.5px; font-weight:700; letter-spacing:-.02em; line-height:1.4}
+.card h3 .n{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--hue-text);
+  background:var(--hue-weak); padding:2px 7px; border-radius:6px; margin-right:8px; vertical-align:2px;
+}
+.card p{margin:0 0 9px; font-size:14px; color:var(--text-2); line-height:1.72}
+.card p:last-child{margin-bottom:0}
+.card .tag{
+  display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.05em;
+  color:var(--text-3); margin-bottom:8px;
+}
+
+/* 콜아웃 */
+.co{border-radius:14px; padding:17px 19px 17px 20px; border:1px solid; position:relative; font-size:14.2px; line-height:1.75}
+.co .lb{display:block; font-size:11px; font-family:"IBM Plex Mono",monospace; letter-spacing:.12em; text-transform:uppercase; margin-bottom:8px; font-weight:600}
+.co p{margin:0 0 8px} .co p:last-child{margin-bottom:0}
+.co.key{background:var(--accent-weak); border-color:color-mix(in srgb,var(--accent) 30%,transparent); color:var(--text)}
+.co.key .lb{color:var(--accent-text)}
+.co.ok{background:var(--good-weak); border-color:color-mix(in srgb,var(--good) 32%,transparent)}
+.co.ok .lb{color:var(--good-text)}
+.co.wr{background:var(--warn-weak); border-color:color-mix(in srgb,var(--warn) 34%,transparent)}
+.co.wr .lb{color:var(--warn-text)}
+.co.bd{background:var(--bad-weak); border-color:color-mix(in srgb,var(--bad) 32%,transparent)}
+.co.bd .lb{color:var(--bad-text)}
+.co.qt{background:var(--surface-2); border-color:var(--border); color:var(--text-2); font-size:14px}
+.co.qt .lb{color:var(--text-3)}
+
+/* 용어 카드 */
+.terms{display:grid; gap:11px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.term{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 17px;
+  box-shadow:var(--shadow); display:flex; flex-direction:column; gap:7px;
+}
+.term .t{font-size:15px; font-weight:700; letter-spacing:-.02em; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap}
+.term .t .en{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500; color:var(--text-3); letter-spacing:.01em}
+.term .d{font-size:13.8px; color:var(--text-2); line-height:1.7; margin:0}
+.term .pm{
+  font-size:13px; line-height:1.7; color:var(--text-2); margin:2px 0 0;
+  padding:10px 12px; background:var(--hue-weak); border-radius:9px;
+  border-left:3px solid var(--hue);
+}
+.term .pm b{color:var(--hue-text)}
+.term .pm::before{content:"PM "; font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.1em; color:var(--hue-text); font-weight:600}
+
+/* 표 */
+.tbl{width:100%; overflow-x:auto; border:1px solid var(--border); border-radius:14px; background:var(--surface); box-shadow:var(--shadow)}
+table{width:100%; border-collapse:collapse; font-size:13.6px; min-width:520px}
+th,td{padding:11px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--border)}
+th{font-size:11.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-3); background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td{color:var(--text-2); line-height:1.65}
+td b{color:var(--text)}
+td.c{text-align:center; white-space:nowrap}
+
+/* 배지 */
+.bg{display:inline-block; font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:600; letter-spacing:.05em; padding:2px 8px; border-radius:6px; white-space:nowrap}
+.bg.must{background:var(--bad-weak); color:var(--bad-text)}
+.bg.should{background:var(--warn-weak); color:var(--warn-text)}
+.bg.could{background:var(--accent-weak); color:var(--accent-text)}
+.bg.wont{background:var(--surface-3); color:var(--text-3)}
+.bg.pass{background:var(--good-weak); color:var(--good-text)}
+.bg.hold{background:var(--warn-weak); color:var(--warn-text)}
+.bg.fail{background:var(--bad-weak); color:var(--bad-text)}
+.bg.n{background:var(--surface-3); color:var(--text-2)}
+
+/* 흐름 */
+.flow{display:flex; align-items:stretch; gap:0; flex-wrap:wrap}
+.flow .node{
+  flex:1 1 150px; min-width:130px; background:var(--surface); border:1px solid var(--border);
+  border-radius:13px; padding:14px 15px; box-shadow:var(--shadow); text-align:center;
+}
+.flow .node .k{font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--hue-text); letter-spacing:.08em; display:block; margin-bottom:6px}
+.flow .node .v{font-size:13.5px; font-weight:600; letter-spacing:-.01em; line-height:1.45}
+.flow .node .s{font-size:12px; color:var(--text-3); margin-top:5px; line-height:1.5}
+.flow .arw{display:flex; align-items:center; justify-content:center; padding:0 8px; color:var(--text-3); font-size:17px; flex:0 0 auto}
+@media(max-width:640px){ .flow{flex-direction:column} .flow .arw{padding:5px 0; transform:rotate(90deg)} }
+
+/* 단계 리스트 */
+.steps{counter-reset:s; display:flex; flex-direction:column; gap:11px; margin:0; padding:0; list-style:none}
+.steps li{
+  counter-increment:s; position:relative; padding:14px 17px 14px 52px;
+  background:var(--surface); border:1px solid var(--border); border-radius:13px; box-shadow:var(--shadow);
+  font-size:14px; color:var(--text-2); line-height:1.7;
+}
+.steps li::before{
+  content:counter(s); position:absolute; left:16px; top:14px;
+  width:24px; height:24px; display:grid; place-items:center; border-radius:8px;
+  background:var(--hue-weak); color:var(--hue-text);
+  font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600;
+}
+.steps li b{display:block; color:var(--text); font-size:14.5px; margin-bottom:3px; letter-spacing:-.01em}
+
+/* 체크 질문 */
+.qs{display:flex; flex-direction:column; gap:9px; margin:0; padding:0; list-style:none}
+.qs li{
+  position:relative; padding:12px 15px 12px 42px; font-size:14px; line-height:1.7; color:var(--text-2);
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+}
+.qs li::before{
+  content:"?"; position:absolute; left:14px; top:12px; width:20px; height:20px;
+  display:grid; place-items:center; border-radius:6px; background:var(--hue-weak);
+  color:var(--hue-text); font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700;
+}
+.qs li b{color:var(--text)}
+.qs.warn li::before{content:"!"; background:var(--bad-weak); color:var(--bad-text)}
+
+/* 숫자 스탯 */
+.stats{display:grid; gap:11px; grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.stat{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px 17px; box-shadow:var(--shadow)}
+.stat b{display:block; font-size:27px; font-weight:700; letter-spacing:-.04em; line-height:1.1; font-variant-numeric:tabular-nums}
+.stat span{display:block; font-size:12.5px; color:var(--text-3); margin-top:6px; line-height:1.5}
+.stat small{display:block; font-size:11.5px; color:var(--text-3); margin-top:4px}
+
+/* 비교 2열 */
+.vs{display:grid; gap:13px; grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+.vs .side{border-radius:14px; padding:17px 18px; border:1px solid var(--border); background:var(--surface); box-shadow:var(--shadow)}
+.vs .side h4{margin:0 0 10px; font-size:14px; font-weight:700; letter-spacing:-.01em; display:flex; align-items:center; gap:8px}
+.vs .side h4 .dot{width:8px; height:8px; border-radius:50%; flex-shrink:0}
+.vs .side.a h4 .dot{background:var(--good)} .vs .side.b h4 .dot{background:var(--bad)}
+.vs .side ul{margin:0; padding-left:17px; font-size:13.6px; color:var(--text-2); line-height:1.75}
+.vs .side li{margin-bottom:5px}
+
+/* 표지 */
+.cover{display:flex; flex-direction:column; justify-content:center; min-height:min(560px,72vh); text-align:left}
+.cover h1{margin:0 0 18px; font-size:clamp(32px,6vw,54px); font-weight:700; letter-spacing:-.045em; line-height:1.16; text-wrap:balance}
+.cover .sub{font-size:17px; color:var(--text-2); max-width:60ch; line-height:1.75; margin:0 0 30px}
+.cover .meta{display:flex; flex-wrap:wrap; gap:9px; margin-bottom:34px}
+.cover .meta span{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--text-3); background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:6px 13px}
+.keyhint{display:flex; flex-wrap:wrap; gap:20px; padding:20px 22px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow)}
+.keyhint div{display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--text-2)}
+kbd{
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo",sans-serif; font-weight:600;
+  display:inline-grid; place-items:center; min-width:26px; height:26px; padding:0 7px;
+  background:var(--surface-2); border:1px solid var(--border-strong); border-bottom-width:2px;
+  border-radius:7px; font-size:12px; font-weight:500; color:var(--text-2);
+}
+
+/* ══════════════════ 하단 내비 ══════════════════ */
+.nav{
+  position:fixed; inset:auto 0 0 0; z-index:60; height:62px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 18px;
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter:saturate(1.6) blur(16px); border-top:1px solid var(--border);
+}
+.nbtn{
+  display:inline-flex; align-items:center; gap:10px; max-width:42vw;
+  padding:9px 15px; border:1px solid var(--border); background:var(--surface); color:var(--text-2);
+  border-radius:11px; cursor:pointer; font-family:inherit; font-size:13px; text-align:left;
+  box-shadow:var(--shadow); transition:transform .14s, border-color .14s, color .14s;
+}
+.nbtn:hover:not(:disabled){transform:translateY(-1px); border-color:var(--border-strong); color:var(--text)}
+.nbtn:disabled{opacity:.35; cursor:default}
+.nbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.nbtn .ar{font-size:15px; color:var(--text-3); flex-shrink:0}
+.nbtn .tx{display:flex; flex-direction:column; min-width:0}
+.nbtn .tx small{font-size:10.5px; color:var(--text-3); font-family:"IBM Plex Mono",monospace; letter-spacing:.06em}
+.nbtn .tx span{font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.dots{display:flex; gap:5px; align-items:center; flex:1; min-width:0; justify-content:center; overflow-x:auto; scrollbar-width:none; -ms-overflow-style:none}
+.dots::-webkit-scrollbar{display:none}
+.dots i{width:6px; height:6px; border-radius:50%; background:var(--border-strong); flex-shrink:0; transition:all .2s; cursor:pointer}
+.dots i.on{background:var(--accent); width:20px; border-radius:3px}
+.dots i.near{background:var(--text-3)}
+@media(max-width:760px){ .nbtn .tx span{display:none} .dots{display:none} }
+
+/* ══════════════════ 오버레이 ══════════════════ */
+.ov{
+  position:fixed; inset:0; z-index:90; background:color-mix(in srgb,var(--bg) 78%,transparent);
+  backdrop-filter:blur(18px) saturate(1.4); display:none; flex-direction:column;
+}
+.ov.on{display:flex}
+.ov-top{display:flex; align-items:center; gap:14px; padding:16px 20px; border-bottom:1px solid var(--border); flex-shrink:0}
+.ov-top h3{margin:0; font-size:16px; font-weight:700; letter-spacing:-.02em; flex-shrink:0}
+.ov-search{position:relative; flex:1; min-width:0; max-width:460px}
+.ov-search input{
+  width:100%; padding:10px 14px; font-size:14px; font-family:inherit; color:var(--text);
+  background:var(--surface); border:1px solid var(--border); border-radius:11px; outline:none;
+}
+.ov-search input:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-weak)}
+.ov-body{flex:1; overflow-y:auto; padding:22px 20px 40px}
+.ov-in{max-width:1060px; margin:0 auto}
+.ov-part{margin-bottom:26px}
+.ov-part > h4{
+  margin:0 0 11px; font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--text-3); display:flex; align-items:center; gap:9px;
+}
+.ov-part > h4::after{content:""; flex:1; height:1px; background:var(--border)}
+.ov-list{display:grid; gap:8px; grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.ov-item{
+  display:flex; align-items:flex-start; gap:11px; padding:11px 13px; text-align:left; cursor:pointer;
+  background:var(--surface); border:1px solid var(--border); border-radius:11px;
+  font-family:inherit; color:var(--text-2); transition:border-color .14s, transform .14s, background .14s;
+}
+.ov-item:hover{border-color:var(--border-strong); transform:translateY(-1px); background:var(--surface-2)}
+.ov-item.cur{border-color:var(--accent); background:var(--accent-weak)}
+.ov-item .num{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--text-3); flex-shrink:0; padding-top:2px; font-variant-numeric:tabular-nums}
+.ov-item .lab{font-size:13.5px; line-height:1.5; font-weight:500; color:var(--text)}
+.ov-item:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.ov-empty{text-align:center; color:var(--text-3); font-size:14px; padding:50px 0}
+
+/* 도움말 */
+.help-grid{display:grid; gap:10px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); max-width:760px; margin:0 auto}
+.help-row{display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--surface); border:1px solid var(--border); border-radius:11px}
+.help-row .ks{display:flex; gap:4px; flex-shrink:0}
+.help-row span{font-size:13.5px; color:var(--text-2)}
+
+/* 좌우 클릭 영역 */
+.edge{position:fixed; top:58px; bottom:62px; width:9vw; max-width:110px; z-index:20; cursor:pointer; border:0; background:transparent; display:grid; place-items:center; opacity:0; transition:opacity .2s}
+.edge:hover{opacity:1}
+.edge.l{left:0} .edge.r{right:0}
+.edge i{width:38px; height:38px; display:grid; place-items:center; border-radius:50%; background:var(--surface); border:1px solid var(--border); box-shadow:var(--shadow-lg); color:var(--text-2); font-size:15px; font-style:normal}
+.edge:disabled{cursor:default} .edge:disabled:hover{opacity:0}
+@media(max-width:900px){ .edge{display:none} }
+@media(hover:none){ .edge{display:none} }
+
+::-webkit-scrollbar{width:10px; height:10px}
+::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:6px; border:3px solid var(--bg)}
+::-webkit-scrollbar-track{background:transparent}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><b>태스크 읽는 PM</b><span>FINFRIENDS TASKS v3.0</span></div>
+  <div class="crumb"><span class="pill" id="cPart">시작</span><span class="ttl" id="cTitle">표지</span></div>
+  <div class="tools">
+    <span class="counter"><b id="cNum">1</b> / <span id="cTot">38</span></span>
+    <button class="tbtn" id="btnOv" aria-label="목차 열기"><span class="lbl">목차</span><kbd>O</kbd></button>
+    <button class="tbtn" id="btnHelp" aria-label="단축키 도움말">?</button>
+    <button class="tbtn" id="btnTheme" aria-label="테마 전환">◐</button>
+  </div>
+</header>
+<div class="prog"><i id="progBar"></i></div>
+
+<button class="edge l" id="edgeL" aria-label="이전 페이지"><i>←</i></button>
+<button class="edge r" id="edgeR" aria-label="다음 페이지"><i>→</i></button>
+
+<main class="deck" id="deck" tabindex="-1" aria-live="polite">
+
+<!-- ══════════════ PART 1 · 시작 ══════════════ -->
+
+<section class="page" data-p="0" data-part="시작" data-title="표지 — 태스크 읽는 PM" data-kw="표지 커버 시작 조작법">
+<div class="page-in cover">
+  <p class="eyebrow">핀프렌즈 태스크 리스트 v3.0 · PM 학습 해설서</p>
+  <h1>요구사항 84개가<br>이슈 55개가 되기까지</h1>
+  <p class="sub">이 해설서는 <b>TASKS-FINFRIENDS-NEXTJS-001 개정 3.0</b> 한 건을 PM의 눈으로 해체한다. 목표는 코드를 읽는 것이 아니라, <b>이 표를 근거로 일정을 판단하고 스코프를 협상하는 것</b>이다. 표 읽는 법으로 시작해 쪼개는 규칙·순서·완료 판정으로 가고, 통합이 감수한 위험으로 끝난다.</p>
+  <div class="meta">
+    <span>38 페이지</span><span>6개 파트</span><span>예상 75분</span><span>대상 · 제품기획 PM</span>
+  </div>
+  <div class="keyhint">
+    <div><kbd>←</kbd><kbd>→</kbd> 페이지 넘기기</div>
+    <div><kbd>O</kbd> 목차 · 검색</div>
+    <div><kbd>?</kbd> 단축키</div>
+    <div><kbd>Home</kbd><kbd>End</kbd> 처음 · 끝</div>
+  </div>
+</div>
+</section>
+
+<section class="page" data-p="0" data-part="시작" data-title="태스크 리스트가 PM에게 하는 일 세 가지" data-kw="역할 왜읽나 일정 스코프 협상 근거">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">왜 PM이 이 표를 읽는가</p>
+    <h2>태스크 리스트가 PM에게 하는 일 세 가지</h2>
+    <p class="dek">SRS가 <b>무엇을 만들 것인가</b>의 합의문이라면, 태스크 리스트는 <b>그것이 며칠짜리 일로 쪼개지는가</b>의 답이다. 개발자가 쓰는 문서처럼 보이지만, 실제로 이 표에 가장 많이 걸려 있는 것은 PM의 결정이다.</p>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <h3><span class="n">01</span>일정을 말할 근거</h3>
+      <p>“언제 되나요”에 답할 수 있는 유일한 자료다. <em>임계 경로 9단계</em>가 §7에 적혀 있고, 어느 태스크가 밀리면 무엇이 함께 밀리는지가 표로 있다.</p>
+      <p>감으로 답하면 밀렸을 때 <b>무엇이 밀렸는지 설명할 수 없다.</b></p>
+    </div>
+    <div class="card">
+      <h3><span class="n">02</span>스코프를 깎을 자리</h3>
+      <p>“두 주 당길 수 없나요”가 오면 <b>무엇을 뺄지</b>를 이 표에서 고른다. §5 착수 차단 8건과 §10 남은 위험이 <em>깎아도 되는 것과 안 되는 것</em>을 이미 갈라 놓았다.</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">03</span>완료를 판정할 기준</h3>
+      <p>수용 기준 <em>84건 전건</em>이 §8에서 이슈에 못 박혀 있다. 미배분 0건이므로 <b>“다 됐어요”가 성립하지 않는 구조</b>다 — 어느 AC가 어느 이슈에서 판정되는지가 정해져 있다.</p>
+    </div>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">이 문서의 성격</span>
+    <p>태스크 리스트는 <b>기획 문서가 아니라 파생 문서</b>다. SRS에 없는 기능은 여기에 없고, 여기에만 있는 기능도 없다. 그래서 <b>이 표를 고치는 것으로 제품을 바꿀 수는 없다</b> — 바꾸려면 SRS로 올라가야 한다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §0 작성 규칙 · §7 임계 경로 · §8 AC 배분표</p>
+</div>
+</section>
+
+<section class="page" data-p="0" data-part="시작" data-title="PRD → SRS → TASKS → 이슈, 문서 체인의 어디인가" data-kw="문서체인 위치 PRD SRS DESIGN 이슈 파생">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">이 문서가 서 있는 자리</p>
+    <h2>PRD → SRS → TASKS → GitHub 이슈</h2>
+    <p class="dek">이 프로젝트의 문서는 <b>한 방향으로 흐른다.</b> 각 단계에서 답하는 질문이 다르고, PM이 관여하는 깊이도 다르다. 태스크 리스트는 끝에서 두 번째다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>문서</th><th>답하는 질문</th><th>PM의 관여</th><th>바뀌는 계기</th></tr></thead>
+      <tbody>
+        <tr><td><b>PRD</b><br><span class="mono" style="font-size:11px">finfriends-prd-v1_0.md</span></td><td>왜 만드는가 · 누구를 위해</td><td><b>주도</b></td><td>시장·사용자 이해가 바뀔 때</td></tr>
+        <tr><td><b>SRS</b><br><span class="mono" style="font-size:11px">SRS_finfriends-nextjs-v1_0.md</span></td><td>무엇을 만드는가 · 무엇이 합격인가</td><td><b>확정 · 승인</b></td><td>범위·판정 기준이 바뀔 때</td></tr>
+        <tr><td><b>TASKS</b> <span class="bg n">이 문서</span><br><span class="mono" style="font-size:11px">TASKS_…-v3_0.md</span></td><td>며칠짜리 일 몇 개인가 · 무슨 순서인가</td><td><b>읽고 판단</b> — 작성은 개발</td><td>SRS가 바뀔 때 · 통합 단위가 바뀔 때</td></tr>
+        <tr><td><b>GitHub 이슈</b><br><span class="mono" style="font-size:11px">.github/ISSUE_TEMPLATE</span></td><td>지금 누가 무엇을 하고 있는가</td><td><b>추적</b></td><td>매일</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co wr" style="margin-top:16px">
+    <span class="lb">방향은 한쪽이지만 예외가 있다</span>
+    <p>설계·태스크 단계에서 발견된 것이 <b>요구사항이면 SRS로 거슬러 올라간다.</b> 기준 SRS 서두의 「설계 문서로부터의 역류 반영」이 그 예다. 태스크 작성 중 <b>“SRS에 이게 안 적혀 있는데요”</b>가 나오면, 그것은 태스크의 문제가 아니라 <b>SRS 개정 신호</b>다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS 헤더 기준·상위 문서 · §0 도출 원칙</p>
+</div>
+</section>
+
+<section class="page" data-p="0" data-part="시작" data-title="55건 한 장 요약" data-kw="요약 숫자 55건 46 9 복잡도 규모">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">한 장으로 보는 규모</p>
+    <h2>55건 — 개발 46 · 디자인 9</h2>
+    <p class="dek">이 숫자들이 이 문서의 전부다. 아래 다섯 개를 외우면 나머지 페이지는 <b>이 숫자가 왜 이렇게 됐는지</b>의 설명이다.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>55</b><span>전체 이슈</span><small>FR 46 + UX 9</small></div>
+    <div class="stat"><b>31 / 24</b><span>복잡도 H / M</span><small>L은 통합으로 소멸</small></div>
+    <div class="stat"><b>84</b><span>수용 기준 전건</span><small>미배분 0건</small></div>
+    <div class="stat"><b>9</b><span>임계 경로 단계</span><small>FR-001 → FR-027</small></div>
+    <div class="stat"><b>8</b><span>착수 차단 항목</span><small>1건은 일반 공개 가부</small></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>개정 2.0에서 무엇이 달라졌나</h3>
+      <p><b>153건 → 55건.</b> 태스크가 사라진 것이 아니라 <em>이슈 단위가 굵어졌다.</em> 흡수된 130건은 각 행의 「흡수」 칸에 전수 남아 있고, 그것이 곧 이슈 본문의 <code>Task Breakdown</code> 체크박스가 된다.</p>
+      <p>비율은 개발 <b>2.8 : 1</b> · 디자인 <b>2.6 : 1</b>.</p>
+    </div>
+    <div class="card">
+      <h3>유형별 분포 <span class="tag mono">개발 46건 · 주 유형</span></h3>
+      <div class="tbl" style="box-shadow:none; border-radius:10px">
+        <table style="min-width:0; font-size:12.5px">
+          <tbody>
+            <tr><td><code>[Feature/Command]</code></td><td class="c"><b>12</b></td><td><code>[Contract]</code></td><td class="c"><b>4</b></td></tr>
+            <tr><td><code>[Infra]</code></td><td class="c"><b>10</b></td><td><code>[DB]</code> · <code>[Feature/Query]</code> · <code>[Sec]</code></td><td class="c"><b>3</b></td></tr>
+            <tr><td><code>[UI]</code></td><td class="c"><b>9</b></td><td><code>[Mock]</code> · <code>[Test]</code></td><td class="c"><b>1</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — TASKS 요약 표 · §9 개정 2.0 → 3.0 대응</p>
+</div>
+</section>
+
+<!-- ══════════════ PART 2 · 표 읽는 법 ══════════════ -->
+
+<section class="page" data-p="1" data-part="표 읽는 법" data-title="ID 체계 — 번호가 곧 순서다" data-kw="ID FR UX 번호 위상정렬 선행 전방참조">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">표 읽는 법 ①</p>
+    <h2>번호는 이름이 아니라 순서다</h2>
+    <p class="dek">보통 ID는 그냥 식별자지만, 이 문서에서는 <b>번호 자체가 정보를 담는다.</b> 이 규칙 하나만 알면 표를 위에서 아래로 읽는 것이 곧 <b>착수 순서를 읽는 것</b>이 된다.</p>
+  </div>
+  <div class="vs">
+    <div class="side a">
+      <h4><span class="dot"></span><code>UX-###</code> — 디자인 산출물</h4>
+      <ul>
+        <li><b>9건.</b> 화면·토큰·컴포넌트 사양</li>
+        <li>개발과 <b>별도 표</b>로 분리 — §2</li>
+        <li>연결은 §4 「디자인 ↔ 개발 연계」에서만</li>
+      </ul>
+    </div>
+    <div class="side b">
+      <h4><span class="dot" style="background:var(--accent)"></span><code>FR-###</code> — 개발·인프라 태스크</h4>
+      <ul>
+        <li><b>46건.</b> 스키마·서버·화면 구현·배치·검증</li>
+        <li>Epic 21구획에 나뉘어 있음 — §3</li>
+        <li>번호가 <b>위상 정렬 순서</b></li>
+      </ul>
+    </div>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">이 규칙이 PM에게 주는 것</span>
+    <p><b>선행 태스크는 항상 자기보다 작은 번호를 가리킨다.</b> 그래서 <em>FR-038의 선행에 FR-041이 있을 수 없다.</em> 이 성질이 §11에서 기계로 검증되어 있다 — 전방 참조 0건 · 순환 의존 0건.</p>
+    <p>실무에서 쓰는 법: 어떤 이슈가 지금 착수 가능한지 보려면 <b>선행 칸의 번호가 전부 닫혔는지만</b> 보면 된다. 그래프를 그릴 필요가 없다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §0 ID 체계 · §11 검증</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="표 읽는 법" data-title="유형 9종 — 접두사가 곧 GitHub 라벨이다" data-kw="유형 접두사 라벨 type Feature Command Query DB Infra Sec Contract Mock Test UI">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">표 읽는 법 ②</p>
+    <h2>유형 9종 — 표의 값과 라벨의 값이 같다</h2>
+    <p class="dek">「유형」 칸의 값은 설명용 분류가 아니다. <b>이슈 제목의 접두사이자 GitHub 라벨 <code>type:</code> 의 값과 같은 문자열</b>이다. 이것이 같아야 Project 보드에서 유형 필터가 성립한다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>유형</th><th>무엇인가</th><th>PM이 이걸 볼 때 알아야 할 것</th><th class="c">건수</th></tr></thead>
+      <tbody>
+        <tr><td><code>[Feature/Command]</code></td><td>데이터를 <b>바꾸는</b> 기능 — 지급·승인·저장</td><td>대부분의 AC가 여기 걸린다. 밀리면 기능이 없는 것</td><td class="c"><b>12</b></td></tr>
+        <tr><td><code>[Infra]</code></td><td>설비 — 플랫폼·배치·계측·관측</td><td>사용자에게 안 보이지만 <b>없으면 판정을 못 한다</b></td><td class="c"><b>10</b></td></tr>
+        <tr><td><code>[UI]</code></td><td>화면 구현</td><td>디자인(UX-*) 완료가 전제. §4에서 짝을 확인</td><td class="c"><b>9</b></td></tr>
+        <tr><td><code>[Contract]</code></td><td>계약 — 타입·인터페이스 정의</td><td>이게 확정돼야 <b>여러 팀이 동시에 착수</b>한다</td><td class="c"><b>4</b></td></tr>
+        <tr><td><code>[DB]</code></td><td>스키마·데이터 접근 계층</td><td>거의 전부의 선행. 밀리면 전부 밀린다</td><td class="c"><b>3</b></td></tr>
+        <tr><td><code>[Feature/Query]</code></td><td>데이터를 <b>읽는</b> 기능 — 조회·렌더 데이터</td><td>성능 예산이 여기 붙는다</td><td class="c"><b>3</b></td></tr>
+        <tr><td><code>[Sec]</code></td><td>인증·동의 게이트·규제 강제</td><td><b>허용 오차 0.</b> 부분 통과가 없다</td><td class="c"><b>3</b></td></tr>
+        <tr><td><code>[Mock]</code></td><td>외부 대체물 — 제휴사 응답 흉내</td><td>외부 계약 미확정 구간의 <b>착수를 열어 주는</b> 장치</td><td class="c"><b>1</b></td></tr>
+        <tr><td><code>[Test]</code></td><td>E2E 검증</td><td>릴리스 게이트의 근거. 마지막에 몰린다</td><td class="c"><b>1</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co qt" style="margin-top:16px">
+    <span class="lb">위첨자를 만나면</span>
+    <p>표에 <code>[DB]</code> <sup>+Sec</sup> 처럼 위첨자가 붙은 것은 <b>통합으로 유형이 섞인 이슈</b>다. 10건 있고 §9에 목록이 있다. <b>주 유형으로 필터하되 부 유형도 라벨로 붙인다</b> — 그래야 보안 담당이 자기 몫을 놓치지 않는다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §0 유형 · 유형별 분포 표 · §9 유형이 섞인 이슈 10건</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="표 읽는 법" data-title="화면과 기능을 왜 끝까지 나눠 두는가" data-kw="UI Feature 분리 병렬 디자인 대기 관점분리">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">표 읽는 법 ③</p>
+    <h2>「승인 대기」가 이슈 두 개인 이유</h2>
+    <p class="dek">153건을 55건으로 줄이면서도 <b>화면과 기능은 끝까지 합치지 않았다.</b> 표에서 <code>FR-018 승인 대기 조회</code>와 <code>FR-019 승인 대기 화면</code>이 따로 있는 것이 그 결과다. 언뜻 낭비로 보이지만 이유가 있다.</p>
+  </div>
+  <div class="flow">
+    <div class="node"><span class="k">합쳤다면</span><span class="v">기능이 디자인을 기다린다</span><span class="s">UX-005가 안 끝나면 조회 로직도 착수 못 함</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">나눴으므로</span><span class="v">조회는 먼저 간다</span><span class="s">FR-018은 UX와 무관하게 착수·완료</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">결과</span><span class="v">디자인이 늦어도<br>절반은 진행</span><span class="s">화면만 대기 상태로 남는다</span></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>같은 이유로 나눠 둔 것 하나 더</h3>
+      <p><code>[Contract]</code> <b>계약</b>과 그것을 소비하는 <code>[Feature/Command]</code>도 합치지 않았다. 계약이 먼저 확정되어야 <em>여러 기능이 동시에 착수</em>할 수 있기 때문이다.</p>
+      <p>예 — <code>FR-008 도메인 계약 6종</code>이 닫혀야 FR-012·014·015·017·020·022가 병렬로 열린다.</p>
+    </div>
+    <div class="card">
+      <h3>PM이 이걸 알아야 하는 순간</h3>
+      <p>“이슈가 너무 잘게 쪼개진 것 아닌가요”라는 말이 나올 때. <b>합치는 순간 병렬성이 사라진다</b>는 것이 답이다.</p>
+      <p>§11 검증에 <em><code>[UI]</code>가 <code>[Feature/*]</code>와 섞인 이슈 0건</em>이 명시돼 있다 — 이 규칙이 실제로 지켜졌다는 증거다.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §0 관점 분리 · §1 남긴 것 · §11 검증</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="표 읽는 법" data-title="복잡도 H / M — 무엇이 H를 만드는가" data-kw="복잡도 H M L 아키텍처 동시성 규제 외부연동">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">표 읽는 법 ④</p>
+    <h2>복잡도는 「오래 걸린다」가 아니다</h2>
+    <p class="dek">H는 작업량이 아니라 <b>틀렸을 때의 대가</b>를 나타낸다. 그래서 H 태스크는 일정 압박을 받을 때 <b>가장 먼저 깎이면 안 되는 것</b>이다.</p>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3><span class="n">H</span>31건 — 되돌리기 어려운 것</h3>
+      <p>넷 중 하나에 해당하면 H다.</p>
+      <ul style="margin:0; padding-left:18px; font-size:13.8px; color:var(--text-2); line-height:1.8">
+        <li><b>아키텍처 결정</b> — 나중에 바꾸면 전부 고쳐야 함</li>
+        <li><b>동시성</b> — 재현이 안 되는 버그가 나오는 자리</li>
+        <li><b>규제 강제</b> — 허용 오차 0</li>
+        <li><b>외부 연동</b> — 우리가 통제하지 못하는 상대가 있음</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="n">M</span>24건 — 표준 구현 + 검증</h3>
+      <p>패턴이 이미 정해져 있고, 틀려도 <b>그 이슈 안에서 고쳐진다.</b> 일정 협상에서 먼저 논의할 수 있는 쪽이다.</p>
+      <p class="tag mono" style="margin-top:10px">L은 개정 3.0에서 사라졌다 — 설정·스크립트 성격의 저복잡도 태스크가 전부 다른 이슈에 흡수됐기 때문이다.</p>
+    </div>
+  </div>
+  <div class="co wr" style="margin-top:16px">
+    <span class="lb">통합이 복잡도에 한 일</span>
+    <p>병합된 이슈의 복잡도는 <b>구성원 중 가장 높은 값</b>을 취한다. M 다섯 개에 H 하나가 섞이면 그 이슈는 H다. 그래서 <em>H가 31건으로 늘어 보이는 것은 위험이 늘어서가 아니라 묶음이 굵어져서</em>다 — 태스크 단위 복잡도 원본이 필요하면 개정 2.0을 봐야 한다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §0 복잡도 · §10.3 통합으로 사라진 것</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="표 읽는 법" data-title="「흡수」 칸 — 153건은 어디로 갔나" data-kw="흡수 Task Breakdown 체크박스 진척 가시성 역방향">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">표 읽는 법 ⑤</p>
+    <h2>「흡수」 칸이 진척 관리의 단위다</h2>
+    <p class="dek">개정 3.0의 각 행에는 <b>「흡수」 건수와 「흡수 ID」</b> 칸이 있다. 이것은 기록용 각주가 아니라, <b>이슈 본문의 체크박스로 그대로 옮겨지는 목록</b>이다.</p>
+  </div>
+  <div class="flow">
+    <div class="node"><span class="k">개정 2.0</span><span class="v">FR-068 ~ FR-072</span><span class="s">개별 태스크 5건</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">개정 3.0</span><span class="v">FR-025 한 이슈</span><span class="s">흡수 5 · 복잡도 H</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">GitHub</span><span class="v">Task Breakdown<br>체크박스 5개</span><span class="s">진척은 여기서 본다</span></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>그래서 “55건”이 진척 단위가 아니다</h3>
+      <p>보드에서 이슈 55개를 세면 <b>한 칸이 너무 크다.</b> 실제 주간 진척은 <em>체크박스 130개</em> 위에서 움직인다. 55는 <b>이슈 수</b>이고 130은 <b>일감 수</b>다.</p>
+    </div>
+    <div class="card">
+      <h3>PM이 확인할 것 하나</h3>
+      <p>이슈를 만들 때 <b>Task Breakdown이 실제로 들어갔는지</b>를 본다. 이게 빠지면 55건짜리 보드는 <b>2주 동안 아무 칸도 안 움직이는 보드</b>가 된다.</p>
+    </div>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">되돌릴 수 있다</span>
+    <p>흡수 ID 칸이 <b>역방향 대응표</b> 역할을 한다. 어떤 이슈가 너무 굵다고 판단되면 <em>흡수 ID를 근거로 다시 분리</em>하면 된다. §10.1에 분리 후보 5건과 각각의 비용(+1건)이 이미 계산돼 있다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §0 흡수 · §9 대응 · §10.3</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="표 읽는 법" data-title="Epic 21구획 — 무엇을 책임지는 묶음인가" data-kw="Epic 21 구획 그룹 도메인 빌드">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">표 읽는 법 ⑥</p>
+    <h2>Epic — 46건을 21개 책임 단위로</h2>
+    <p class="dek">Epic은 <b>같은 것을 책임지는 이슈들의 묶음</b>이고, 번호 <code>E1~E21</code>은 <b>빌드 순서를 따른다.</b> 이슈 번호도 같은 순서라, Epic을 위에서 아래로 읽는 것이 곧 프로젝트를 시간순으로 읽는 것이다.</p>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <h3>기반 — <span class="bg n">B0</span></h3>
+      <p style="font-size:13.4px">Platform &amp; Infra · DB Schema &amp; Data Access · Build Gate · Server Runtime &amp; Domain · Contract &amp; Mock</p>
+      <p class="tag mono">FR-001 ~ 009 · 9건</p>
+    </div>
+    <div class="card">
+      <h3>진입과 규제 — <span class="bg n">B1</span></h3>
+      <p style="font-size:13.4px">Auth &amp; Consent · Guardian Onboarding</p>
+      <p class="tag mono">FR-010 ~ 013 · 4건</p>
+    </div>
+    <div class="card">
+      <h3>보상과 학습 — <span class="bg n">B2</span></h3>
+      <p style="font-size:13.4px">Star Ledger &amp; Learning</p>
+      <p class="tag mono">FR-014 ~ 016 · 3건</p>
+    </div>
+    <div class="card">
+      <h3>실천 루프 — <span class="bg n">B3</span></h3>
+      <p style="font-size:13.4px">Practice &amp; Mission · Wishlist &amp; Avatar · PWA &amp; Offline</p>
+      <p class="tag mono">FR-017 ~ 021 · FR-039 · 6건</p>
+    </div>
+    <div class="card">
+      <h3>외부 연동 — <span class="bg n">B4</span></h3>
+      <p style="font-size:13.4px">Partner &amp; Spending</p>
+      <p class="tag mono">FR-022 ~ 026 · 5건</p>
+    </div>
+    <div class="card">
+      <h3>전달과 배치 — <span class="bg n">B5</span></h3>
+      <p style="font-size:13.4px">Retrospective · pg_cron 배치 · Notification · Vercel Cron 배치 · Growth Delivery</p>
+      <p class="tag mono">FR-027 ~ 029 · 031 ~ 038 · 11건</p>
+    </div>
+  </div>
+  <div class="co qt" style="margin-top:14px">
+    <span class="lb">빌드에 안 들어가는 Epic 4구획</span>
+    <p><b>Batch Infrastructure</b>(B0/B5 병행 · 1건) · <b>Observability &amp; Ops</b>(전 빌드 병행 · 2건) · <b>AI Ops Tool</b>(조건부 <code>AI_ENABLED</code> · 2건) · <b>Verification Harness</b>(릴리스 게이트 근거 · 3건). 이 8건은 <em>특정 빌드에 속하지 않고 계속 돌거나 조건부로 열린다.</em></p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §3 Epic 칸 · §6 빌드 구획별 배치</p>
+</div>
+</section>
+
+<section class="page" data-p="1" data-part="표 읽는 법" data-title="실습 — 표 한 행을 끝까지 읽어 보기" data-kw="실습 예시 FR-025 웹훅 읽는법 한행">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">표 읽는 법 ⑦ · 실습</p>
+    <h2>FR-025 한 행에서 읽어 낼 수 있는 것</h2>
+    <p class="dek">지금까지의 규칙을 한 행에 전부 적용해 본다. 이 한 행에서 PM은 <b>여섯 가지</b>를 읽을 수 있다.</p>
+  </div>
+  <div class="co qt">
+    <span class="lb">원문 한 행</span>
+    <p class="mono" style="font-size:12.5px; line-height:1.9"><b>FR-025</b> | <code>[Feature/Command]</code> | Partner &amp; Spending | 제휴사 웹훅 수신·매칭·카드 상태 | 흡수 <b>5</b> | FR-068~072 | 6.1.2 · REQ-TEC-018 · 3.4 … | 선행 <b>FR-007 · 008 · 012 · 022 · 024</b> | <b>H</b></p>
+  </div>
+  <ol class="steps" style="margin-top:16px">
+    <li><b>쓰기 기능이다</b> — <code>[Feature/Command]</code>. 데이터를 바꾸므로 AC가 여기 붙고, 실패하면 <b>기능이 없는 것</b>이지 화면이 안 예쁜 게 아니다.</li>
+    <li><b>외부가 걸려 있다</b> — Epic이 Partner &amp; Spending이고 「웹훅 수신」이다. 우리가 통제하지 못하는 상대가 있다는 뜻이고, 그래서 복잡도가 H다.</li>
+    <li><b>착수 조건이 다섯 개다</b> — 선행 5건이 전부 닫혀야 시작한다. 가장 큰 번호가 <b>FR-024</b>이므로 <em>실질 착수 시점은 FR-024 완료 직후</em>다.</li>
+    <li><b>일감은 다섯 개다</b> — 흡수 5건(구 FR-068~072). 이슈 본문의 체크박스가 5개이고, 주간 진척은 이 위에서 본다.</li>
+    <li><b>근거 문서가 있다</b> — SRS §6.1.2 · REQ-TEC-018 · §3.4. “왜 이걸 만드나”가 나오면 <b>이 좌표를 그대로 인용</b>하면 된다.</li>
+    <li><b>임계 경로 위다</b> — §7의 9단계 중 여덟 번째. 밀리면 <b>FR-026 · FR-027 회고 · FR-033 소비 집계</b>가 함께 밀린다.</li>
+  </ol>
+  <p class="src"><b>출처</b> — TASKS §3 개발·인프라 태스크 · §7 임계 경로</p>
+</div>
+</section>
+
+<!-- ══════════════ PART 3 · 쪼개는 규칙 ══════════════ -->
+
+<section class="page" data-p="2" data-part="쪼개는 규칙" data-title="도출 원칙 — SRS에 없는 것은 만들지 않는다" data-kw="도출원칙 SRS 명시 추가금지 파생">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">쪼개는 규칙 ①</p>
+    <h2>이 표에는 새 기능이 없다</h2>
+    <p class="dek">태스크 리스트의 첫 번째 규칙은 <b>“SRS에 명시된 것만 태스크화한다”</b>이다. 당연해 보이지만, 이 규칙이 있어야 <b>표를 보고 스코프를 판단하는 것이 성립</b>한다.</p>
+  </div>
+  <div class="vs">
+    <div class="side a">
+      <h4><span class="dot"></span>이 규칙이 있을 때</h4>
+      <ul>
+        <li>이슈 55건 = SRS가 요구한 것의 전부</li>
+        <li>“이건 왜 있죠?” → <b>SRS 좌표로 답</b>됨</li>
+        <li>스코프를 줄이려면 <b>SRS를 고쳐야</b> 한다 — 협상 자리가 한 곳</li>
+      </ul>
+    </div>
+    <div class="side b">
+      <h4><span class="dot"></span>이 규칙이 없을 때</h4>
+      <ul>
+        <li>“개발하다 보니 필요해서” 이슈가 늘어난다</li>
+        <li>늘어난 것이 <b>요구사항인지 구현 편의인지</b> 구분 불가</li>
+        <li>일정이 밀렸을 때 <b>무엇을 빼야 하는지 판단 근거가 없다</b></li>
+      </ul>
+    </div>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">그래서 표의 「관련 SRS 섹션」 칸이 중요하다</span>
+    <p>모든 행에 SRS 좌표가 붙어 있다. 이 칸이 <b>빈 이슈가 생기면 그것이 규칙 위반 신호</b>다 — 요구사항 없이 만들어진 일이라는 뜻이므로, 지우거나 SRS로 올려야 한다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §0 도출 원칙 · 관련 SRS 섹션</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="쪼개는 규칙" data-title="합친 것 — 사슬 · 형제 · 저복잡도" data-kw="합친것 병합 사슬 형제 저복잡도 통합원칙 담당자 검증">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">쪼개는 규칙 ②</p>
+    <h2>“셋 다 같으면 한 이슈”</h2>
+    <p class="dek">개정 3.0의 병합 기준은 <b>분할 규칙을 뒤집은 것</b>이다 — <em>담당자 · 검증 방식 · 완료 판정이 셋 다 같으면 나눌 이유가 없다.</em> 이 문장에서 세 가지 병합 유형이 나온다.</p>
+  </div>
+  <ol class="steps">
+    <li><b>사슬 — 직렬로만 이어지는 것</b>A→B이고, B의 유일한 선행이 A이며, A는 B만 막는 관계. 나눠 놔도 <b>동시에 할 수 없고 순서도 하나뿐</b>이므로 두 칸으로 둘 이유가 없다.</li>
+    <li><b>형제 — 나란히 갈 수 있는 것</b>선행 집합·Epic·유형이 모두 같은 태스크들. 동시 착수가 가능하고 <b>완료 판정이 같으므로</b> 한 이슈의 체크박스로 충분하다.</li>
+    <li><b>설정·스크립트 성격의 저복잡도 태스크</b>담당자와 검증 방식이 같다. 개정 2.0에서 <code>L</code> 복잡도였던 3건이 여기에 해당해 <b>개정 3.0에는 L이 하나도 없다.</b></li>
+  </ol>
+  <div class="co qt" style="margin-top:16px">
+    <span class="lb">PM이 이 기준으로 판단할 수 있는 것</span>
+    <p>누군가 “이슈를 더 합치자”고 하면 <b>세 조건을 물으면 된다</b> — 담당자가 같습니까 · 검증 방식이 같습니까 · 완료 판정이 같습니까. 하나라도 다르면 합쳤을 때 <b>둘 중 하나가 끝났는지 알 수 없게 된다.</b></p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS 개정 3.0 머리말 · §1 합친 것</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="쪼개는 규칙" data-title="남긴 것 — 합치면 안 되는 세 경계" data-kw="남긴것 경계 UI Feature Contract Command 병렬">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">쪼개는 규칙 ③</p>
+    <h2>합치지 않은 세 종류</h2>
+    <p class="dek">153 → 55의 압축에서도 <b>넘지 않은 선이 셋</b>이다. 앞의 병합 기준(담당자·검증·완료 판정)에 걸리기 때문이 아니라, <b>합치는 순간 병렬성이나 추적성이 죽기</b> 때문이다.</p>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <h3><span class="n">①</span>화면 ↔ 기능</h3>
+      <p><code>[UI]</code>와 <code>[Feature/*]</code>. 합치면 <em>기능이 디자인 완료를 기다린다.</em></p>
+      <p class="tag mono">검증: 섞인 이슈 0건</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">②</span>계약 ↔ 소비자</h3>
+      <p><code>[Contract]</code>와 그것을 쓰는 Command. 계약이 먼저 확정돼야 <em>여러 기능이 동시에 착수</em>한다.</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">③</span>혼자 둔 7건</h3>
+      <p>임계 경로 위에 있거나, AC를 혼자 많이 지거나, 성능 예산을 단독으로 지는 이슈. 다음 페이지에서 본다.</p>
+    </div>
+  </div>
+  <div class="co wr" style="margin-top:16px">
+    <span class="lb">경계를 넘은 곳도 있다 — 정직하게 적혀 있음</span>
+    <p>분석서가 <b>“절대 병합하지 말 것”</b>으로 지목한 항목 중 <em>5건은 55건 목표를 맞추려고 병합했다.</em> 이 문서는 그것을 숨기지 않고 §10.1에 목록·잃는 것·되돌리는 비용까지 적어 두었다 — 파트 6에서 다룬다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §1 남긴 것 · §11 검증 · §10.1</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="쪼개는 규칙" data-title="혼자 남겨 둔 7건 — 왜 이것들만" data-kw="혼자 단독 7건 FR-004 FR-007 FR-014 FR-024 FR-032 FR-037 FR-044">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">쪼개는 규칙 ④</p>
+    <h2>합칠 수 있었지만 혼자 둔 7건</h2>
+    <p class="dek">이 일곱은 흡수 건수가 <b>1</b>이다. 즉 통합 전후로 크기가 그대로다. 문서가 제시한 근거는 <b>세 가지</b>이며, 각 이슈는 그중 하나 이상에 해당한다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>이슈</th><th>무엇인가</th><th>혼자 두지 않았다면</th></tr></thead>
+      <tbody>
+        <tr><td><b>FR-004</b> <span class="bg n">H</span></td><td>별 원장 원자 기입</td><td>별이 걸린 <b>FR-014 · 017 · 020 · 027</b>이 함께 흔들린다</td></tr>
+        <tr><td><b>FR-007</b> <span class="bg n">H</span></td><td><code>domain</code> 순수 판정 함수</td><td>판정 로직이 기능 이슈 안에 숨어 <b>단위 검증 대상이 사라진다</b></td></tr>
+        <tr><td><b>FR-014</b> <span class="bg n">H</span></td><td><code>grantStar</code> 지급 경로</td><td><b>임계 경로 6번째 칸.</b> 밀린 사실이 다른 일에 가려진다</td></tr>
+        <tr><td><b>FR-024</b> <span class="bg n">H</span></td><td>웹훅 수신 공통 계약</td><td>외부 종속 구간. FR-025 · 026 · 027 · 033이 <b>한꺼번에</b> 걸린다</td></tr>
+        <tr><td><b>FR-032</b> <span class="bg n">H</span></td><td>BAT-1 나무 승급·정체 판정</td><td>배치 판정이 집계 이슈에 섞이면 <b>오탐 원인을 못 좁힌다</b></td></tr>
+        <tr><td><b>FR-037</b> <span class="bg n">H</span></td><td>성장 나무 조회</td><td><b>성능 예산을 단독으로 진다</b> — 다른 것과 합치면 초과 원인 불명</td></tr>
+        <tr><td><b>FR-044</b> <span class="bg n">H</span></td><td>게이트 위반 주입 7/7</td><td>릴리스 게이트 <b>RG-T1의 근거</b>. 부분 통과를 표현해야 한다</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tag mono" style="margin-top:10px; display:block">※ 오른쪽 칸은 원문이 제시한 세 근거(임계 경로 · AC 부담 · 성능 예산)를 이슈별로 풀어 쓴 <b>본 해설서의 설명</b>이다. 원문은 일곱 건에 근거를 묶어서 제시한다.</p>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">공통점</span>
+    <p>일곱 개 전부 <b>복잡도 H</b>다. <em>“이슈가 굵어지면 밀렸을 때 무엇이 밀렸는지 알 수 없다”</em> 는 것이 이 문서가 통합을 멈춘 지점이며, 그 기준이 정확히 H의 정의(아키텍처·동시성·규제·외부 연동)와 겹친다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §1 남긴 것 · §3 흡수 칸 · §7 임계 경로</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="쪼개는 규칙" data-title="범위 제외 5건 — 빠진 게 아니라 뺀 것" data-kw="범위제외 누락아님 R2 예적금 옷장 기록이전 네이티브 위치정보">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">쪼개는 규칙 ⑤</p>
+    <h2>표에 없는 것을 설명하는 표</h2>
+    <p class="dek">태스크 리스트에서 가장 자주 나오는 질문은 <b>“왜 이게 없어요?”</b>다. 그래서 §0 끝에 <b>제외 항목과 근거</b>가 별도로 있다. 이 다섯 줄이 회의에서 그대로 답이 된다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>없는 것</th><th>왜 없는가</th><th>언제 생기나</th></tr></thead>
+      <tbody>
+        <tr><td>예적금 비교·선택<br><span class="mono" style="font-size:11px">REQ-FUNC-014</span></td><td>기준 SRS §13.2 — <b>R2 배분</b></td><td>D2 법률 검토 통과 후</td></tr>
+        <tr><td>별의 옷장 외 목적지<br><span class="mono" style="font-size:11px">REQ-FUNC-016</span></td><td>기준 SRS §13.2 — <b>R2+ 배분</b></td><td>현금 분리선 재검토 통과 후</td></tr>
+        <tr><td>기존 앱 기록 이전<br><span class="mono" style="font-size:11px">REQ-FUNC-017</span></td><td>기준 SRS §13.2 — <b>미배분 (Won't)</b></td><td>부재를 문구로 처리 — 계획 없음</td></tr>
+        <tr><td>네이티브 앱 · 별도 백엔드<br>별도 CI/CD · 자체 AI 서버</td><td>기술 제약 <b>C-TEC-001 · 002 · 005 · 007</b></td><td>제약이 바뀌지 않는 한 없음</td></tr>
+        <tr><td>소비 순간 자동 개입<br>위치정보 수집</td><td>ADR-002 · CON-REG-03 — <b>영구 제외</b></td><td><b>재검토 대상 아님</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">세 종류를 구분해서 말한다</span>
+    <p><b>① 나중에 함</b>(R2 · R2+ — 조건이 풀리면 열림) / <b>② 안 함</b>(Won't — 부재를 문구로 처리) / <b>③ 못 함</b>(제약·규제 — 구조적으로 경로가 없음). 이 셋을 섞어서 “아직 없어요”라고 답하면, <em>③번 항목에 대해 다음 분기에 또 같은 질문을 받는다.</em></p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §0 범위 제외 · 기준 SRS §13.2</p>
+</div>
+</section>
+
+<section class="page" data-p="2" data-part="쪼개는 규칙" data-title="개정 2.0 → 3.0 — 153건이 55건이 된 사건" data-kw="개정 2.0 3.0 통합 밴드C 규칙1 153 55 비용">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">쪼개는 규칙 ⑥</p>
+    <h2>왜 지금 통합했는가</h2>
+    <p class="dek">개정 2.0은 <b>153건</b>이었다. 통합안 「밴드 C + 규칙 1」을 적용해 <b>55건</b>이 됐다. PM이 알아야 할 것은 압축비가 아니라 <b>이 통합의 비용이 지금 얼마인가</b>다.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>2.8 : 1</b><span>개발 압축비</span><small>FR 130 → 46</small></div>
+    <div class="stat"><b>2.6 : 1</b><span>디자인 압축비</span><small>UX 23 → 9</small></div>
+    <div class="stat"><b>130 / 130</b><span>전수 흡수</span><small>중복 배정 0건</small></div>
+    <div class="stat"><b>10</b><span>유형이 섞인 이슈</span><small>부 유형은 라벨 병기</small></div>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">통합 비용이 지금은 문서 개정뿐이다</span>
+    <p><b>아직 GitHub 이슈를 만들지 않았다.</b> 그래서 이 통합의 비용은 문서를 고치는 것으로 끝난다. 이슈를 먼저 153개 만들어 두었다면 <em>이슈 이관·링크 재작성·보드 재구성</em>이 붙었을 것이다.</p>
+    <p><b>PM의 판단 지점</b> — 이슈 생성은 <b>단위가 확정된 뒤</b>에 한다. 지금이 마지막으로 공짜인 순간이다.</p>
+  </div>
+  <div class="co wr" style="margin-top:14px">
+    <span class="lb">되돌리기</span>
+    <p>“55건은 너무 굵다”는 판단이 나오면 §10.1의 5건을 분리해 <b>60건</b>(51 FR + 9 UX)으로 갈 수 있다. 각각 <em>분리 시 +1건</em>으로 비용이 계산돼 있고, FR-027만 순환 때문에 <b>추가로 +1</b>이 든다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS 개정 3.0 머리말 · §9 · §10.1 · §11</p>
+</div>
+</section>
+
+<!-- ══════════════ PART 4 · 순서와 병목 ══════════════ -->
+
+<section class="page" data-p="3" data-part="순서와 병목" data-title="빌드 구획 B0~B5 — 언제 무엇이 돌아가나" data-kw="빌드 구획 B0 B1 B2 B3 B4 B5 배치 병행 조건부">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">순서와 병목 ①</p>
+    <h2>46건이 놓인 여섯 개의 층</h2>
+    <p class="dek">빌드 구획은 <b>“이 시점에 무엇이 돌아가는가”</b>를 나타낸다. B0가 끝나면 화면은 아직 없지만 <b>스키마·게이트·계약이 서 있다.</b> B2가 끝나면 아이가 별을 받는다. B5가 끝나야 보호자가 변화를 읽는다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>빌드</th><th>이 구획이 끝나면 무엇이 되는가</th><th>태스크</th><th class="c">건수</th></tr></thead>
+      <tbody>
+        <tr><td><b>B0</b> 기반</td><td>스키마 · 접근 계층 · prebuild 게이트 · Action 골격 · 계약/Mock. <b>사용자에게 보이는 것은 없다</b></td><td class="mono">FR-001~009</td><td class="c"><b>9</b></td></tr>
+        <tr><td><b>B1</b> 진입</td><td>보호자가 가입하고 <b>법정대리인 동의가 걸린다</b> — 아동 영역의 문이 열린다</td><td class="mono">FR-010~013</td><td class="c"><b>4</b></td></tr>
+        <tr><td><b>B2</b> 보상</td><td>별이 지급되고 학습이 돈다 — <b>아이 쪽 루프의 입구</b></td><td class="mono">FR-014~016</td><td class="c"><b>3</b></td></tr>
+        <tr><td><b>B3</b> 실천</td><td>미션 · 위시리스트 · 아바타 · PWA/오프라인 — <b>실천 3경로 중 둘</b></td><td class="mono">FR-017~021 · 039</td><td class="c"><b>6</b></td></tr>
+        <tr><td><b>B4</b> 외부</td><td>계획 카드와 제휴사 결제 연동 — <b>실천 3경로의 마지막</b></td><td class="mono">FR-022~026</td><td class="c"><b>5</b></td></tr>
+        <tr><td><b>B5</b> 전달</td><td>회고 · 배치 · 알림 · 나무/숲 화면 — <b>보호자가 변화를 읽는다</b></td><td class="mono">FR-027~029 · 031~038</td><td class="c"><b>11</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid g4" style="margin-top:14px">
+    <div class="card"><h3>B0/B5 병행</h3><p class="mono" style="font-size:12px">FR-030 · 1건</p><p style="font-size:13px">배치 기반 설비 — 먼저 깔고 나중에 채운다</p></div>
+    <div class="card"><h3>전 빌드 병행</h3><p class="mono" style="font-size:12px">FR-040 · 041 · 2건</p><p style="font-size:13px">관측·계측. <b>처음부터 켜져 있어야</b> 한다</p></div>
+    <div class="card"><h3>조건부</h3><p class="mono" style="font-size:12px">FR-042 · 043 · 2건</p><p style="font-size:13px"><code>AI_ENABLED</code>. 꺼도 <b>기능 손실 0건</b></p></div>
+    <div class="card"><h3>게이트 근거</h3><p class="mono" style="font-size:12px">FR-044~046 · 3건</p><p style="font-size:13px">검증 설비. 릴리스 판정의 출처</p></div>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §6 빌드 구획별 배치</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="순서와 병목" data-title="임계 경로 9단계" data-kw="임계경로 critical path 9단계 FR-001 FR-027 순서">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">순서와 병목 ②</p>
+    <h2>이 아홉 칸이 전체 일정이다</h2>
+    <p class="dek">임계 경로는 <b>여기서 하루 밀리면 프로젝트가 하루 밀리는</b> 사슬이다. 나머지 37건은 이 사슬 옆에서 병렬로 돈다. 주간 보고에서 <b>가장 먼저 볼 아홉 칸</b>이 이것이다.</p>
+  </div>
+  <div class="co qt">
+    <p class="mono" style="font-size:12.5px; line-height:2.1; letter-spacing:-.01em">FR-001 <b>플랫폼</b> → FR-002 <b>스키마</b> → FR-003 <b>접근 계층</b> → FR-006 <b>Action 골격</b> → FR-008 <b>도메인 계약</b> → FR-014 <b>별 지급</b> → FR-017 <b>미션 루프</b> → FR-025 <b>결제 매칭</b> → FR-027 <b>회고</b></p>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>사슬이 이 모양인 이유</h3>
+      <p>앞의 다섯 칸은 <b>전부 설비</b>다 — 플랫폼 · 스키마 · 접근 · 실행 규칙 · 계약. 기능은 <b>여섯 번째 칸(별 지급)부터</b> 시작한다.</p>
+      <p>즉 <em>착수 후 상당 기간 화면에 아무것도 안 보인다.</em> 이것이 정상이라는 것을 미리 말해 두지 않으면, B0 구간에 “진척이 없다”는 오해가 생긴다.</p>
+    </div>
+    <div class="card">
+      <h3>끝이 「회고」인 이유</h3>
+      <p>회고는 <b>실천 3경로 중 마지막</b>이자 두 가치 선언이 만나는 지점이다. 결제(외부) → 매칭 → 회고로 이어지므로 <b>외부 종속이 가장 깊게 박힌 끝단</b>이기도 하다.</p>
+      <p>그래서 제휴사 계약이 흔들리면 <em>사슬의 마지막 두 칸이 통째로</em> 흔들린다.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §7 임계 경로</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="순서와 병목" data-title="밀리면 함께 밀리는 것 — 연쇄 7지점" data-kw="연쇄 지연 파급 FR-002 FR-003 FR-004 FR-005 FR-006 FR-008 FR-024">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">순서와 병목 ③</p>
+    <h2>한 칸이 밀렸을 때 무엇이 함께 밀리나</h2>
+    <p class="dek">임계 경로가 <b>일정의 길이</b>를 정한다면, 이 표는 <b>사고의 크기</b>를 정한다. 같은 하루 지연이라도 어디서 났느냐에 따라 파급이 다르다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>지연 지점</th><th>함께 밀리는 것</th><th class="c">파급</th></tr></thead>
+      <tbody>
+        <tr><td><b>FR-002</b> Prisma 스키마</td><td>이후 <b>전 태스크</b></td><td class="c"><span class="bg fail">최대</span></td></tr>
+        <tr><td><b>FR-003</b> 데이터 접근 계층<br><span style="font-size:12px">롤 · RLS · pii 포함</span></td><td>요청 경로 전체 — <em>“RLS는 마지막에 켤 수 없다”</em></td><td class="c"><span class="bg fail">최대</span></td></tr>
+        <tr><td><b>FR-004</b> 별 원장 원자 기입</td><td>FR-014 · 017 · 020 · 027 — <b>별이 걸린 전 기능</b></td><td class="c"><span class="bg hold">큼</span></td></tr>
+        <tr><td><b>FR-005</b> prebuild 게이트</td><td>직접 막는 것은 없지만 <b>첫 커밋부터 켜져 있어야 위반이 쌓이지 않는다</b></td><td class="c"><span class="bg hold">누적</span></td></tr>
+        <tr><td><b>FR-006</b> Action 공통 골격</td><td><b>모든 쓰기 이슈</b></td><td class="c"><span class="bg fail">최대</span></td></tr>
+        <tr><td><b>FR-008</b> 도메인 계약 6종</td><td>소비 Command 전건 — <b>계약이 흔들리면 그 도메인이 함께 흔들린다</b></td><td class="c"><span class="bg hold">큼</span></td></tr>
+        <tr><td><b>FR-024</b> 웹훅 수신 공통<br><span style="font-size:12px">외부 종속</span></td><td>FR-025 · 026 + FR-027 회고 + FR-033 소비 집계</td><td class="c"><span class="bg hold">큼</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co bd" style="margin-top:16px">
+    <span class="lb">여기서 “나중에 하자”가 안 되는 것</span>
+    <p><b>FR-003(RLS)</b>과 <b>FR-005(prebuild 게이트)</b>는 순서를 바꾸면 <em>기능이 아니라 규제 방어선이 사라진다.</em> 뒤로 미루면 “나중에 켜기”가 아니라 <b>그 사이에 쌓인 위반을 전부 찾아 고치기</b>가 된다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §7 · 기준 SRS §13.1</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="순서와 병목" data-title="순서가 곧 규제인 두 지점" data-kw="RLS prebuild 게이트 순서 규제 방어선 나중에못켬">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">순서와 병목 ④</p>
+    <h2>“나중에 켜면 되죠”가 안 되는 이유</h2>
+    <p class="dek">일정이 밀리면 <b>보안·검증부터 뒤로 미루자</b>는 제안이 반드시 나온다. 이 프로젝트에는 그 제안이 성립하지 않는 지점이 두 개 있고, 근거가 문서에 적혀 있다.</p>
+  </div>
+  <div class="vs">
+    <div class="side b">
+      <h4><span class="dot"></span>FR-003 — RLS · 롤 · pii 분리</h4>
+      <ul>
+        <li>데이터베이스가 <b>줄 단위로</b> 접근을 막는 장치</li>
+        <li>나중에 켜면 <b>이미 쓰인 모든 쿼리를 재검토</b>해야 한다</li>
+        <li>켜는 순간 <em>지금까지 통과하던 코드가 빈 결과를 받는다</em></li>
+        <li>→ 실질적으로 <b>전 기능 재검증</b></li>
+      </ul>
+    </div>
+    <div class="side b">
+      <h4><span class="dot"></span>FR-005 — prebuild 게이트 7종</h4>
+      <ul>
+        <li>배포 직전 자동 검사. 별↔저금통 전환 코드 등을 <b>빌드 실패로</b> 막는다</li>
+        <li>이 프로젝트는 <b>별도 CI/CD가 없다</b>(C-TEC-007) — 여기가 <b>유일한 검문소</b></li>
+        <li>늦게 켜면 그 사이 위반이 <b>누적된 채 통과</b></li>
+      </ul>
+    </div>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">PM이 쓸 문장</span>
+    <p><b>“이 둘은 일정 항목이 아니라 순서 항목입니다.”</b> 뒤로 미루는 것은 2주를 버는 게 아니라, <em>2주 뒤에 훨씬 큰 정리 작업을 만드는 것</em>이다. 두 이슈 모두 B0에 있고 복잡도 H다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §7 · §3 FR-003 · FR-005 · 기준 SRS §13.1 · C-TEC-007</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="순서와 병목" data-title="UX-001 — 단 하나의 디자인 차단점" data-kw="UX-001 디자인시스템 차단 선행 토큰 컴포넌트 FR-001">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">순서와 병목 ⑤</p>
+    <h2>디자인 9건 중 8건이 하나를 기다린다</h2>
+    <p class="dek">디자인 태스크는 9건이지만 <b>실질 차단점은 하나</b>다. <code>UX-001 디자인 시스템</code>이 끝나야 나머지 8건이 열리고, 개발 쪽 <code>FR-001</code>보다 <b>먼저</b> 끝나야 한다.</p>
+  </div>
+  <div class="flow">
+    <div class="node"><span class="k">UX-001</span><span class="v">디자인 시스템</span><span class="s">토큰 · 테마 · 컴포넌트<br>접근성 · 아동 문구</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">UX-002 ~ 009</span><span class="v">8개 화면 도메인</span><span class="s">온보딩 · 학습 · 나무<br>승인 · 회고 · 소비 · 아바타 · 콘솔</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">FR-013 · 016 · 019 · 021<br>023 · 029 · 038 · 043</span><span class="v">화면 구현 이슈</span><span class="s">§4 연계표에서 짝 확인</span></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>연계표를 언제 보는가</h3>
+      <p>§4는 <b>착수 순서 조율에만</b> 쓴다. 화면 이슈를 스프린트에 넣기 전에 <em>전제 디자인이 닫혔는지</em> 확인하는 용도다.</p>
+      <p>가장 무거운 것은 <b>FR-038 전달 화면 전체</b> — <code>UX-004</code>와 <code>UX-007</code> 둘 다를 전제한다.</p>
+    </div>
+    <div class="card">
+      <h3>PM이 놓치기 쉬운 것</h3>
+      <p><b>FR-011 동의 게이트 판정</b>과 <b>FR-039 PWA·오프라인</b>도 <code>UX-002</code>를 전제한다. 둘 다 <em>화면 이슈처럼 안 생겼는데</em> 디자인이 걸려 있다 — 차단 화면과 설치 배너가 그 안에 있기 때문이다.</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §2 UI/UX 태스크 · §4 디자인 ↔ 개발 연계</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="순서와 병목" data-title="착수 차단 8건 — 태스크 이전에 답이 필요한 것" data-kw="착수차단 T-1 T-2 T-3 T-4 D-TEC 외부 확인 블로커">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">순서와 병목 ⑥</p>
+    <h2>코드로 못 푸는 8건</h2>
+    <p class="dek">이 여덟은 <b>개발이 답할 수 없는 질문</b>이다. 계약·법률·플랜 확인이 필요하고, 전부 <b>PM 또는 그 위에서 처리해야 하는 항목</b>이다. 표의 마지막 칸이 특히 중요하다 — <b>답이 안 나왔을 때의 대안</b>이 이미 준비돼 있다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>#</th><th>확인해야 할 것</th><th>막히는 태스크</th><th>답이 안 나오면</th></tr></thead>
+      <tbody>
+        <tr><td><b>T-1</b></td><td>제휴사가 <b>고정 출구 IP</b>를 요구하는가</td><td class="mono">FR-024~026</td><td><b>착수는 가능</b> — Mock 픽스처로 진행, 완료만 지연</td></tr>
+        <tr><td><b>T-2</b></td><td>플랜이 <b>5분 Cron · 배포 보호 · 로그 보존</b>을 주는가</td><td class="mono">FR-001 · 035 · 040</td><td>프로브 주기 상향 또는 외부 수단 대체</td></tr>
+        <tr><td><b>T-3</b></td><td>Prisma가 <b>다중 스키마</b>를 지원하는가</td><td class="mono">FR-002 · 003</td><td><code>pii</code> 분리를 별도 DB 또는 뷰+권한으로 교체</td></tr>
+        <tr><td><b>T-4</b></td><td><code>pg_cron</code> · <code>pg_net</code> 활성화 가능한가</td><td class="mono">FR-030~033</td><td><b>배치 분담 전면 재설계</b> — 충돌 X-5 재개</td></tr>
+        <tr><td><b>D-TEC-4</b></td><td>Supabase 플랜 · 백업/PITR 보존 기간</td><td class="mono">FR-001 · 002</td><td>복구 요건 미충족을 <b>명시하고</b> 진행</td></tr>
+        <tr><td><b>D-TEC-6</b></td><td>Gemini API의 데이터 처리 조건</td><td class="mono">FR-042 · 043</td><td><code>AI_ENABLED=false</code> 유지 — <b>기능 손실 0건</b></td></tr>
+        <tr><td><b>D-TEC-8</b></td><td><b>SMS 게이트웨이</b> 사업자 · 단가</td><td class="mono">FR-034</td><td>폴백 채널 1종 부재 — <b>AC-7.1 미성립</b></td></tr>
+        <tr><td><b>D-TEC-1</b> 🔴</td><td>해외 클라우드가 <b>아동 개인정보 국외이전</b>에 해당하는가</td><td class="mono">전체</td><td><b>일반 공개 불가</b> — 다음 페이지</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">이 표의 진짜 쓸모</span>
+    <p>여덟 개 중 <b>일곱 개는 착수를 막지 않는다</b> — 대안이 있기 때문이다. 그래서 <em>“외부 답이 안 와서 못 합니다”는 일곱 건에 대해서는 성립하지 않는다.</em> 진짜 블로커는 하나뿐이다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §5 착수 차단 항목</p>
+</div>
+</section>
+
+<section class="page" data-p="3" data-part="순서와 병목" data-title="D-TEC-1 — 일반 공개가 걸린 단 하나" data-kw="D-TEC-1 국외이전 개인정보 일반공개 RG-T4 X-8 규제">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">순서와 병목 ⑦</p>
+    <h2>다른 일곱과 성격이 다른 하나</h2>
+    <p class="dek">D-TEC-1은 <b>특정 태스크를 막는 것이 아니라 릴리스 단계 하나를 통째로 막는다.</b> 다른 차단 항목은 “이 기능이 늦어진다”이지만, 이것은 <b>“만들어도 일반 공개를 못 한다”</b>이다.</p>
+  </div>
+  <div class="flow">
+    <div class="node"><span class="k">질문</span><span class="v">해외 클라우드가<br>국외이전에 해당하나</span><span class="s">충돌 X-8</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">미해소 시</span><span class="v">RG-T4 미통과</span><span class="s">릴리스 게이트 불합격</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">결과</span><span class="v">일반 공개 불가</span><span class="s">α · β는 고지·동의 하에 진행</span></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>그래서 개발은 멈추지 않는다</h3>
+      <p>이 항목이 막는 것은 <b>일반 공개 단계</b>이지 구현이 아니다. α(내부)와 β(클로즈드)는 <em>고지와 동의를 받고 진행</em>할 수 있다. 46건 전부 그대로 만든다.</p>
+    </div>
+    <div class="card">
+      <h3>PM이 관리할 것</h3>
+      <p><b>답이 오는 시점을 β 종료 전으로 못 박는다.</b> β가 끝났는데 답이 없으면 <em>완성된 제품을 공개하지 못한 채 대기</em>하게 된다 — 가장 비싼 실패 모드다.</p>
+      <p class="tag mono" style="margin-top:8px">법률 검토 · 리전 계약 조건 확인이 선행</p>
+    </div>
+  </div>
+  <div class="co bd" style="margin-top:14px">
+    <span class="lb">기억할 문장</span>
+    <p>이 프로젝트에서 <b>기술로 닫지 못한 항목은 이것 하나</b>다. 나머지는 전부 대안이 준비돼 있거나 구조로 해결됐다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §5 D-TEC-1 · 기준 SRS 충돌 X-8 · 릴리스 게이트 RG-T4</p>
+</div>
+</section>
+
+<!-- ══════════════ PART 5 · 완료 판정 ══════════════ -->
+
+<section class="page" data-p="4" data-part="완료 판정" data-title="AC 84건 — 미배분 0건이 왜 완료 조건인가" data-kw="AC 84 미배분 0건 수용기준 완료판정 귀속">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">완료 판정 ①</p>
+    <h2>“다 됐어요”가 성립하지 않는 구조</h2>
+    <p class="dek">두 SRS의 수용 기준 <b>84건 전부</b>가 §8에서 특정 이슈에 못 박혀 있다. <b>미배분 0건</b>이라는 것은, <em>어느 합격 기준도 이슈 밖에 떠 있지 않다</em>는 뜻이다.</p>
+  </div>
+  <div class="vs">
+    <div class="side b">
+      <h4><span class="dot"></span>배분표가 없을 때</h4>
+      <ul>
+        <li>이슈는 전부 닫혔는데 <b>AC 몇 개가 어디서도 판정되지 않는다</b></li>
+        <li>릴리스 직전에 발견 → <b>일정 밖의 작업</b>이 생긴다</li>
+        <li>“이건 누가 확인하기로 했죠?”가 반복된다</li>
+      </ul>
+    </div>
+    <div class="side a">
+      <h4><span class="dot"></span>배분표가 있을 때</h4>
+      <ul>
+        <li>AC 하나를 집으면 <b>귀속 이슈가 바로 나온다</b></li>
+        <li>이슈 하나를 집으면 <b>그것이 지는 AC가 나온다</b></li>
+        <li>완료 판정이 <b>협의가 아니라 조회</b>가 된다</li>
+      </ul>
+    </div>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">읽는 법 예시</span>
+    <p><code>AC-4.2</code> — <em>“결제 자동 매칭 정확도 ≥ 90% (표본 50건 수동 대조)”</em> · 유형 <b>T</b> · 귀속 <b>FR-025 · FR-046</b>.<br>
+    이 한 줄에서 나오는 것: <b>누가</b>(FR-025 담당) · <b>어떻게</b>(표본 50건 수동 대조) · <b>언제</b>(릴리스 게이트) · <b>어디서</b>(FR-046 E2E 설비).</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §0 AC 귀속 · §8 배분표 · §11 검증</p>
+</div>
+</section>
+
+<section class="page" data-p="4" data-part="완료 판정" data-title="D · T · M — 판정을 세 갈래로 나눈 이유" data-kw="D T M 판정유형 DoD 검증설비 계측 시점">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">완료 판정 ②</p>
+    <h2>84건이 같은 시점에 판정되지 않는다</h2>
+    <p class="dek">AC를 전부 “이슈 닫힐 때 확인”으로 두면 <b>이슈가 영원히 안 닫힌다</b> — 인터뷰 지표나 운영 4주차 지표가 붙어 있기 때문이다. 그래서 <b>판정 시점으로 세 갈래</b>를 나눴다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th class="c">유형</th><th>무엇으로 변환되는가</th><th>판정 시점</th><th class="c">건수</th></tr></thead>
+      <tbody>
+        <tr><td class="c"><span class="bg pass">D</span></td><td>해당 Feature · UI 이슈의 <b>DoD 체크리스트로 흡수</b> — 단위 테스트 · 화면 검수</td><td><b>이슈 완료 시</b></td><td class="c"><b>37</b></td></tr>
+        <tr><td class="c"><span class="bg hold">T</span></td><td><code>[Test]</code> · <code>[Infra]</code> <b>검증 설비로 변환</b> — 부하 · 위반 주입 · E2E · 감사</td><td><b>릴리스 게이트</b></td><td class="c"><b>35</b></td></tr>
+        <tr><td class="c"><span class="bg n">M</span></td><td><b>계측만 확보</b>하고 판정은 운영 · 리서치 단계 — 인터뷰 rubric · 운영 집계</td><td><b>α · β 이후</b></td><td class="c"><b>12</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co wr" style="margin-top:16px">
+    <span class="lb">PM이 여기서 오해하기 쉬운 것</span>
+    <p><b>T와 M은 “나중에 해도 되는 것”이 아니다.</b> T는 <em>릴리스를 막는 것</em>이고 M은 <em>지금 계측을 안 붙이면 나중에 영영 못 재는 것</em>이다. 미루는 것은 <b>판정</b>이지 <b>준비</b>가 아니다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §8.1 배분 유형 3종</p>
+</div>
+</section>
+
+<section class="page" data-p="4" data-part="완료 판정" data-title="D형 37건 — 이슈가 닫히면 끝나는 것" data-kw="D형 DoD 단위테스트 화면검수 37건">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">완료 판정 ③</p>
+    <h2>D — 가장 흔하고 가장 다루기 쉬운 것</h2>
+    <p class="dek">84건 중 <b>37건</b>. 담당 개발자가 <b>이슈를 닫기 전에 스스로 확인</b>할 수 있는 항목들이다. PM은 이슈 본문에 <b>DoD 체크리스트로 실제로 들어갔는지</b>만 확인하면 된다.</p>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>D형의 전형</h3>
+      <p class="mono" style="font-size:12px; color:var(--text-3)">AC-4.1 · FUNC-008</p>
+      <p>“계획 카드 저장 · 업종이 카드 승인 업종 코드와 <b>대조 가능</b>” → 귀속 <b>FR-022</b>. 단위 테스트로 확인되고, 다른 데서 다시 볼 필요가 없다.</p>
+      <p class="mono" style="font-size:12px; color:var(--text-3); margin-top:12px">AC-4.3 · FUNC-008</p>
+      <p>“계획 카드 없는 결제 → 작성 유도 · ⭐ 미지급” → 귀속 <b>FR-025 · FR-023</b>. <em>기능과 화면 두 이슈에 걸쳐 있다.</em></p>
+    </div>
+    <div class="card">
+      <h3>여기서 나오는 함정</h3>
+      <p>귀속 이슈가 <b>둘 이상인 D형</b>이 있다. 위의 AC-4.3처럼 기능(FR-025)과 화면(FR-023)에 나뉘어 붙으면, <b>둘 다 닫혀야 그 AC가 판정된 것</b>이다.</p>
+      <p>한쪽만 닫고 “AC-4.3 완료”로 표시하면 <em>화면에서 작성 유도가 안 뜨는 상태로 통과</em>한다.</p>
+      <p class="tag mono" style="margin-top:10px">확인법 — 배분표에서 귀속 칸에 이슈가 몇 개인지 본다</p>
+    </div>
+  </div>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">D형이 많다는 것은 좋은 신호다</span>
+    <p>37/84가 <b>이슈 안에서 닫힌다</b>는 뜻이므로, 릴리스 직전에 몰리는 검증 부담이 그만큼 줄어 있다. 남은 47건이 T와 M이고, 그것이 다음 두 페이지다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §8.1 · §8.2 배분표</p>
+</div>
+</section>
+
+<section class="page" data-p="4" data-part="완료 판정" data-title="T형 35건 — 릴리스 게이트에서만 판정되는 것" data-kw="T형 검증설비 릴리스게이트 E2E 부하 위반주입 감사 35건">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">완료 판정 ④</p>
+    <h2>T — 이슈 밖에서 판정되는 35건</h2>
+    <p class="dek">이 35건은 <b>개별 이슈가 아니라 검증 설비</b>에서 판정된다. 그래서 이 설비를 만드는 <b>FR-044 · FR-045 · FR-046</b> 세 이슈가 사실상 <b>릴리스 판정의 출처</b>다.</p>
+  </div>
+  <div class="grid g3">
+    <div class="card">
+      <h3><span class="n">FR-044</span>게이트 위반 주입 7/7</h3>
+      <p>prebuild 게이트 7종에 <b>일부러 위반 코드를 넣어</b> 전부 잡히는지 본다. 릴리스 게이트 <b>RG-T1의 단독 근거</b>.</p>
+      <p class="tag mono">복잡도 H · 선행 FR-005</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">FR-045</span>횡단 검증 설비</h3>
+      <p>부하 · 감사 · 정합성처럼 <b>한 기능에 속하지 않는</b> 검증. 선행 <b>8건</b> — FR-046과 함께 이 문서에서 가장 많다.</p>
+      <p class="tag mono">복잡도 H · AC 12건</p>
+    </div>
+    <div class="card">
+      <h3><span class="n">FR-046</span>기능 E2E 전체</h3>
+      <p>사용자 시나리오 끝에서 끝까지. 선행 <b>8건</b> · <b>AC 15건</b>으로 이 문서에서 AC를 가장 많이 진 이슈.</p>
+      <p class="tag mono">복잡도 H · 마지막에 몰린다</p>
+    </div>
+  </div>
+  <div class="co bd" style="margin-top:16px">
+    <span class="lb">일정에서 이 셋이 만드는 위험</span>
+    <p>세 이슈 모두 <b>선행이 많아 끝에 몰린다.</b> 그런데 여기서 실패가 나오면 <em>고쳐야 하는 곳은 앞쪽 기능 이슈</em>다 — 이미 닫힌 이슈를 다시 여는 상황이 된다.</p>
+    <p><b>완화책</b> — T형 AC 중 <b>부분적으로 미리 돌릴 수 있는 것</b>을 각 빌드 종료 시점에 한 번씩 실행한다. 특히 FR-044는 선행이 <code>FR-005</code> 하나뿐이라 <b>B0 직후에 바로 켤 수 있다.</b></p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §3 E21 Verification Harness · §8.1 · §10.2</p>
+</div>
+</section>
+
+<section class="page" data-p="4" data-part="완료 판정" data-title="M형 12건 — 계측만 확보하고 미루는 것" data-kw="M형 계측 인터뷰 rubric 운영집계 12건 판정보류">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">완료 판정 ⑤</p>
+    <h2>M — 지금 재면 거짓말이 되는 12건</h2>
+    <p class="dek">이 12건은 <b>사용자가 실제로 써 봐야</b> 값이 생긴다. 개발 완료 시점에는 <b>분모가 0</b>이거나 인터뷰 표본이 없다. 그래서 판정을 α · β 이후로 미루되, <b>계측은 지금 붙인다.</b></p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>AC</th><th>판정 내용</th><th>귀속 이슈</th></tr></thead>
+      <tbody>
+        <tr><td><code>AC-1.1</code></td><td>나무 5초 노출 후 「행동이 어떻게 달라졌나」 회상 <b>≥ 6/8</b></td><td class="mono">FR-038 · UX-004</td></tr>
+        <tr><td><code>AC-1.2</code></td><td>개입 0회로 「실천」 도달 ≥ 6/8 — <b>「퀴즈」만 나오면 실패</b></td><td class="mono">FR-038 · UX-004</td></tr>
+        <tr><td><code>AC-1.3</code></td><td>월간 숲 60초 내 3개 지목 ≥ 6/8 · 확인 중위 ≤ 3분</td><td class="mono">FR-038 · UX-004</td></tr>
+        <tr><td><code>AC-2.1</code></td><td>첫 실천 ⭐·진행도 동일 세션 반영 · <b>7일 내 인정률 ≥ 60%</b></td><td class="mono">FR-014 · FR-016</td></tr>
+        <tr><td><code>AC-2.3</code></td><td>4영역 중 2영역 이상 성장 ≥ 50% · 전 영역 정체 ≤ 15%</td><td class="mono">FR-033</td></tr>
+        <tr><td><code>AC-3.2</code></td><td>오귀인 발화 ≤ 2/8 · <b>앱 불신 발화 ≤ 2/8</b></td><td class="mono">FR-038 · UX-004</td></tr>
+        <tr><td><code>AC-3.3</code></td><td>정체 계정의 익주 재방문율 ≥ 50%</td><td class="mono">FR-033</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">PM이 M형에서 실제로 할 일</span>
+    <p>개발 완료 시점에 확인할 것은 <b>“값이 나오는가”</b>이지 <b>“값이 좋은가”</b>가 아니다. <em>이벤트가 적재되고 분모가 정의돼 있으면 그 이슈는 닫힌다.</em> 판정은 β에서 한다.</p>
+    <p>반대로 <b>계측이 안 붙은 채 이슈가 닫히면</b> α·β에서 <em>“산출 불가”</em>가 되고, 그때는 되돌릴 방법이 없다 — 지나간 사용자 행동은 소급 수집이 안 된다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §8.1 M 유형 · §8.2 배분표</p>
+</div>
+</section>
+
+<section class="page" data-p="4" data-part="완료 판정" data-title="이슈 템플릿과 AC 상한 10" data-kw="이슈템플릿 GWT DoD 상한 10 초과 3건 FR-046 FR-038 FR-045">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">완료 판정 ⑥</p>
+    <h2>한 이슈가 질 수 있는 AC의 한계</h2>
+    <p class="dek">이슈 템플릿은 <b>GWT 3시나리오 + DoD 6항목</b>을 전제한다. 즉 한 이슈가 감당하도록 설계된 AC는 <b>대략 10건</b>이다. 통합 후 이 상한을 넘은 이슈가 <b>3건</b> 있다.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>15</b><span>FR-046 기능 E2E 전체</span><small>흡수 5건 · 상한 +5</small></div>
+    <div class="stat"><b>12</b><span>FR-038 전달 화면 전체</span><small>흡수 4건 · 상한 +2</small></div>
+    <div class="stat"><b>12</b><span>FR-045 횡단 검증 설비</span><small>흡수 4건 · 상한 +2</small></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>선택지는 둘뿐이다</h3>
+      <p><b>① 템플릿을 늘려 쓴다</b> — GWT를 4~5개로. 이슈는 하나로 유지되지만 <em>리뷰가 길어지고 부분 통과를 표현하기 어렵다.</em></p>
+      <p><b>② 분리한다</b> — 흡수 ID를 근거로 되돌린다. 이슈 수가 늘지만 <em>진척과 실패 지점이 선명해진다.</em></p>
+    </div>
+    <div class="card">
+      <h3>세 건의 성격이 다르다</h3>
+      <p><b>FR-038</b>은 화면이고 <b>FR-045 · FR-046</b>은 검증 설비다. 화면은 <em>부분 완료가 눈에 보이지만</em>, 검증 설비는 <b>돌거나 안 돌거나</b>여서 부분 통과 표현이 더 절실하다.</p>
+      <p class="tag mono" style="margin-top:8px">권고 — 검증 설비 쪽을 먼저 분리 검토</p>
+    </div>
+  </div>
+  <div class="co qt" style="margin-top:14px">
+    <span class="lb">이것이 왜 PM의 결정인가</span>
+    <p>템플릿을 늘릴지 이슈를 늘릴지는 <b>보드를 어떻게 읽고 싶은가</b>의 문제다 — 개발 기술의 문제가 아니다. 이슈 생성 전에 정해야 비용이 0이다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §10.2 AC 상한 초과 이슈 3건 · 짝 문서 이슈 템플릿</p>
+</div>
+</section>
+
+<!-- ══════════════ PART 6 · 운영과 남은 위험 ══════════════ -->
+
+<section class="page" data-p="5" data-part="운영과 남은 위험" data-title="금지 목록과 충돌한 병합 5건" data-kw="남은위험 절대금지 병합 5건 FR-001 FR-005 FR-017 FR-025 FR-027 되돌리기">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">운영과 남은 위험 ①</p>
+    <h2>“합치지 말 것”을 알면서 합친 5건</h2>
+    <p class="dek">분석서가 <b>절대 병합 금지</b>로 지목한 항목 중 다섯을 <b>55건 목표를 맞추기 위해</b> 병합했다. 이 문서는 그것을 숨기지 않고 <b>무엇을 잃는지와 되돌리는 비용</b>까지 적었다. PM이 가장 먼저 검토할 페이지다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>이슈</th><th>무엇을 흡수했나</th><th>잃는 것</th><th class="c">되돌림</th></tr></thead>
+      <tbody>
+        <tr><td><b>FR-001</b></td><td>환경 스코프 · Preview 격리 <span class="mono" style="font-size:11px">(구 FR-004)</span></td><td><code>AC-T14.1</code>이 릴리스 게이트 <b>RG-T3의 단독 근거</b>인데 <b>부분 통과를 표현할 수 없다</b></td><td class="c"><span class="bg n">+1</span></td></tr>
+        <tr><td><b>FR-005</b></td><td>규제 게이트(G1·G2·G6)와 기술 게이트(G3·G4·G5·G7)를 한 이슈로</td><td>전자는 <code>[Sec]</code>·규제 강제, 후자는 <code>[Infra]</code> — <b>담당과 실패 시 대응이 다르다</b></td><td class="c"><span class="bg n">+1</span></td></tr>
+        <tr><td><b>FR-017</b></td><td><code>approveMission</code> <span class="mono" style="font-size:11px">(구 FR-056)</span></td><td>임계 경로 위 H 태스크. 합치면 <b>밀릴 때 무엇이 밀렸는지</b> 알 수 없다</td><td class="c"><span class="bg n">+1</span></td></tr>
+        <tr><td><b>FR-025</b></td><td>결제 ↔ 계획 매칭 <span class="mono" style="font-size:11px">(구 FR-069)</span></td><td>동일 — 임계 경로</td><td class="c"><span class="bg n">+1</span></td></tr>
+        <tr><td><b>FR-027</b></td><td><code>submitRetrospective</code> <span class="mono" style="font-size:11px">(구 FR-075)</span></td><td>동일 — 임계 경로. 문장 풀과 <b>순환이 생겨</b> 분리에 비용이 더 든다</td><td class="c"><span class="bg hold">+1</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co wr" style="margin-top:16px">
+    <span class="lb">셋으로 갈린다</span>
+    <p><b>FR-001 · FR-005</b>는 <em>릴리스 판정과 담당 분리</em>의 문제이고, <b>FR-017 · 025 · 027</b>은 <em>임계 경로 가시성</em>의 문제다. 전자는 <b>게이트에서 터지고</b> 후자는 <b>주간 보고에서 티가 안 난다</b> — 성격이 다르므로 대응도 다르게 잡아야 한다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §10.1 · ANALYSIS §7</p>
+</div>
+</section>
+
+<section class="page" data-p="5" data-part="운영과 남은 위험" data-title="사라진 것 — 되돌릴 수 없는 것은 없다" data-kw="사라진것 가시성 복잡도 선행관계 축약 복원">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">운영과 남은 위험 ②</p>
+    <h2>통합으로 잃은 세 가지와 그 행방</h2>
+    <p class="dek">55건으로 묶으면서 <b>세 가지가 표에서 사라졌다.</b> 다만 셋 다 <b>어딘가에 남아 있고</b>, 문서가 그 위치를 명시했다 — 그래서 되돌릴 수 없는 것은 없다.</p>
+  </div>
+  <ol class="steps">
+    <li><b>130건의 개별 진척 가시성</b>§3 「흡수 ID」 칸 → 이슈 본문 <code>Task Breakdown</code> 체크박스로 이어진다. <b>보드가 아니라 이슈 안에서</b> 봐야 한다.</li>
+    <li><b>태스크 단위 복잡도 H / M / L</b>구성원 중 <b>최댓값</b>으로 축약됐다. 개별 값이 필요하면 <b>개정 2.0</b>이 원본이다.</li>
+    <li><b>세부 선행 관계</b>그룹 간 관계로 축약됐다. 다만 <b>순환 0건은 유지</b>되고 있음이 §11에서 검증됐다 — 축약이 순서를 망가뜨리지는 않았다.</li>
+  </ol>
+  <div class="co ok" style="margin-top:16px">
+    <span class="lb">이 문서가 잘한 것</span>
+    <p>통합을 <b>“정리했다”가 아니라 “무엇을 포기했다”로</b> 적었다. §10 제목 자체가 <em>「남은 위험 — 통합이 감수한 것」</em>이다. 이런 문서는 나중에 문제가 생겼을 때 <b>왜 그렇게 했는지</b>를 다시 찾을 수 있다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §10.3 · §11</p>
+</div>
+</section>
+
+<section class="page" data-p="5" data-part="운영과 남은 위험" data-title="검증 7항목 — 문서가 스스로 증명한 것" data-kw="검증 순환 0 전방참조 진입점 미배분 기계검증">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">운영과 남은 위험 ③</p>
+    <h2>이 표를 믿어도 되는 근거</h2>
+    <p class="dek">§11은 <b>사람의 판단이 아니라 기계로 확인할 수 있는 일곱 가지</b>를 검사한 결과다. PM이 문서를 인수할 때 <b>이 일곱 줄이 전부 통과인지</b>만 보면 된다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>검증 항목</th><th>이게 깨지면</th><th class="c">결과</th></tr></thead>
+      <tbody>
+        <tr><td>개정 2.0의 130건 전수 흡수</td><td>일감이 조용히 사라진다</td><td class="c"><span class="bg pass">130 / 130</span></td></tr>
+        <tr><td>흡수 중복 배정</td><td>같은 일을 두 팀이 한다</td><td class="c"><span class="bg pass">0건</span></td></tr>
+        <tr><td>통합 후 순환 의존</td><td><b>어느 것도 시작할 수 없다</b></td><td class="c"><span class="bg pass">0건</span></td></tr>
+        <tr><td>전방 참조<span style="font-size:12px"> (선행 번호 ≥ 자기 번호)</span></td><td>번호 순서로 읽는 것이 무의미해진다</td><td class="c"><span class="bg pass">0건</span></td></tr>
+        <tr><td>진입점 <span style="font-size:12px">(선행 없음)</span></td><td>둘 이상이면 시작점이 모호하다</td><td class="c"><span class="bg pass">1건</span></td></tr>
+        <tr><td><code>[UI]</code>가 <code>[Feature/*]</code>와 섞인 이슈</td><td>기능이 디자인을 기다린다</td><td class="c"><span class="bg pass">0건</span></td></tr>
+        <tr><td>AC 84건 미배분</td><td>판정되지 않는 합격 기준이 남는다</td><td class="c"><span class="bg pass">0건</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">진입점 1건이 뜻하는 것</span>
+    <p>선행이 없는 이슈가 <b>정확히 하나</b>다 — <code>FR-001 플랫폼 셋업</code>. 즉 <em>이 프로젝트는 시작할 곳이 한 군데뿐</em>이고, 그 앞에는 <code>UX-001 디자인 시스템</code>이 있다. “어디부터 시작하죠”에 대한 답이 문서에 기계적으로 박혀 있다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §11 검증</p>
+</div>
+</section>
+
+<section class="page" data-p="5" data-part="운영과 남은 위험" data-title="주간 점검 — 세 줄로 고정한다" data-kw="주간보고 세줄 임계경로 외부의존 진척률 운영">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">운영과 남은 위험 ④</p>
+    <h2>주간 보고 양식을 세 줄로 고정한다</h2>
+    <p class="dek">이슈 55건 · 체크박스 130개를 매주 훑을 수는 없다. 이 문서의 구조를 그대로 쓰면 <b>주간 점검은 세 줄</b>로 끝난다. 순서가 중요하다 — <b>진척률을 맨 앞에 쓰면 아무도 위험을 보지 않는다.</b></p>
+  </div>
+  <ol class="steps">
+    <li><b>① 임계 경로 9칸의 상태</b>지금 몇 번째 칸인가 · 그 칸이 예정보다 며칠 밀렸는가. <em>FR-001 → 002 → 003 → 006 → 008 → 014 → 017 → 025 → 027.</em> 이 줄만으로 전체 일정을 말할 수 있다.</li>
+    <li><b>② 착수 차단 8건의 상태</b>특히 <b>D-TEC-1</b>(일반 공개 가부)과 <b>D-TEC-8</b>(SMS 게이트웨이 — AC-7.1이 걸림). 나머지 6건은 대안이 있으므로 <em>“대안으로 진행 중”</em>이면 정상이다.</li>
+    <li><b>③ 나머지 진척</b>빌드 구획 단위로 본다 — <em>“B2 진행 중 · 3건 중 2건 닫힘.”</em> 이슈 번호를 나열하지 않는다.</li>
+  </ol>
+  <div class="co qt" style="margin-top:16px">
+    <span class="lb">왜 이 순서인가</span>
+    <p>①과 ②는 <b>PM이 개입해야 움직이는 것</b>이고 ③은 <b>개발이 알아서 도는 것</b>이다. 위험을 앞에 두면 회의가 <em>“무엇을 도와줘야 하는가”</em>로 시작하고, 진척률을 앞에 두면 <em>“왜 느린가”</em>로 시작한다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §5 · §6 · §7</p>
+</div>
+</section>
+
+<section class="page" data-p="5" data-part="운영과 남은 위험" data-title="회의에서 쓰는 질문 세트" data-kw="질문세트 회의 체크리스트 스코프 일정 협상">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">운영과 남은 위험 ⑤</p>
+    <h2>이 문서를 근거로 던지는 질문 9개</h2>
+    <p class="dek">전부 <b>표에서 답이 나오는</b> 질문이다. 답이 안 나오면 그것 자체가 신호다 — 문서에 없는 일이 진행되고 있거나, 표가 갱신되지 않았다는 뜻이다.</p>
+  </div>
+  <div class="grid g2">
+    <div>
+      <p class="tag mono" style="display:block; margin-bottom:9px">착수 · 순서</p>
+      <ul class="qs">
+        <li>지금 착수 가능한 이슈는 몇 개입니까? <b>선행이 전부 닫힌 것</b>만 세면 됩니다</li>
+        <li><b>UX-001</b>은 <b>FR-001</b>보다 먼저 끝날 일정입니까?</li>
+        <li><b>FR-003(RLS)</b>과 <b>FR-005(게이트)</b>가 B0 안에 있습니까? 뒤로 밀린 적 없습니까?</li>
+        <li>임계 경로에서 지금 몇 번째 칸입니까?</li>
+      </ul>
+    </div>
+    <div>
+      <p class="tag mono" style="display:block; margin-bottom:9px">완료 · 위험</p>
+      <ul class="qs">
+        <li>닫은 이슈의 <b>DoD 체크리스트</b>에 배분표의 D형 AC가 실제로 들어가 있습니까?</li>
+        <li><b>M형 12건</b>의 계측이 붙었습니까? 값이 <b>나오기는</b> 합니까?</li>
+        <li><b>FR-044</b>는 B0 직후에 켰습니까? 선행이 FR-005 하나뿐입니다</li>
+        <li><b>D-TEC-1</b>의 답은 β 종료 전에 옵니까?</li>
+        <li>§10.1의 <b>분리 후보 5건</b> 중 되돌릴 것이 있습니까? <b>이슈 생성 전이라 지금은 공짜</b>입니다</li>
+      </ul>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — TASKS 전 절</p>
+</div>
+</section>
+
+<section class="page" data-p="5" data-part="운영과 남은 위험" data-title="위험 신호 — 이걸 보면 이미 늦다" data-kw="위험신호 경고 지연 징후 이슈 안움직임 체크박스">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">운영과 남은 위험 ⑥</p>
+    <h2>보이면 이미 늦은 다섯 가지</h2>
+    <p class="dek">아래는 <b>발생한 뒤에 대응하면 비용이 크게 뛰는</b> 신호다. 각각 <b>더 일찍 보이는 선행 신호</b>를 함께 적었다 — PM이 실제로 볼 것은 오른쪽이다.</p>
+  </div>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>늦은 신호</th><th>일찍 보이는 신호</th></tr></thead>
+      <tbody>
+        <tr><td><b>보드가 2주 동안 안 움직인다</b></td><td>이슈 본문에 <code>Task Breakdown</code>이 없다 — <b>이슈 생성 시점</b>에 확인</td></tr>
+        <tr><td>릴리스 게이트에서 <b>규제 위반이 무더기로</b> 잡힌다</td><td><b>FR-005</b>가 B0에서 뒤로 밀렸다 · <b>FR-044</b>를 아직 안 켰다</td></tr>
+        <tr><td>β에서 <b>“이 지표는 산출 불가”</b>가 나온다</td><td><b>M형 12건</b>의 계측이 이슈 DoD에 안 들어갔다</td></tr>
+        <tr><td>화면 이슈가 <b>줄줄이 대기</b> 상태다</td><td><b>UX-001</b>이 <b>FR-001</b>보다 늦게 끝났다</td></tr>
+        <tr><td>임계 경로가 <b>밀린 줄 몰랐다</b></td><td>주간 보고가 <b>진척률부터</b> 시작한다 — 굵은 이슈 안에 지연이 숨는다(§10.1)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co bd" style="margin-top:16px">
+    <span class="lb">마지막 행이 이 문서가 스스로 경고한 것이다</span>
+    <p>FR-017 · 025 · 027은 <b>임계 경로 위 이슈를 굵게 묶은 것</b>이고, §10.1이 그 대가를 <em>“밀릴 때 무엇이 밀렸는지 알 수 없다”</em> 로 명시했다. 그래서 <b>이 세 이슈만은 체크박스 단위로</b> 진척을 봐야 한다.</p>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §10.1 · §8 · §4</p>
+</div>
+</section>
+
+<section class="page" data-p="5" data-part="운영과 남은 위험" data-title="되돌리는 법 — 60건 시나리오" data-kw="되돌리기 분리 60건 51 9 비용 이슈생성전">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">운영과 남은 위험 ⑦</p>
+    <h2>55건이 너무 굵다고 판단되면</h2>
+    <p class="dek">문서가 <b>되돌리는 경로를 계산해 두었다.</b> §10.1의 5건을 전부 분리하면 <b>51 FR + 9 UX = 60건</b>이 된다. 결정은 PM의 몫이고, <b>지금이 비용 0인 마지막 시점</b>이다.</p>
+  </div>
+  <div class="flow">
+    <div class="node"><span class="k">현재</span><span class="v">55건</span><span class="s">FR 46 + UX 9</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">5건 분리</span><span class="v">60건</span><span class="s">FR 51 + UX 9</span></div>
+    <div class="arw">→</div>
+    <div class="node"><span class="k">얻는 것</span><span class="v">게이트 부분 통과<br>담당 분리<br>임계 경로 가시성</span><span class="s">§10.1의 「잃는 것」이 해소</span></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+    <div class="card">
+      <h3>전부 말고 골라서 되돌릴 수도 있다</h3>
+      <p><b>FR-001 · FR-005</b>만 분리하면 <b>57건</b>. 릴리스 게이트 판정(RG-T3)과 규제/기술 담당 분리라는 <em>가장 날카로운 두 문제</em>가 해소된다.</p>
+      <p><b>FR-027</b>은 순환 때문에 분리 비용이 더 크므로 <em>마지막에 검토</em>한다.</p>
+    </div>
+    <div class="card">
+      <h3>지금 결정해야 하는 이유</h3>
+      <p>아직 <b>GitHub 이슈를 만들지 않았다.</b> 지금 분리하면 <em>문서 한 줄</em>이고, 이슈 생성 후에 분리하면 <b>이슈 이관 · 링크 재작성 · 보드 재구성</b>이 붙는다.</p>
+      <p class="tag mono" style="margin-top:8px">권고 — 이슈 생성 전에 이 결정을 닫는다</p>
+    </div>
+  </div>
+  <p class="src"><b>출처</b> — TASKS §10.1 · §9 통합 비용</p>
+</div>
+</section>
+
+<section class="page" data-p="5" data-part="운영과 남은 위험" data-title="마무리 — 이 문서를 언제 다시 여는가" data-kw="마무리 정리 요약 다시읽기 끝">
+<div class="page-in">
+  <div class="ph">
+    <p class="eyebrow">끝</p>
+    <h2>표는 계속 바뀐다 — 규칙은 안 바뀐다</h2>
+    <p class="dek">이슈 번호와 건수는 개정마다 달라진다. 하지만 <b>이 해설서가 다룬 규칙 다섯 개</b>는 그대로다. 다음에 표가 바뀌면 이 다섯 개로 다시 읽으면 된다.</p>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <h3>기억할 다섯 가지</h3>
+      <ol style="margin:0; padding-left:19px; font-size:14px; color:var(--text-2); line-height:1.85">
+        <li><b>번호가 순서다</b> — 선행은 항상 작은 번호</li>
+        <li><b>유형이 라벨이다</b> — 표의 값과 GitHub의 값이 같음</li>
+        <li><b>흡수 칸이 진척 단위다</b> — 55는 이슈 수, 130은 일감 수</li>
+        <li><b>AC는 전부 어딘가에 붙어 있다</b> — 미배분 0건</li>
+        <li><b>순서가 곧 규제인 지점이 있다</b> — RLS와 게이트</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>이 문서를 다시 열 때</h3>
+      <p><b>일정을 말해야 할 때</b> → 파트 4 순서와 병목<br>
+      <b>스코프를 협상할 때</b> → 파트 3 범위 제외 · 파트 6 되돌리는 법<br>
+      <b>완료를 판정할 때</b> → 파트 5 AC 배분<br>
+      <b>새 팀원이 왔을 때</b> → 파트 2 표 읽는 법</p>
+    </div>
+  </div>
+  <div class="co key" style="margin-top:16px">
+    <span class="lb">마지막으로 한 가지</span>
+    <p>이 태스크 리스트의 가장 좋은 점은 <b>자기가 감수한 위험을 스스로 적었다</b>는 것이다(§10). 문서가 이렇게 쓰여 있으면 <em>나중에 문제가 생겼을 때 “왜 이렇게 했지”를 다시 찾을 수 있다.</em> 표를 고칠 때도 그 습관을 유지하는 것이 이 문서를 계속 쓸모 있게 만든다.</p>
+  </div>
+  <p class="src"><b>원본 문서</b> — <b>TASKS_finfriends-nextjs-v3_0.md</b> (TASKS-FINFRIENDS-NEXTJS-001 · 개정 3.0) &nbsp;·&nbsp; <b>기준 문서</b> — SRS_finfriends-nextjs-v1_0.md &nbsp;·&nbsp; <b>연관</b> — METHODOLOGY_task-extraction.md · ANALYSIS_task-consolidation.md</p>
+</div>
+</section>
+
+
+
+</main>
+
+<nav class="nav">
+  <button class="nbtn" id="prevBtn"><span class="ar">←</span><span class="tx"><small>PREV</small><span id="prevT">—</span></span></button>
+  <div class="dots" id="dots"></div>
+  <button class="nbtn" id="nextBtn" style="flex-direction:row-reverse"><span class="ar">→</span><span class="tx" style="text-align:right"><small>NEXT</small><span id="nextT">—</span></span></button>
+</nav>
+
+<!-- 목차 오버레이 -->
+<div class="ov" id="ovTOC" role="dialog" aria-modal="true" aria-label="목차">
+  <div class="ov-top">
+    <h3>목차</h3>
+    <div class="ov-search"><input type="text" id="ovQ" placeholder="페이지 · 용어 검색 (예: 계측, ADR, 제약)" autocomplete="off"></div>
+    <button class="tbtn" id="ovClose">닫기 <kbd>Esc</kbd></button>
+  </div>
+  <div class="ov-body"><div class="ov-in" id="ovIn"></div></div>
+</div>
+
+<!-- 도움말 오버레이 -->
+<div class="ov" id="ovHelp" role="dialog" aria-modal="true" aria-label="단축키">
+  <div class="ov-top"><h3>키보드 단축키</h3><div style="flex:1"></div><button class="tbtn" id="helpClose">닫기 <kbd>Esc</kbd></button></div>
+  <div class="ov-body"><div class="ov-in">
+    <div class="help-grid">
+      <div class="help-row"><span class="ks"><kbd>←</kbd><kbd>→</kbd></span><span>이전 · 다음 페이지</span></div>
+      <div class="help-row"><span class="ks"><kbd>Space</kbd></span><span>다음 페이지</span></div>
+      <div class="help-row"><span class="ks"><kbd>PgUp</kbd><kbd>PgDn</kbd></span><span>이전 · 다음 페이지</span></div>
+      <div class="help-row"><span class="ks"><kbd>Home</kbd><kbd>End</kbd></span><span>첫 · 마지막 페이지</span></div>
+      <div class="help-row"><span class="ks"><kbd>↑</kbd><kbd>↓</kbd></span><span>긴 페이지 안에서 스크롤</span></div>
+      <div class="help-row"><span class="ks"><kbd>O</kbd></span><span>목차 열기 · 검색</span></div>
+      <div class="help-row"><span class="ks"><kbd>Esc</kbd></span><span>오버레이 닫기</span></div>
+      <div class="help-row"><span class="ks"><kbd>T</kbd></span><span>라이트 · 다크 전환</span></div>
+      <div class="help-row"><span class="ks"><kbd>?</kbd></span><span>이 도움말</span></div>
+      <div class="help-row"><span class="ks"><kbd>1</kbd>–<kbd>6</kbd></span><span>파트 첫 페이지로 이동</span></div>
+    </div>
+    <p style="text-align:center; color:var(--text-3); font-size:13px; margin-top:24px">모바일에서는 <b>좌우 스와이프</b>로 넘길 수 있습니다. 마지막으로 본 페이지는 자동 저장되어 다시 열면 이어서 시작합니다.</p>
+  </div></div>
+</div>
+
+
+<script>
+
+(function(){
+  "use strict";
+  var pages = Array.prototype.slice.call(document.querySelectorAll(".page"));
+  var N = pages.length, cur = 0;
+  var KEY = "ff-tasks-pm-study";
+
+  var elNum=document.getElementById("cNum"), elTot=document.getElementById("cTot"),
+      elPart=document.getElementById("cPart"), elTitle=document.getElementById("cTitle"),
+      bar=document.getElementById("progBar"), dots=document.getElementById("dots"),
+      prevB=document.getElementById("prevBtn"), nextB=document.getElementById("nextBtn"),
+      prevT=document.getElementById("prevT"), nextT=document.getElementById("nextT"),
+      edgeL=document.getElementById("edgeL"), edgeR=document.getElementById("edgeR"),
+      ovTOC=document.getElementById("ovTOC"), ovHelp=document.getElementById("ovHelp"),
+      ovIn=document.getElementById("ovIn"), ovQ=document.getElementById("ovQ"),
+      deck=document.getElementById("deck");
+
+  elTot.textContent = N;
+
+  /* ── 파트 그룹 ── */
+  var parts = [];
+  pages.forEach(function(p,i){
+    var nm = p.getAttribute("data-part");
+    if(!parts.length || parts[parts.length-1].name !== nm) parts.push({name:nm, first:i, items:[]});
+    parts[parts.length-1].items.push(i);
+  });
+
+  /* ── 점 내비 ── */
+  pages.forEach(function(p,i){
+    var d = document.createElement("i");
+    d.title = (i+1) + ". " + p.getAttribute("data-title");
+    d.addEventListener("click", function(){ go(i); });
+    dots.appendChild(d);
+  });
+  var dotEls = Array.prototype.slice.call(dots.children);
+
+  /* ── 목차 ── */
+  function buildTOC(q){
+    q = (q||"").trim().toLowerCase();
+    ovIn.innerHTML = "";
+    var shown = 0;
+    parts.forEach(function(pt){
+      var matched = pt.items.filter(function(i){
+        if(!q) return true;
+        var p = pages[i];
+        return (p.getAttribute("data-title")+" "+(p.getAttribute("data-kw")||"")+" "+p.getAttribute("data-part")).toLowerCase().indexOf(q) > -1;
+      });
+      if(!matched.length) return;
+      shown += matched.length;
+      var sec = document.createElement("div"); sec.className = "ov-part";
+      var h = document.createElement("h4"); h.textContent = pt.name; sec.appendChild(h);
+      var list = document.createElement("div"); list.className = "ov-list";
+      matched.forEach(function(i){
+        var b = document.createElement("button");
+        b.className = "ov-item" + (i===cur ? " cur" : "");
+        b.innerHTML = '<span class="num">'+String(i+1).padStart(2,"0")+'</span><span class="lab"></span>';
+        b.querySelector(".lab").textContent = pages[i].getAttribute("data-title");
+        b.addEventListener("click", function(){ closeOv(); go(i); });
+        list.appendChild(b);
+      });
+      sec.appendChild(list); ovIn.appendChild(sec);
+    });
+    if(!shown){
+      var e = document.createElement("div"); e.className = "ov-empty";
+      e.textContent = "'" + q + "' 에 해당하는 페이지가 없습니다.";
+      ovIn.appendChild(e);
+    }
+  }
+
+  /* ── 이동 ── */
+  function go(i, noPush){
+    if(i < 0 || i >= N || i === cur) { if(i===cur) return; }
+    i = Math.max(0, Math.min(N-1, i));
+    var back = i < cur;
+    pages[cur].classList.remove("on");
+    cur = i;
+    var p = pages[cur];
+    p.style.setProperty("--enter", back ? "-26px" : "26px");
+    void p.offsetWidth;
+    p.classList.add("on");
+    p.scrollTop = 0;
+    render();
+    if(!noPush){ try{ history.replaceState(null,"","#p"+(cur+1)); }catch(e){} }
+    try{ localStorage.setItem(KEY, String(cur)); }catch(e){}
+  }
+
+  function render(){
+    var p = pages[cur];
+    elNum.textContent = cur+1;
+    elPart.textContent = p.getAttribute("data-part");
+    elTitle.textContent = p.getAttribute("data-title");
+    bar.style.width = ((cur+1)/N*100) + "%";
+    prevB.disabled = edgeL.disabled = (cur === 0);
+    nextB.disabled = edgeR.disabled = (cur === N-1);
+    prevT.textContent = cur > 0 ? pages[cur-1].getAttribute("data-title") : "—";
+    nextT.textContent = cur < N-1 ? pages[cur+1].getAttribute("data-title") : "—";
+    dotEls.forEach(function(d,i){
+      d.className = i===cur ? "on" : (Math.abs(i-cur)<=1 ? "near" : "");
+    });
+    var od = dotEls[cur];
+    if(od && od.scrollIntoView) od.scrollIntoView({block:"nearest", inline:"center", behavior:"smooth"});
+  }
+
+  function next(){ if(cur < N-1) go(cur+1); }
+  function prev(){ if(cur > 0) go(cur-1); }
+
+  /* ── 오버레이 ── */
+  function openTOC(){ buildTOC(ovQ.value); ovTOC.classList.add("on"); setTimeout(function(){ ovQ.focus(); ovQ.select(); }, 40); }
+  function openHelp(){ ovHelp.classList.add("on"); }
+  function closeOv(){ ovTOC.classList.remove("on"); ovHelp.classList.remove("on"); deck.focus(); }
+  function ovOpen(){ return ovTOC.classList.contains("on") || ovHelp.classList.contains("on"); }
+
+  document.getElementById("btnOv").addEventListener("click", openTOC);
+  document.getElementById("btnHelp").addEventListener("click", openHelp);
+  document.getElementById("ovClose").addEventListener("click", closeOv);
+  document.getElementById("helpClose").addEventListener("click", closeOv);
+  ovQ.addEventListener("input", function(){ buildTOC(ovQ.value); });
+  [ovTOC, ovHelp].forEach(function(o){ o.addEventListener("click", function(e){ if(e.target === o) closeOv(); }); });
+
+  /* ── 테마 ── */
+  var btnTheme = document.getElementById("btnTheme");
+  function curTheme(){
+    var t = document.documentElement.getAttribute("data-theme");
+    if(t) return t;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  function toggleTheme(){
+    var nt = curTheme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", nt);
+    try{ localStorage.setItem(KEY+"-theme", nt); }catch(e){}
+  }
+  btnTheme.addEventListener("click", toggleTheme);
+  try{ var st = localStorage.getItem(KEY+"-theme"); if(st) document.documentElement.setAttribute("data-theme", st); }catch(e){}
+
+  /* ── 버튼 ── */
+  prevB.addEventListener("click", prev);
+  nextB.addEventListener("click", next);
+  edgeL.addEventListener("click", prev);
+  edgeR.addEventListener("click", next);
+
+  /* ── 키보드 ── */
+  document.addEventListener("keydown", function(e){
+    var tag = (e.target && e.target.tagName || "").toLowerCase();
+    var typing = tag === "input" || tag === "textarea" || (e.target && e.target.isContentEditable);
+
+    if(e.key === "Escape"){ if(ovOpen()){ e.preventDefault(); closeOv(); } return; }
+    if(typing){
+      if(e.key === "Enter" && ovTOC.classList.contains("on")){
+        var first = ovIn.querySelector(".ov-item");
+        if(first){ e.preventDefault(); first.click(); }
+      }
+      return;
+    }
+    if(ovOpen()) return;
+    if(e.metaKey || e.ctrlKey || e.altKey) return;
+
+    switch(e.key){
+      case "ArrowRight": case "PageDown": e.preventDefault(); next(); break;
+      case "ArrowLeft":  case "PageUp":   e.preventDefault(); prev(); break;
+      case " ": e.preventDefault(); e.shiftKey ? prev() : next(); break;
+      case "Home": e.preventDefault(); go(0); break;
+      case "End":  e.preventDefault(); go(N-1); break;
+      case "ArrowDown": pages[cur].scrollBy({top:120, behavior:"smooth"}); break;
+      case "ArrowUp":   pages[cur].scrollBy({top:-120, behavior:"smooth"}); break;
+      case "o": case "O": case "ㅐ": case "m": case "M": case "ㅡ": e.preventDefault(); openTOC(); break;
+      case "t": case "T": case "ㅅ": e.preventDefault(); toggleTheme(); break;
+      case "?": case "/": e.preventDefault(); openHelp(); break;
+      default:
+        if(/^[1-6]$/.test(e.key)){
+          var idx = parseInt(e.key,10) - 1;
+          if(parts[idx]){ e.preventDefault(); go(parts[idx].first); }
+        }
+    }
+  });
+
+  /* ── 스와이프 ── */
+  var tx=0, ty=0, tt=0;
+  deck.addEventListener("touchstart", function(e){
+    if(e.touches.length !== 1) return;
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY; tt = Date.now();
+  }, {passive:true});
+  deck.addEventListener("touchend", function(e){
+    if(!tt) return;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - tx, dy = t.clientY - ty, dt = Date.now() - tt;
+    tt = 0;
+    if(dt < 600 && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.8){
+      dx < 0 ? next() : prev();
+    }
+  }, {passive:true});
+
+  /* ── 시작 위치 ── */
+  var start = 0;
+  var m = /#p(\d+)/.exec(location.hash);
+  if(m){ start = Math.max(0, Math.min(N-1, parseInt(m[1],10) - 1)); }
+  else {
+    try{
+      var s = localStorage.getItem(KEY);
+      if(s !== null){ var v = parseInt(s,10); if(!isNaN(v) && v>0 && v<N) start = v; }
+    }catch(e){}
+  }
+  pages[0].classList.remove("on");
+  cur = start;
+  pages[cur].classList.add("on");
+  render();
+  buildTOC("");
+  deck.focus();
+
+  window.addEventListener("hashchange", function(){
+    var mm = /#p(\d+)/.exec(location.hash);
+    if(mm){ var i = parseInt(mm[1],10)-1; if(i !== cur) go(i, true); }
+  });
+})();
+</script>
+</body>
+</html>

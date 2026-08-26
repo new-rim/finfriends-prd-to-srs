@@ -8,7 +8,7 @@ assignees: ''
 
 <!--
 Stage 3 · 5건 중 1번. Stage 3 내부 선행 없음 — FR-010과 병렬 착수 가능.
-흡수: 개정 2.0의 FR-016(러너) · UI-003(G1) · FR-017(G2) · UI-004(G3) · FR-018(G4) · UI-005(G5) · FR-019(G6) · FR-020(G7) — 8건
+흡수: 개정 2.0의 FR-016(러너) · UX-005(G1) · FR-017(G2) · UX-007(G3) · FR-018(G4) · UX-006(G5) · FR-019(G6) · FR-020(G7) — 8건
 -->
 
 ## 🎯 Summary
@@ -36,14 +36,14 @@ Stage 3 · 5건 중 1번. Stage 3 내부 선행 없음 — FR-010과 병렬 착�
 - [ ] 위반 시 **파일·줄 번호**를 출력 (AC-T2.1이 요구한다)
 
 **규제 계층 게이트 3종 — `// gate-ignore` 지시자를 인정하지 않는다**
-- [ ] **(구 UI-003) G1 별↔저금통 전환 경로** — 소스 전체에서 전환 함수·API 심볼 · `star`↔`cash` 변환 패턴
+- [ ] **(구 UX-005) G1 별↔저금통 전환 경로** — 소스 전체에서 전환 함수·API 심볼 · `star`↔`cash` 변환 패턴
 - [ ] **(구 FR-017) G2 금지 필드 스캔** — `schema.prisma` + 마이그레이션에서 좌표(`lat`·`lng`·`geo`) · 얼굴(`face`·`photo`)
 - [ ] **(구 FR-019) G6 AI 경계** — AI SDK import가 `app/api/ops/**` 밖에 있는가 · 프롬프트 빌더의 **변수 보간 화이트리스트**
 
 **기술 게이트 4종**
-- [ ] **(구 UI-004) G3 런타임 경계** — import 그래프: Client Component → `@/db/**` · RSC → 쓰기 API · 요청 경로 → `db/batch`
+- [ ] **(구 UX-007) G3 런타임 경계** — import 그래프: Client Component → `@/db/**` · RSC → 쓰기 API · 요청 경로 → `db/batch`
 - [ ] **(구 FR-018) G4 Server Action 계약** — `"use server"` 파일의 export 시그니처에 `idempotencyKey` · zod 스키마 존재
-- [ ] **(구 UI-005) G5 스타일 단일 경로** — `globals.css` 외 CSS 파일 · CSS-in-JS 의존성 · 인라인 `style={{…}}`
+- [ ] **(구 UX-006) G5 스타일 단일 경로** — `globals.css` 외 CSS 파일 · CSS-in-JS 의존성 · 인라인 `style={{…}}`
 - [ ] **(구 FR-020) G7 마이그레이션 안전성** — 신규 마이그레이션의 `DROP COLUMN` · `RENAME` · `SET NOT NULL` · **분할 지침 출력**
 
 **공통**

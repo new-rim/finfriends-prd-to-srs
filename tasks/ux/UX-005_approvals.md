@@ -1,8 +1,8 @@
 ---
-name: "[UI] UI-003: 승인 대기 화면"
-about: Stage 7 · 개정 3.0 UI-003 (개정 2.0 FR-060 흡수)
-title: "[UI] UI-003: (guardian)/approvals — Table · 거절 사유 Dialog · 일괄 승인 Checkbox"
-labels: "type:ui, epic:E9, complexity:M, milestone:B3"
+name: "[UI/UX] UX-005: 승인 대기 — 디자인 + 승인 대기 화면"
+about: Stage 7 · 개정 3.0 UX-005 (개정 2.0 FR-060 흡수)
+title: "[UI/UX] UX-005: 승인 대기 — 디자인 + 승인 대기 화면"
+labels: "type:ui-ux, milestone:design-then-build"
 assignees: ''
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: "[Contract] FR-007: domain 순수 판정 함수 모듈"
-about: Stage 2 · 개정 3.0 FR-007 (개정 2.0 UI-007 흡수)
+about: Stage 2 · 개정 3.0 FR-007 (개정 2.0 UX-006 흡수)
 title: "[Contract] FR-007: domain/ 순수 판정 함수 — 나무 승급·정체·계획 대조·WPA"
 labels: "type:contract, epic:E4, complexity:H, milestone:B0"
 assignees: ''
@@ -8,7 +8,7 @@ assignees: ''
 
 <!--
 Stage 2 · 5건 중 2번. Stage 2 내부 선행 없음 — FR-006 · FR-009와 병렬 착수 가능.
-흡수: 개정 2.0의 UI-007 (1건 · 통합 없음)
+흡수: 개정 2.0의 UX-006 (1건 · 통합 없음)
 -->
 
 ## 🎯 Summary
