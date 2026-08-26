@@ -1871,6 +1871,44 @@
   "num": 33
  },
  {
+  "id": "UX-004d",
+  "file": "tasks/stage-0/UX-004d_growth-delivery-spec.md",
+  "title": "[UI/UX] UX-004d: 성장 나무·월간 숲·소비 내역 — 디자인 + 전달 화면 전체",
+  "labels": [
+   "build:design-then-build",
+   "lane:X",
+   "slack-tight",
+   "type:ui-ux"
+  ],
+  "milestone": "M1 기반 — 인프라·스키마·접근계층·계약·Mock",
+  "start": "2026-09-14",
+  "target": "2026-09-18",
+  "es": 5,
+  "ef": 10,
+  "dur": 5,
+  "slack": 46,
+  "lane": "X",
+  "cx": "H",
+  "absorb": 0,
+  "ac": 0,
+  "downstream": 1,
+  "deps": [
+   "UX-001"
+  ],
+  "blocked": [],
+  "critical": false,
+  "parts": [
+   [
+    "UX-004d",
+    5,
+    5,
+    10,
+    46
+   ]
+  ],
+  "num": null
+ },
+ {
   "id": "UX-004",
   "file": "tasks/stage-7/UX-004_growth-delivery.md",
   "title": "[UI/UX] UX-004: 성장 나무·월간 숲·소비 내역 — 디자인 + 전달 화면 전체",
@@ -1882,11 +1920,11 @@
   ],
   "milestone": "M4 검증·릴리스 게이트",
   "start": "2026-11-04",
-  "target": "2026-11-20",
+  "target": "2026-11-13",
   "es": 42,
-  "ef": 55,
-  "dur": 13,
-  "slack": 1,
+  "ef": 50,
+  "dur": 8,
+  "slack": 6,
   "lane": "X",
   "cx": "H",
   "absorb": 3,
@@ -1897,17 +1935,18 @@
    "FR-006",
    "FR-026",
    "FR-030",
-   "UX-001"
+   "UX-001",
+   "UX-004d"
   ],
   "blocked": [],
   "critical": false,
   "parts": [
    [
     "UX-004",
-    13,
+    8,
     42,
-    55,
-    1
+    50,
+    6
    ]
   ],
   "num": 45
