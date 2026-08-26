@@ -25,7 +25,9 @@ for name,layout,filt,fs in VIEWS:
     try:
         if name in cur: vid=cur[name]; print('  · 뷰 있음:',name)
         else:
-            r=gql('mutation{createProjectV2View(input:{projectId:"%s",name:%s,layout:%s,configuration:{visibleFieldIds:%s}}){projectV2View{id name}}}'%(PID,esc(name),layout,vis(*fs)))
+            # ROADMAP 레이아웃은 표시 열을 못 받는다 — Start/Target date 필드를 이름으로 자동 인식한다
+            cfg='' if layout=='ROADMAP_LAYOUT' else ',configuration:{visibleFieldIds:%s}'%vis(*fs)
+            r=gql('mutation{createProjectV2View(input:{projectId:"%s",name:%s,layout:%s%s}){projectV2View{id name}}}'%(PID,esc(name),layout,cfg))
             vid=r['createProjectV2View']['projectV2View']['id']; print('  + 뷰 생성:',name)
         if filt:
             gql('mutation{updateProjectV2View(input:{viewId:"%s",filter:%s}){projectV2View{id}}}'%(vid,esc(filt)))

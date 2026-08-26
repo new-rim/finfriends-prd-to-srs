@@ -81,7 +81,8 @@ for o in sorted(M.values(),key=lambda x:x['num']):
     add('복잡도','singleSelectOptionId:"%s"'%opt('복잡도','H 아키텍처·동시성·규제·외부연동' if o['cx']=='H' else 'M 표준 구현 + 검증'))
     t=next((TYPE[l] for l in o['labels'] if l in TYPE),'Infra')
     add('유형','singleSelectOptionId:"%s"'%opt('유형',t))
-    add('마일스톤 단계','singleSelectOptionId:"%s"'%opt('마일스톤 단계',o['milestone'].split(' —')[0]))
+    MSMAP={'M1':'M1 기반','M2':'M2 기능','M3':'M3 전달·운영','M4':'M4 검증·릴리스'}
+    add('마일스톤 단계','singleSelectOptionId:"%s"'%opt('마일스톤 단계',MSMAP[o['milestone'][:2]]))
     add('착수 차단','text:%s'%esc(' · '.join(o['blocked']) if o['blocked'] else '—'))
     add('선행','text:%s'%esc(' · '.join(o['deps']) if o['deps'] else '(진입점)'))
     gql('mutation{%s}'%'\n'.join(muts)); n+=1
