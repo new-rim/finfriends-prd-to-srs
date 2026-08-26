@@ -1,13 +1,13 @@
 ---
 name: "[UI/UX] UX-008: 운영자 콘솔 — 디자인 + AI 초안 검토 화면"
-about: UI/UX 트랙 · 개정 3.0 UX-008 (개정 2.0 FR-120 흡수)
+about: Stage 8 · 개정 3.0 UX-008 (개정 2.0 FR-120 흡수)
 title: "[UI/UX] UX-008: 운영자 콘솔 — 디자인 + AI 초안 검토 화면"
 labels: "type:ui-ux, milestone:design-then-build"
 assignees: ''
 ---
 
 <!--
-UI/UX 트랙 · 9건 중 8번 — 디자인과 화면 구현을 한 이슈로 진다 (개정 3.1)
+Stage 8 · 5건 중 5번 — UI/UX(디자인 + 화면 구현 통합 · 개정 3.1)
 FR 선행: FR-034 · 착수 가능: Stage 8 이후
 조건부 이슈 — AI_ENABLED=false면 이 화면도 필요 없다.
 흡수: 개정 2.0의 FR-120 (1건 · 통합 없음)
@@ -27,6 +27,8 @@ FR 선행: FR-034 · 착수 가능: Stage 8 이후
 - 🔴 **FR 선행이 생겼다** — 이 이슈는 `FR-034` 뒤에 온다(Stage 8 이후). 통합 전에는 디자인이 개발과 무관하게 먼저 갈 수 있었다.
 
 > 방법론 §2는 *"담당자·검증 방식·완료 판정이 다르면 다른 이슈"* 라고 한다. 디자인과 구현은 셋 다 다를 수 있으므로 **이 통합은 그 기준과 긴장 관계**에 있다 — 보고서 §5에 근거를 적어 두었다.
+
+> **Stage 8 배정 근거** — `FR-034`(AI 경계)를 선행으로 두어 Stage 7에 놓을 수 없다. 46건 전건 Stage 배정은 `REPORT_task-extraction-review.md` §4.1.
 
 ## 🔗 References (Spec & Context)
 
