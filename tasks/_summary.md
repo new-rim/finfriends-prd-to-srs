@@ -1,6 +1,6 @@
 # 이슈 한 줄 요약 — Stage 1~9 (전체)
 
-**대상:** `tasks/stage-1/` ~ `tasks/stage-9/` · **46건 (FR 37 + UI/UX 9 · 전건 Stage 배정)**
+**대상:** `tasks/stage-0/` ~ `tasks/stage-9/` · **47건 (FR 37 + UI/UX 9 + 디자인 명세 1 · 전건 Stage 배정)**
 **기준 문서:** `TASKS_finfriends-nextjs-v3_0.md` (개정 3.1 · 46건)
 **작성 순서:** `REPORT_task-extraction-review.md` (개정 3.0) §4 — 9 Stage
 **짝 문서:** `tasks/_index.md` (Stage 진행 현황 · 이슈번호 매핑 · Stage별 상세 요약)
@@ -9,6 +9,16 @@
 > ⚠️ **의사결정 근거로 쓰기엔 얇다.** GWT·DoD·차단 항목은 `tasks/stage-N/` 원문에 있고, 실제 착수 판단은 거기서 한다.
 
 ---
+
+<!-- STAGE0:BEGIN -->
+
+## Stage 0 — 디자인 명세 (UXUI 통합 단계 · 1건 · FR 선행 0건)
+
+| Task ID | 핵심 제약 |
+| --- | --- |
+| `UX-002d` | 온보딩 5단계 플로우 · Stepper 시각 규칙 · 재개 표기 문구 · 실패 화면 사유 · PWA 배너 배치 |
+
+<!-- STAGE0:END -->
 
 ## Stage 1 — 플랫폼·데이터 명세 + 디자인 시스템 (5건 · 흡수 22 · AC 6)
 

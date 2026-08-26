@@ -144,6 +144,10 @@ mx = max(o['ef'] for o in L)
 check('G5', '전체 max(ef) <= %d 영업일' % MAX_EF, mx <= MAX_EF, 'max(ef)=D+%d' % mx)
 
 # ── 출력 ──────────────────────────────────────────────────────────────────
+# --invariants-only : 분리 진행 중 건별 게이트. G1~G5는 8건이 다 끝나야 성립한다 (DECISION_LOG MINOR-5).
+ONLY_INV = '--invariants-only' in sys.argv
+if ONLY_INV:
+    results = [r for r in results if r[0].startswith('I')]
 W = max(len(t) for _, t, _, _ in results)
 print('편성 원장 검증 — %s' % os.path.relpath(MANIFEST, ROOT))
 print('=' * (W + 22))
@@ -153,5 +157,6 @@ for code, title, ok, detail in results:
         fails += 1
     print('%s %-3s %-*s  %s' % ('✅' if ok else '❌', code, W, title, detail))
 print('=' * (W + 22))
-print('불변식 I1~I6 · 목표 조건 G1~G5 — 통과 %d / %d' % (len(results) - fails, len(results)))
+print('%s — 통과 %d / %d' % ('불변식 I1~I6 (건별 게이트)' if ONLY_INV else '불변식 I1~I6 · 목표 조건 G1~G5',
+                              len(results) - fails, len(results)))
 sys.exit(1 if fails else 0)
