@@ -1,9 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardMuted, CardTitle } from "@/components/ui/card";
+import { TreeFigure } from "@/components/tree-figure";
 import { AREA_ORDER, AREAS, EMPTY_STATE } from "@/contracts/areas";
 import { buildNarrative } from "@/contracts/narrative";
 import { STAGE_LABEL, isStalled, remainingConditions } from "@/contracts/tree";
-import { treeDefault, treeNoPractice } from "@/fixtures/tree";
+import { treeDefault, treeGrown, treeNoPractice } from "@/fixtures/tree";
 
 /**
  * ① 성장 나무 + 정체 원인 — 계획 §5
@@ -20,7 +21,8 @@ export default async function TreePage({
   searchParams: Promise<{ state?: string }>;
 }) {
   const { state } = await searchParams;
-  const view = state === "empty" ? treeNoPractice : treeDefault;
+  const view =
+    state === "empty" ? treeNoPractice : state === "grown" ? treeGrown : treeDefault;
   const narrative = buildNarrative(view.states);
 
   const stalled = view.states.filter(isStalled);
@@ -68,9 +70,13 @@ export default async function TreePage({
                 </>
               ) : (
                 <>
-                  <p className="mt-3 text-lg font-semibold text-[var(--accent)]">
-                    {STAGE_LABEL[s.stage]}
-                  </p>
+                  {/* 🔴 도형 + 글자 둘 다 낸다 — 그림만으로 상태를 구별하지 않는다(UX-001) */}
+                  <div className="mt-3 flex items-center gap-2">
+                    <TreeFigure stage={s.stage} />
+                    <p className="text-lg font-semibold text-[var(--accent)]">
+                      {STAGE_LABEL[s.stage]}
+                    </p>
+                  </div>
                   {s.progress.practice > 0 && (
                     <CardMuted className="text-sm">실천 {s.progress.practice}회</CardMuted>
                   )}

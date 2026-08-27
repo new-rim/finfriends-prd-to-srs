@@ -22,3 +22,18 @@ export const treeNoPractice: TreeView = {
   })),
   pendingApprovals: 0,
 };
+
+/**
+ * 승급 완료 변형 — 「나무」 단계 도형 검수용.
+ * 🔴 기본 시나리오(§14.1)를 바꾸지 않는다. 계획 §5.4가 3단계 도형을 확정했는데
+ *    기본 상태에는 씨앗·새싹만 나와 세 번째 단계를 눈으로 확인할 자리가 없다.
+ *    빈 상태를 ?state=empty로 뜬 것과 같은 방식이다.
+ */
+export const treeGrown: TreeView = {
+  states: AREA_STATES.map((s) =>
+    s.area === "SPEND"
+      ? { ...s, stage: "TREE" as const, progress: { learn: 3, quiz: 5, practice: 3 }, promotedThisCycle: true }
+      : s,
+  ),
+  pendingApprovals: PENDING_APPROVALS,
+};

@@ -1,5 +1,5 @@
 # ① 성장 나무 + 정체 원인 (보호자)
-생성: 2026-08-27 15:01:37
+생성: 2026-08-27 15:10:33
 
 ════════════════════════════════════════
 URL: /tree
@@ -8,7 +8,7 @@ URL: /tree
 guardian
 
 ## DOM 개요
-<main> <section> <h1> <section> <section> <h3> <h3> <h3> <h3> <section> <ul> <li> <li> <li>
+<main> <section> <h1> <section> <section> <h3> <svg role=img stage=SPROUT> <h3> <svg role=img stage=SPROUT> <h3> <svg role=img stage=SPROUT> <h3> <section> <ul> <li> <li> <li>
 
 ## 렌더 텍스트
 이번 달, 잘 써요가 새싹이 됐어요.
@@ -50,13 +50,60 @@ guardian
 퀴즈 3개 남음
 
 ════════════════════════════════════════
+URL: /tree?state=grown
+════════════════════════════════════════
+## THEME
+guardian
+
+## DOM 개요
+<main> <section> <h1> <section> <section> <h3> <svg role=img stage=SPROUT> <h3> <svg role=img stage=TREE> <h3> <svg role=img stage=SPROUT> <h3> <section> <ul> <li> <li> <li>
+
+## 렌더 텍스트
+이번 달, 잘 써요가 나무이 됐어요.
+쓰기 전에 3번 적어서 자란 거예요.
+승인 대기
+2
+건
+벌어요
+미션을 해내면 별을 받아요
+새싹
+실천
+2
+회
+학습 1회 남음 · 퀴즈 2개 남음
+잘 써요
+쓰기 전에 미리 적어두고, 지키면 별을 받아요
+나무
+실천
+3
+회
+모아요
+갖고 싶은 걸 정하고 조금씩 모아요
+새싹
+실천 1회 남음
+늘려요
+모아둔 돈이 시간이 지나면 스스로 늘어나요
+곧 열려요.
+지금은 배우기만 할 수 있어요.
+모아요
+가
+14
+일째 그대로예요
+·
+실천 1회 남음
+·
+학습 2회 남음
+·
+퀴즈 3개 남음
+
+════════════════════════════════════════
 URL: /tree?state=empty
 ════════════════════════════════════════
 ## THEME
 guardian
 
 ## DOM 개요
-<main> <section> <h1> <section> <h3> <h3> <h3> <h3>
+<main> <section> <h1> <section> <h3> <svg role=img stage=SEED> <h3> <svg role=img stage=SEED> <h3> <svg role=img stage=SEED> <h3>
 
 ## 렌더 텍스트
 아직 기록이 없어요.

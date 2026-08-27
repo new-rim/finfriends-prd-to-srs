@@ -46,7 +46,7 @@ grab() { # grab <파일> <제목> <경로...>
 FAILED=0
 
 grab home  "진입점 — ②→③→① 순서"                 "/"
-grab tree  "① 성장 나무 + 정체 원인 (보호자)"      "/tree" "/tree?state=empty"
+grab tree  "① 성장 나무 + 정체 원인 (보호자)"      "/tree" "/tree?state=grown" "/tree?state=empty"
 grab learn "② 학습·퀴즈 (아동)"                   "/learn/spend" "/learn/spend?picked=b"
 grab retro "③ 두 갈래 회고 (아동)"                "/retro" "/retro?state=backlog" "/retro?state=empty"
 

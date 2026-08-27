@@ -164,10 +164,24 @@ const leakedRender = ["home", "tree", "learn", "retro"].filter((n) =>
 );
 const leaked = [...leakedSrc, ...leakedRender.map((n) => `render:${n}`)];
 const emptyOk = empties.every(([, ok]) => ok);
-if (emptyOk && treeLabels.length === 4 && learnLabel && leaked.length === 0)
-  pass("L5", "빈 상태 · 표기 일치", `빈 상태 3/3 · 나무 표기 4/4 (${treeLabels.join(" ")}) · 학습 "${learnLabel}" 일치 · PRD 문서 명칭 누출 0건 (렌더 4/4 · 소스 주석 제외)`);
+// 🔴 계획 §5.4가 확정한 3단계 도형이 실제로 그려졌는가.
+// 6R까지 아무도 못 잡은 이유는 계측기가 svg를 아예 안 봤기 때문이다 —
+// html-to-text.mjs가 이제 <svg stage=...>를 DOM 개요에 남기고, 여기서 그것을 센다.
+const stagesDrawn = new Set([...treeSnap.matchAll(/<svg[^>]*stage=(\w+)/g)].map((m) => m[1]));
+const STAGES = ["SEED", "SPROUT", "TREE"];
+const figureOk = STAGES.every((v) => stagesDrawn.has(v)); // 계획 §5.4 — 3단계 전부
+if (emptyOk && treeLabels.length === 4 && learnLabel && leaked.length === 0 && figureOk)
+  pass(
+    "L5",
+    "빈 상태 · 표기 · 도형",
+    `빈 상태 3/3 · 나무 표기 4/4 (${treeLabels.join(" ")}) · 학습 "${learnLabel}" 일치 · PRD 문서 명칭 누출 0건 (렌더 4/4 · 소스 주석 제외) · 단계 도형 3/3 (${STAGES.join("/")})`,
+  );
 else
-  fail("L5", "빈 상태 · 표기 일치", `빈 상태 ${empties.filter(([, o]) => o).length}/3 (${empties.filter(([, o]) => !o).map(([n]) => n)}) · 나무 표기 ${treeLabels.length}/4 · 누출 ${leaked.length}건 ${leaked}`);
+  fail(
+    "L5",
+    "빈 상태 · 표기 · 도형",
+    `빈 상태 ${empties.filter(([, o]) => o).length}/3 (${empties.filter(([, o]) => !o).map(([n]) => n)}) · 나무 표기 ${treeLabels.length}/4 · 누출 ${leaked.length}건 ${leaked} · 단계 도형 ${stagesDrawn.size}/3 (${[...stagesDrawn].join("/") || "0건 — 계획 §5.4의 CSS/SVG 3단계 도형이 없다"})`,
+  );
 
 // ── L6 시나리오 불변식 ──────────────────────────────────────────
 const test = skip("L6") ? { ok: true, out: "(--screen: 건너뜀)" } : sh('node --test "src/**/*.test.ts"');

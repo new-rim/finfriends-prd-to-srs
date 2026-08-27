@@ -11,13 +11,16 @@ const stripped = body
 
 // DOM 개요 — 태그 흐름과 data-theme
 const outline = [];
-const tagRe = /<(h1|h2|h3|main|section|article|ol|ul|li|dl|a|button|label|input)\b([^>]*)>/gi;
+const tagRe = /<(h1|h2|h3|main|section|article|ol|ul|li|dl|a|button|label|input|svg|figure)\b([^>]*)>/gi;
 let m;
 while ((m = tagRe.exec(stripped))) {
   const attrs = m[2];
   const theme = /data-theme="([^"]+)"/.exec(attrs)?.[1];
   const role = /role="([^"]+)"/.exec(attrs)?.[1];
-  outline.push(`<${m[1].toLowerCase()}${theme ? ` theme=${theme}` : ""}${role ? ` role=${role}` : ""}>`);
+  const stage = /data-stage="([^"]+)"/.exec(attrs)?.[1];
+  outline.push(
+    `<${m[1].toLowerCase()}${theme ? ` theme=${theme}` : ""}${role ? ` role=${role}` : ""}${stage ? ` stage=${stage}` : ""}>`,
+  );
 }
 
 const text = stripped

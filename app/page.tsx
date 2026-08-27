@@ -42,6 +42,10 @@ export default function Home() {
           나무 · 실천 0건
         </Link>
         {" · "}
+        <Link className="underline" href="/tree?state=grown">
+          나무 · 승급 완료
+        </Link>
+        {" · "}
         <Link className="underline" href="/retro?state=empty">
           회고 · 큐 빔
         </Link>
