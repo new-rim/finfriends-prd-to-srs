@@ -9,6 +9,11 @@
  */
 
 import type { AreaState } from "@/contracts/tree";
+import type { WishlistItem } from "@/contracts/wishlist";
+import type { MissionItem } from "@/contracts/missions";
+import type { ForestSummary } from "@/contracts/forest";
+import type { PlanSummary } from "@/contracts/plan";
+import type { HistoryItem } from "@/contracts/history";
 
 export type RetroBranch = "KEPT" | "CATEGORY_DIFF" | "OVER";
 
@@ -160,3 +165,133 @@ export const LEARN_PROGRESS = {
   topicsDone: SPEND_STATE.progress.learn,
   quizCorrect: SPEND_STATE.progress.quiz,
 } as const;
+
+/** ④ 위시리스트 & ⭐ 보유 잔액 시나리오 데이터 — 계획 §15.1 */
+export const TOTAL_STARS = 12;
+
+export const WISHLIST_ITEM: WishlistItem = {
+  id: "w1",
+  name: "알록달록 캐릭터 모자",
+  category: "아바타 꾸미기",
+  requiredStars: 15,
+  currentStars: TOTAL_STARS,
+  isUnlocked: false,
+};
+
+/** ⑤ 미션 목록 시나리오 데이터 — 계획 §15.2 (WAINTING 2건은 PENDING_APPROVALS 2건과 일치) */
+export const MISSIONS_LIST: MissionItem[] = [
+  {
+    id: "m1",
+    title: "방 정리하기",
+    rewardStars: 2,
+    status: "AVAILABLE",
+    category: "EARN",
+  },
+  {
+    id: "m2",
+    title: "심부름 다녀오기",
+    rewardStars: 3,
+    status: "WAITING",
+    category: "EARN",
+  },
+  {
+    id: "m3",
+    title: "책 한 권 읽기",
+    rewardStars: 2,
+    status: "WAITING",
+    category: "EARN",
+  },
+  {
+    id: "m4",
+    title: "마켓 영수증 챙기기",
+    rewardStars: 1,
+    status: "REJECTED",
+    category: "SPEND",
+    rejectionReason: "영수증 글자가 잘 보이게 다시 찍어볼까요?",
+  },
+  {
+    id: "m5",
+    title: "용돈 정산하기",
+    rewardStars: 8,
+    status: "COMPLETED",
+    category: "SAVE",
+  },
+];
+
+/** ⑥ 월간 숲 시나리오 데이터 — 계획 §15.3 */
+export const FOREST_SUMMARY: ForestSummary = {
+  currentMonth: "2026-08",
+  monthsData: [
+    { month: "2026-06", treeCount: 0, sproutCount: 1, seedCount: 3 },
+    { month: "2026-07", treeCount: 1, sproutCount: 1, seedCount: 2 },
+    { month: "2026-08", treeCount: 1, sproutCount: 2, seedCount: 1 },
+  ],
+  highlights: [
+    {
+      id: "h1",
+      title: "잘 써요 실천 1회 증가",
+      description: "지난달보다 소비 회고 실천이 1회 늘어났어요.",
+    },
+    {
+      id: "h2",
+      title: "모아요 영역 정체 해소",
+      description: "모아요 학습 조건이 채워졌어요.",
+    },
+    {
+      id: "h3",
+      title: "위시리스트 80% 달성",
+      description: "목표 별 15개 중 12개를 모았어요.",
+    },
+  ],
+  isFirstMonth: false,
+};
+
+/** ⑦ 계획 카드 시나리오 데이터 — 계획 §15.4 */
+export const PLAN_SUMMARY: PlanSummary = {
+  monthlyBudget: 10000,
+  usedAmount: 6500,
+  hasPlan: true,
+  categoryName: "잘 써요",
+  guidanceText: "쓰기 전에 얼마까지 쓸지 미리 적어두면 별을 받아요!",
+};
+
+/** ⑧ 소비 내역 시나리오 데이터 — 계획 §15.5 */
+export const HISTORY_ITEMS: HistoryItem[] = [
+  {
+    id: "h1",
+    merchantName: "분식집",
+    amount: 4000,
+    date: "08.25",
+    hasPlanned: true,
+    retroStatus: "COMPLETED",
+    retroId: "r1",
+  },
+  {
+    id: "h2",
+    merchantName: "문구점",
+    amount: 4000,
+    date: "08.24",
+    hasPlanned: true,
+    retroStatus: "COMPLETED",
+    retroId: "r2",
+  },
+  {
+    id: "h3",
+    merchantName: "분식집",
+    amount: 7000,
+    date: "08.22",
+    hasPlanned: true,
+    retroStatus: "COMPLETED",
+    retroId: "r3",
+  },
+  {
+    id: "h4",
+    merchantName: "편의점",
+    amount: 2500,
+    date: "08.20",
+    hasPlanned: true,
+    retroStatus: "COMPLETED",
+    retroId: "r4",
+  },
+];
+

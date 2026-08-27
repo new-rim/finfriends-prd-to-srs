@@ -74,12 +74,19 @@ const ROUTES = [
   ["app/(guardian)/tree/page.tsx", "/tree"],
   ["app/(child)/learn/spend/page.tsx", "/learn/spend"],
   ["app/(child)/retro/page.tsx", "/retro"],
+  ["app/(child)/wishlist/page.tsx", "/wishlist"],
+  ["app/(child)/missions/page.tsx", "/missions"],
+  ["app/(guardian)/forest/page.tsx", "/forest"],
+  ["app/(child)/plan/page.tsx", "/plan"],
+  ["app/(child)/history/page.tsx", "/history"],
+  ["app/(child)/avatar/page.tsx", "/avatar"],
+  ["app/(guardian)/guardian/missions/page.tsx", "/guardian/missions"],
 ];
 const missing = ROUTES.filter(([f]) => !existsSync(f));
 const skip = (id) => only !== null && only !== id;
 const build = skip("L2") ? { ok: true, out: "(--screen: 건너뜀)" } : sh("npx next build");
 if (build.ok && missing.length === 0)
-  pass("L2", "빌드 · 라우트 그룹", `next build exit 0 · 3/3 경로 존재 (${ROUTES.map(([, r]) => r).join(" ")})`);
+  pass("L2", "빌드 · 라우트 그룹", `next build exit 0 · 10/10 경로 존재 (${ROUTES.map(([, r]) => r).join(" ")})`);
 else fail("L2", "빌드 · 라우트 그룹", build.ok ? `누락 ${missing.map(([f]) => f)}` : "next build 실패");
 
 // ── L3 스타일 단일 경로 ─────────────────────────────────────────
@@ -159,7 +166,7 @@ const stripComments = (t) =>
 const leakedSrc = SRC.filter((f) =>
   DOC_NAMES.some((d) => stripComments(readFileSync(f, "utf8")).includes(d)),
 );
-const leakedRender = ["home", "tree", "learn", "retro"].filter((n) =>
+const leakedRender = ["home", "tree", "learn", "retro", "wishlist", "missions", "forest", "plan", "history"].filter((n) =>
   DOC_NAMES.some((d) => read(`${SNAP}/${n}.txt`).includes(d)),
 );
 const leaked = [...leakedSrc, ...leakedRender.map((n) => `render:${n}`)];

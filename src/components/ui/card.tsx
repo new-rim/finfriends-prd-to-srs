@@ -31,3 +31,20 @@ export function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
 export function CardMuted({ className, ...props }: React.ComponentProps<"p">) {
   return <p className={cn("text-[var(--text-muted)]", className)} {...props} />;
 }
+
+export function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return <div className={cn("flex flex-col space-y-1.5 pb-2", className)} {...props} />;
+}
+
+export function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+  return <div className={cn("pt-0", className)} {...props} />;
+}
+
+export function CardDescription({ className, ...props }: React.ComponentProps<"p">) {
+  return <p className={cn("text-sm text-[var(--text-muted)]", className)} {...props} />;
+}
+
+export function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return <div className={cn("flex items-center pt-2", className)} {...props} />;
+}
+

@@ -45,10 +45,17 @@ grab() { # grab <파일> <제목> <경로...>
 }
 FAILED=0
 
-grab home  "진입점 — ②→③→① 순서"                 "/"
-grab tree  "① 성장 나무 + 정체 원인 (보호자)"      "/tree" "/tree?state=grown" "/tree?state=empty"
-grab learn "② 학습·퀴즈 (아동)"                   "/learn/spend" "/learn/spend?picked=b"
-grab retro "③ 두 갈래 회고 (아동)"                "/retro" "/retro?state=backlog" "/retro?state=empty"
+grab home     "진입점 — 전체 시나리오 8화면 순서"    "/"
+grab tree     "① 성장 나무 + 정체 원인 (보호자)"     "/tree" "/tree?state=grown" "/tree?state=empty"
+grab learn    "② 학습·퀴즈 (아동)"                  "/learn/spend" "/learn/spend?picked=b"
+grab retro    "③ 두 갈래 회고 (아동)"               "/retro" "/retro?state=backlog" "/retro?state=empty"
+grab wishlist "④ 위시리스트/⭐ 잔액 (아동)"          "/wishlist"
+grab missions "⑤ 미션 목록 (아동)"                 "/missions"
+grab forest   "⑥ 월간 숲 (보호자)"                 "/forest" "/forest?state=first"
+grab plan     "⑦ 소비 계획 (아동)"                 "/plan"
+grab history  "⑧ 소비 내역 (아동)"                 "/history"
+grab avatar   "⑨ 아바타 꾸미기 (아동)"              "/avatar"
+grab gmissions "⑩ 부모 미션 승인 룸 (보호자)"        "/guardian/missions"
 
 if [ "$FAILED" -ne 0 ]; then echo "스냅샷 실패 — 빈 렌더가 있다"; exit 1; fi
 echo "스냅샷 완료"

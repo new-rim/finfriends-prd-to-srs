@@ -20,7 +20,7 @@ done
 {
   printf '{'
   first=1
-  for p in /tree /learn/spend /retro; do
+  for p in /tree /learn/spend /retro /wishlist /missions /forest /plan /history /avatar /guardian/missions; do
     code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:$PORT$p")
     [ $first -eq 0 ] && printf ','
     printf '"%s":%s' "$p" "$code"

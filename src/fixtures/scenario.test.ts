@@ -1,7 +1,16 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { AREA_STATES, LEARN_PROGRESS, RETRO_ENTRIES } from "./scenario.ts";
+import {
+  AREA_STATES,
+  LEARN_PROGRESS,
+  RETRO_ENTRIES,
+  PENDING_APPROVALS,
+  TOTAL_STARS,
+  WISHLIST_ITEM,
+  MISSIONS_LIST,
+  HISTORY_ITEMS,
+} from "./scenario.ts";
 import { PROMOTION, remainingConditions } from "../contracts/tree.ts";
 import { buildNarrative, particle } from "../contracts/narrative.ts";
 import { AREAS, AREA_ORDER } from "../contracts/areas.ts";
@@ -105,3 +114,30 @@ test("4영역 라벨 어느 것으로도 조사가 맞다", () => {
   // 받침 있는 가상 라벨에도 「이」가 붙는다
   assert.equal(particle("모음", "이가"), "이");
 });
+
+/**
+ * 🔴 확장 L6 불변식 — 미션 목록의 승인 대기 건수(WAITING) === 나무 화면 승인 대기 N건(PENDING_APPROVALS)
+ */
+test("L6 — 미션 목록의 승인 대기 건수 = 나무 화면의 PENDING_APPROVALS (계획 §15.2)", () => {
+  const waitingMissions = MISSIONS_LIST.filter((m) => m.status === "WAITING").length;
+  assert.equal(waitingMissions, PENDING_APPROVALS);
+});
+
+/**
+ * 🔴 확장 L6 불변식 — 소비 내역과 회고 이력의 1:1 연동 정합성
+ */
+test("L6 — 소비 내역과 회고 이력이 1:1로 매핑된다 (계획 §15.5)", () => {
+  for (const entry of RETRO_ENTRIES) {
+    const historyItem = HISTORY_ITEMS.find((h) => h.retroId === entry.id);
+    assert.ok(historyItem, `회고 ${entry.id}에 대응하는 소비 내역이 존재해야 한다`);
+    assert.equal(historyItem.retroStatus, "COMPLETED");
+  }
+});
+
+/**
+ * 🔴 확장 L6 불변식 — 위시리스트의 보유 별 잔액 = TOTAL_STARS (계획 §15.1)
+ */
+test("L6 — 위시리스트 보유 별 = TOTAL_STARS", () => {
+  assert.equal(WISHLIST_ITEM.currentStars, TOTAL_STARS);
+});
+

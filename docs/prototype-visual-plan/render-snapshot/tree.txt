@@ -1,5 +1,5 @@
 # ① 성장 나무 + 정체 원인 (보호자)
-생성: 2026-08-27 15:30:39
+생성: 2026-08-27 17:06:39
 
 ════════════════════════════════════════
 URL: /tree
@@ -8,46 +8,33 @@ URL: /tree
 guardian
 
 ## DOM 개요
-<main> <section> <h1> <section> <section> <h3> <svg role=img stage=SPROUT> <h3> <svg role=img stage=SPROUT> <h3> <svg role=img stage=SPROUT> <h3> <section> <ul> <li> <li> <li>
+<main> <a> <h1> <button> <section> <h1> <section> <svg role=img stage=SPROUT> <svg role=img stage=SPROUT> <svg role=img stage=SPROUT> <svg role=img stage=SEED> <section> <h2> <h3>
 
 ## 렌더 텍스트
-이번 달, 잘 써요가 새싹이 됐어요.
-쓰기 전에 3번 적어서 자란 거예요.
-승인 대기
+← 부모 홈
+성장 나무
+승인대기
 2
 건
+🌳 성장 진화 연출 체험:
+아이가 3회 실천했을 때의 성장 변화를 직접 눌러보세요.
+✨ 3회 실천 ➔ 성장 진화 연출 보기
+이번 달, 잘 써요가 새싹이 됐어요.
+쓰기 전에 3번 적어서 자란 거예요.
 벌어요
-미션을 해내면 별을 받아요
 새싹
-실천
-2
-회
-학습 1회 남음 · 퀴즈 2개 남음
 잘 써요
-쓰기 전에 미리 적어두고, 지키면 별을 받아요
 새싹
-실천
-3
-회
-학습 2회 남음 · 퀴즈 4개 남음
+이번달 성장!
 모아요
-갖고 싶은 걸 정하고 조금씩 모아요
 새싹
-실천 1회 남음
 늘려요
-모아둔 돈이 시간이 지나면 스스로 늘어나요
 곧 열려요.
 지금은 배우기만 할 수 있어요.
+정체 원인 분석
 모아요
-가
-14
-일째 그대로예요
-·
-실천 1회 남음
-·
-학습 2회 남음
-·
-퀴즈 3개 남음
+영역이 정체 중이에요
+실천 횟수가 부족해요. 아이에게 미션을 추천하거나 함께 퀴즈를 풀어보세요.
 
 ════════════════════════════════════════
 URL: /tree?state=grown
@@ -56,45 +43,33 @@ URL: /tree?state=grown
 guardian
 
 ## DOM 개요
-<main> <section> <h1> <section> <section> <h3> <svg role=img stage=SPROUT> <h3> <svg role=img stage=TREE> <h3> <svg role=img stage=SPROUT> <h3> <section> <ul> <li> <li> <li>
+<main> <a> <h1> <button> <section> <h1> <section> <svg role=img stage=SPROUT> <svg role=img stage=TREE> <svg role=img stage=SPROUT> <svg role=img stage=SEED> <section> <h2> <h3>
 
 ## 렌더 텍스트
-이번 달, 잘 써요가 나무가 됐어요.
-쓰기 전에 3번 적어서 자란 거예요.
-승인 대기
+← 부모 홈
+성장 나무
+승인대기
 2
 건
+🌳 성장 진화 연출 체험:
+아이가 3회 실천했을 때의 성장 변화를 직접 눌러보세요.
+🔄 초기 상태로
+이번 달, 잘 써요가 나무가 됐어요.
+쓰기 전에 3번 적어서 자란 거예요.
 벌어요
-미션을 해내면 별을 받아요
 새싹
-실천
-2
-회
-학습 1회 남음 · 퀴즈 2개 남음
 잘 써요
-쓰기 전에 미리 적어두고, 지키면 별을 받아요
 나무
-실천
-3
-회
+이번달 성장!
 모아요
-갖고 싶은 걸 정하고 조금씩 모아요
 새싹
-실천 1회 남음
 늘려요
-모아둔 돈이 시간이 지나면 스스로 늘어나요
 곧 열려요.
 지금은 배우기만 할 수 있어요.
+정체 원인 분석
 모아요
-가
-14
-일째 그대로예요
-·
-실천 1회 남음
-·
-학습 2회 남음
-·
-퀴즈 3개 남음
+영역이 정체 중이에요
+실천 횟수가 부족해요. 아이에게 미션을 추천하거나 함께 퀴즈를 풀어보세요.
 
 ════════════════════════════════════════
 URL: /tree?state=empty
@@ -103,24 +78,25 @@ URL: /tree?state=empty
 guardian
 
 ## DOM 개요
-<main> <section> <h1> <section> <h3> <svg role=img stage=SEED> <h3> <svg role=img stage=SEED> <h3> <svg role=img stage=SEED> <h3>
+<main> <a> <h1> <button> <section> <h1> <section> <svg role=img stage=SEED> <svg role=img stage=SEED> <svg role=img stage=SEED> <svg role=img stage=SEED>
 
 ## 렌더 텍스트
+← 부모 홈
+성장 나무
+승인대기
+2
+건
+🌳 성장 진화 연출 체험:
+아이가 3회 실천했을 때의 성장 변화를 직접 눌러보세요.
+✨ 3회 실천 ➔ 성장 진화 연출 보기
 아직 기록이 없어요.
 미션 하나만 해내도 나무가 자라기 시작해요.
 벌어요
-미션을 해내면 별을 받아요
 씨앗
-실천 1회 남음
 잘 써요
-쓰기 전에 미리 적어두고, 지키면 별을 받아요
 씨앗
-실천 1회 남음
 모아요
-갖고 싶은 걸 정하고 조금씩 모아요
 씨앗
-실천 1회 남음
 늘려요
-모아둔 돈이 시간이 지나면 스스로 늘어나요
 곧 열려요.
 지금은 배우기만 할 수 있어요.

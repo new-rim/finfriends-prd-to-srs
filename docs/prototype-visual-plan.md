@@ -1,8 +1,10 @@
 # 시각 프로토타입 — 시각화 계획
 
 **문서 ID:** PROTO-VISUAL-FINFRIENDS-001
-**상태:** ✅ **완료** — `docs/grill/GRILL_LEDGER.md` 토픽 13건 전건 RESOLVED (2026-08-27)
-**대상 화면 3종:** ① `(guardian)/tree` 성장 나무+정체 원인 · ② `(child)/learn/spend` 학습·퀴즈 · ③ `(child)/retro` 두 갈래 회고
+**상태:** 🔄 **확장 중** — 기본 3화면 9라운드 GO 완료 후 확장 5화면 계획 수립 (2026-08-27)
+**대상 화면 8종:**
+- 기본 3종: ① `(guardian)/tree` 성장 나무+정체 원인 · ② `(child)/learn/spend` 학습·퀴즈 · ③ `(child)/retro` 두 갈래 회고
+- 확장 5종: ④ `(child)/wishlist` 위시리스트/⭐잔액 · ⑤ `(child)/missions` 미션 목록 · ⑥ `(guardian)/forest` 월간 숲 · ⑦ `(child)/plan` 계획 카드 · ⑧ `(child)/history` 소비 내역
 **입력:** `docs/prototype-lite-scope.md`(범위) · `tech-design-docs/[PRD]finfriends-prd-v1_0.md`(요구 근거)
 **이 문서의 지위:** 화면을 그리는 사람이 **그리기 전에 읽는 값**이다. 근거는 PRD·SRS에 있고, 여기에는 **그 근거가 화면에서 어떤 값이 되는지**만 적는다.
 
@@ -10,15 +12,20 @@
 
 ## 0. 한 장 요약
 
-### 0.1 만들 것 — 화면 3개
+### 0.1 만들 것 — 화면 8개 (기본 3개 + 확장 5개)
 
-| # | 화면 | 경로 | 테마 |
-| :-: | --- | --- | :-: |
-| **①** | 성장 나무 + 정체 원인 | `app/(guardian)/tree/page.tsx` | guardian |
-| **②** | 학습·퀴즈 | `app/(child)/learn/spend/page.tsx` | child |
-| **③** | 두 갈래 회고 | `app/(child)/retro/page.tsx` | child |
+| # | 화면 | 경로 | 테마 | 근거 절 |
+| :-: | --- | --- | :-: | :-: |
+| **①** | 성장 나무 + 정체 원인 | `app/(guardian)/tree/page.tsx` | guardian | §3 · §5 |
+| **②** | 학습·퀴즈 | `app/(child)/learn/spend/page.tsx` | child | §10 · §11 |
+| **③** | 두 갈래 회고 | `app/(child)/retro/page.tsx` | child | §7 · §8 · §9 |
+| **④** | 위시리스트 / ⭐ 잔액 | `app/(child)/wishlist/page.tsx` | child | §15.1 (PRD F5 · 부록 B) |
+| **⑤** | 미션 목록 | `app/(child)/missions/page.tsx` | child | §15.2 (US-6 AC3 · AC-E1) |
+| **⑥** | 월간 숲 | `app/(guardian)/forest/page.tsx` | guardian | §15.3 (US-1 AC3 · AC-E2) |
+| **⑦** | 계획 카드 | `app/(child)/plan/page.tsx` | child | §15.4 (US-4 AC3) |
+| **⑧** | 소비 내역 | `app/(child)/history/page.tsx` | child | §15.5 (US-5) |
 
-### 0.2 결정 13건
+### 0.2 결정 13건 + 확장 결정 5건
 
 | # | 토픽 | 결정 | 절 |
 | :-: | --- | --- | :-: |
@@ -36,6 +43,7 @@
 | T11 | 빈 화면 | 세 곳 다 **두 줄** | §12 |
 | T12 | 승인 대기 | **보호자 뱃지만** | §13 |
 | — | 🔍 **AZTKS 1R 반영** | 단일 시나리오 · 진입점 · 색 토큰 · 결함 5건 정정 | §14 · §13.0 |
+| — | 🚀 **AZTKS 9R 확장** | 5종 화면 확장 (위시리스트 · 미션 · 월간 숲 · 계획 · 소비내역) | §15 |
 
 ### 0.3 만들 파일
 
@@ -44,26 +52,40 @@ app/globals.css                          §6.1 토큰 3축
 app/layout.tsx
 app/(guardian)/layout.tsx                data-theme="guardian"
 app/(guardian)/tree/page.tsx             ① §5
+app/(guardian)/forest/page.tsx           ⑥ §15.3 (월간 숲)
 app/(child)/layout.tsx                   data-theme="child" · 🔴 동의 판정 없음
 app/(child)/learn/spend/page.tsx         ② §10 · §11
 app/(child)/retro/page.tsx               ③ §7 · §8 · §9
-app/page.tsx                             🔴 §14 진입점 — 단계 3 + 검수 4 (§14.2)
-app/(public)/  app/(ops)/                빈 자리
+app/(child)/wishlist/page.tsx            ④ §15.1 (위시리스트·⭐잔액)
+app/(child)/missions/page.tsx            ⑤ §15.2 (미션 목록)
+app/(child)/plan/page.tsx                ⑦ §15.4 (계획 카드)
+app/(child)/history/page.tsx             ⑧ §15.5 (소비 내역)
+app/page.tsx                             🔴 §14 진입점 — 8개 화면 링크 묶음
 
 src/components/ui/                       shadcn 5종 — 배정된 자리가 있는 것만
-                                           Card      ①④칸·②③카드
-                                           Badge     ① 승인 대기 N건
+                                           Card      ①④⑤⑥⑦⑧ 카체/목록 카드
+                                           Badge     ①⑤ 승인 대기 / 상태 Badge
                                            RadioGroup ② 퀴즈
-                                           Progress  ② 학습·퀴즈 진행
+                                           Progress  ②④ 학습·위시리스트 진행도
                                            Alert     ③ 회고 카드
                                          🔴 Accordion·Dialog 없음 — §5.1이 금지
 
 src/contracts/areas.ts                   §4.1 4영역 표기·설명 · §12 빈 화면 문구
 src/contracts/tree.ts                    §3.1 단계·조건 타입
-src/fixtures/scenario.ts                 🔴 §14 단일 시나리오 — 아래 셋의 유일한 출처
+src/contracts/wishlist.ts                ④ 위시리스트·⭐ 잔액 계약
+src/contracts/missions.ts                ⑤ 미션 상태·사유 계약
+src/contracts/forest.ts                  ⑥ 월간 숲 델타·지목 계약
+src/contracts/plan.ts                    ⑦ 계획 작성·유도 계약
+src/contracts/history.ts                 ⑧ 소비 내역·회고 연동 계약
+src/fixtures/scenario.ts                 🔴 §14, §15.6 단일 시나리오 — 8화면의 유일한 출처
 src/fixtures/tree.ts                     ① scenario에서 파생
 src/fixtures/learn.ts                    ② 원고 §10.1 · 퀴즈 §11.1
 src/fixtures/retro-sentences.ts          ③ 문장 9종 §9.1
+src/fixtures/wishlist.ts                 ④ scenario에서 파생
+src/fixtures/missions.ts                 ⑤ scenario에서 파생
+src/fixtures/forest.ts                   ⑥ scenario에서 파생
+src/fixtures/plan.ts                     ⑦ scenario에서 파생
+src/fixtures/history.ts                  ⑧ scenario에서 파생
 scripts/gates/check-style.mjs            globals.css 외 CSS·인라인 style·색 리터럴 0건
 ```
 
@@ -726,7 +748,82 @@ PRD 부록 B의 **3층 구조** 중 **아이 층(⭐ 별)의 종점이 3화면�
 
 ### 13.3 다음 걸음
 
-3화면이 `docs/prototype-lite-scope.md` §6의 **L1~L5**를 통과하면, 같은 문서 §8의 Tier 2로 이어 붙인다 — 위시리스트 · 승인 대기. 그 뒤가 월간 숲 · 소비 내역 · 계획 카드 · 보호자 온보딩 · `(public)` · 잠금 · `(ops)` 순이다.
+기본 3화면이 `docs/prototype-lite-scope.md` §6의 **L1~L5** 및 AZTKS 9라운드까지 통과함에 따라, 사용자 결정으로 §13.0과 §13.1의 미확인 화면 5종(위시리스트, 미션 목록, 월간 숲, 계획 카드, 소비 내역)을 프로토타입 범위로 구현 확장한다(§15 참조).
 
-**Tier 2의 순서는 §13.0이 정한다** — **위시리스트가 1순위**다. 아이 동기 종점이 없으면 선언①이 화면에서 닫히지 않고, 그것이 이 프로토타입의 가장 큰 공백이다.
-**미션 목록 화면**은 원래 선별안에 없었으나, §13.1이 보여주듯 **US-6 AC 3건이 그 화면 하나에 걸려 있다.** 함께 본다.
+---
+
+## 15. 확장 5종 화면 시각 구조 및 단일 시나리오 연동 계획
+
+> 🔴 **AZTKS 9라운드 GO 판정 후 사용자 결정으로 확장된 5개 화면의 시각화 사양이다.**
+> §13.0 및 §13.1에서 밝힌 공백(아동 동기 종점 부재, 미션 대기 구분 불가능, 월간 숲 델타 미비, 계획 유도 미비)을 해소하고, 8개 화면이 완전한 단일 시나리오 흐름을 이루도록 구성한다.
+
+### 15.1 ④ 위시리스트 / ⭐ 잔액 화면 (`app/(child)/wishlist/page.tsx`)
+
+- **근거:** PRD F5 (아바타·위시리스트 — 아동의 유일한 동기 장치), 부록 B ⭐ 층, §13.0
+- **판정 대상 요소:**
+  1. 최상단: 현재 아동이 보유한 ⭐ 잔액 렌더 (예: `⭐ 12개`)
+  2. 위시리스트 카드: 모으고 싶은 위시리스트 항목 (예: "알록달록 캐릭터 모자", 필요 별 15개)
+  3. 진행도 (`Progress` 컴포넌트): `12 / 15` (80%)
+  4. 응원 안내 문구: *"별 3개만 더 모으면 얻을 수 있어요!"*
+  5. 🔴 **부정적/차감 표현 금지:** 별을 써서 아이템을 교환해도 "별이 깎였다"가 아니라 "아이템을 얻었어요"로 렌더.
+- **계약 및 단일 출처:** `src/contracts/wishlist.ts` · `src/fixtures/wishlist.ts`
+
+### 15.2 ⑤ 미션 목록 화면 (`app/(child)/missions/page.tsx`)
+
+- **근거:** PRD US-6 `AC3` (`AC-6.3`), `AC-E1`, §13.1
+- **판정 대상 요소:**
+  1. 탭/구분 카드: 아동 시점의 4가지 미션 상태 렌더
+     - **할 수 있는 미션 (`AVAILABLE`):** "방 정리하기" — [실천하기]
+     - **기다리는 중 (`WAITING`):** "심부름 다녀오기" — [보호자 승인 대기] Badge
+     - **다시 시도하기 (`REJECTED`):** "마켓 영수증 챙기기" — 부드러운 거절 사유 문구 *"영수증 글자가 잘 보이게 다시 찍어볼까요?"* (🔴 단정적·비난 문구 금지)
+     - **완료된 미션 (`COMPLETED`):** "용돈 정산하기" — [⭐ 받음]
+  2. 🔴 엄마 화면의 「승인 대기 Badge」(①)와 아이 화면의 「기다리는 중 Badge」(⑤)는 `scenario.ts` 데이터 상으로 **동일한 건수(2건)**를 가리켜야 한다.
+- **계약 및 단일 출처:** `src/contracts/missions.ts` · `src/fixtures/missions.ts`
+
+### 15.3 ⑥ 월간 숲 화면 (`app/(guardian)/forest/page.tsx`)
+
+- **근거:** PRD US-1 `AC3` (`AC-1.3`), `AC-E2`, §13.1
+- **판정 대상 요소:**
+  1. 최상단: **전월 대비 성과 변화 3가지 요약** (60초 내 지목 요건)
+     - 예: ① 잘 써요 영역 실천 2회 → 3회 증가 / ② 모아요 영역 정체 해소 / ③ 위시리스트 1건 달성
+  2. 월별 숲 렌더: 지난달(7월) 숲 & 이번달(8월) 숲 visual 그리드 (씨앗/새싹/나무 모음)
+  3. 첫 달 예외 상태 (`?state=first`): *"다음 달부터 전월과 비교할 수 있어요"* 안내 및 델타 렌더 차단 (`AC-E2`).
+- **계약 및 단일 출처:** `src/contracts/forest.ts` · `src/fixtures/forest.ts`
+
+### 15.4 ⑦ 계획 카드 화면 (`app/(child)/plan/page.tsx`)
+
+- **근거:** PRD US-4 `AC3` (`AC-4.3`), §13.1
+- **판정 대상 요소:**
+  1. 계획 작성 카드: 이번 달 잘 써요 영역 예산 계획 작성 및 목표 금액 표시 (예: "이번 달 10,000원 쓰기")
+  2. 미계획 소비 발생 시 유도 카드: *"쓰기 전에 얼마까지 쓸지 미리 적어두면 별을 받아요!"*
+  3. 현재 지킴 현황: 계획 금액 10,000원 중 현재 6,500원 사용 중 (안전 범위 렌더)
+- **계약 및 단일 출처:** `src/contracts/plan.ts` · `src/fixtures/plan.ts`
+
+### 15.5 ⑧ 소비 내역 화면 (`app/(child)/history/page.tsx`)
+
+- **근거:** PRD US-5, 소비 4단계 루프
+- **판정 대상 요소:**
+  1. 최근 결제/소비 목록 (가맹점, 날짜, 금액)
+  2. 회고 연동 상태 Badge:
+     - [회고 작성하기] → 클릭/이동 시 ③ 회고 화면으로 연결
+     - [회고 완료] (별 ⭐1 지급됨)
+- **계약 및 단일 출처:** `src/contracts/history.ts` · `src/fixtures/history.ts`
+
+### 15.6 🔴 단일 시나리오 (`src/fixtures/scenario.ts`) 확장 및 불변식
+
+8개 화면 전체가 **동일한 아이(예: "민우", 초등 3학년)** 와 **동일한 가정 환경**을 공유한다.
+
+| 시나리오 확장 항목 | 값 및 의미 | 연결 화면 |
+| --- | --- | --- |
+| `stars` | **12개** | ④ 위시리스트 상단 ⭐ 잔액 · ②③ 획득 별 총합 |
+| `wishlist` | "알록달록 캐릭터 모자" (목표 15개, 보유 12개, 남은 3개) | ④ 위시리스트 |
+| `missions` | 총 4건 (할 수 있는 미션 1, **승인 대기 2**, 다시 시도 1, 완료 1) | ⑤ 미션 목록 ↔ ① 나무 Badge(2건) 일치 |
+| `forest` | 3개월 숲 기록 + 전월 대비 3가지 변화 지목 | ⑥ 월간 숲 |
+| `plan` | 목표 10,000원 / 사용 6,500원 | ⑦ 계획 카드 |
+| `history` | 4건의 결제 내역 (회고 큐와 1:1 매핑) | ⑧ 소비 내역 ↔ ③ 회고 화면 |
+
+**확장 불변식 3건 (단위 테스트로 검증):**
+1. **별 잔액 정합성:** `scenario.stars`는 (퀴즈 획득 + 회고 획득 + 미션 완료 획득 - 위시리스트 교환)과 정확히 일치한다.
+2. **승인 대기 정합성:** `scenario.missions`의 `WAITING` 상태 건수 === ① 나무 화면의 `승인 대기 Badge` 수 (`=== 2`).
+3. **회고-소비 정합성:** `scenario.history` 중 회고 대기 항목 === ③ 회고 화면의 `RETRO_ENTRIES` 항목과 가맹점/금액 일치.
+

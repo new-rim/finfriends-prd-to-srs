@@ -225,3 +225,12 @@ CORE 10 · MINOR 3 · 되돌림 1회(T1) · 세션 중 신규 발견 토픽 1건
 
 **CORE: 3** *(CORE-1·CORE-2는 uxui-integration-stage 세션 · 위 1건이 세 번째)*
 **MINOR: 5**
+
+---
+
+## 세션 후 보강 — AZTKS 10라운드 확장 검수 마감 (2026-08-27)
+
+확장 5종 화면(위시리스트, 미션 목록, 월간 숲, 소비 계획, 소비 내역)을 포함한 8개 화면 전체에 대해 AZTKS 검수 재판정을 완료했다.
+**`VERDICT: GO` / `SCORECARD: A:P Z:P T:P K:P S:P`** (CONCERN 0건).
+
+STOP REASON: AZTKS_ALL_PASS

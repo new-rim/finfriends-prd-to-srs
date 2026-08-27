@@ -1,61 +1,96 @@
 import Link from "next/link";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 /**
- * 진입점 — 계획 §14.2
- *
- * 🔴 프로토타입 전용이다. 제품 사양이 아니며 FR-010(인증·라우팅)이 오면 사라진다.
- * 🔴 링크 순서가 곧 주장이다 — PRD §0-1의 위계(선언①이 일어나야 선언②가
- *    보여줄 것이 생긴다)를 ②→③→① 순서가 그대로 재현한다.
+ * 진입점 — 사용자 선택(아동 / 보호자 2명 시점)
  */
-const STEPS = [
-  { href: "/learn/spend", n: 1, label: "배워요", note: "아이가 배운다" },
-  { href: "/retro", n: 2, label: "돌아봐요", note: "아이가 실천을 되돌아본다" },
-  { href: "/tree", n: 3, label: "부모 화면", note: "그 결과가 부모에게 보인다" },
-];
-
 export default function Home() {
   return (
-    <main data-theme="guardian" className="mx-auto max-w-xl p-6">
-      <h1 className="text-2xl font-bold">핀프렌즈 프로토타입</h1>
-      <p className="mt-1 text-[var(--text-muted)]">
-        아래 순서로 보면 「성장이 일어난다 → 그 성장이 보인다」가 한 줄로 읽힙니다.
-      </p>
+    <main data-theme="guardian" className="mx-auto max-w-2xl p-6 space-y-6">
+      <div className="text-center space-y-2">
+        <Badge className="bg-emerald-600 text-white">시각 프로토타입 v2.0</Badge>
+        <h1 className="text-3xl font-bold">핀프렌즈 (FinFriends)</h1>
+        <p className="text-muted-foreground text-sm">
+          아동과 보호자 2명의 사용자 시점으로 아바타 꾸미기, 미션 승인, 회고 등 핵심 서비스를 직접 경험해 보세요.
+        </p>
+      </div>
 
-      <ol className="mt-6 space-y-3">
-        {STEPS.map((s) => (
-          <li key={s.href}>
+      {/* 사용자 선택 2개 카드 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* 1. 아동(아이) 사용자 */}
+        <Card className="border-2 border-amber-400 bg-amber-50/40 dark:bg-amber-950/20 hover:border-amber-500 transition-colors">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <span className="text-2xl">👦</span>
+              <Badge className="bg-amber-500 text-white">아동 시점</Badge>
+            </div>
+            <CardTitle className="text-xl">아이 화면 시작하기</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-xs text-muted-foreground">
+              아바타를 직접 입히고, 나만의 미션을 만들며, 오늘 쓴 돈을 직접 기록하고 회고해요.
+            </p>
             <Link
-              href={s.href}
-              className="flex items-baseline gap-3 rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] p-4"
+              href="/child/home"
+              className="block w-full text-center py-2.5 px-4 rounded-md font-bold bg-amber-500 hover:bg-amber-600 text-white shadow"
             >
-              <span className="font-bold text-[var(--accent)]">{s.n}</span>
-              <span className="font-semibold">{s.label}</span>
-              <span className="text-sm text-[var(--text-muted)]">{s.note}</span>
+              아이 홈 대시보드 &rarr;
             </Link>
-          </li>
-        ))}
-      </ol>
+          </CardContent>
+        </Card>
 
-      <p className="mt-6 text-sm text-[var(--text-muted)]">
-        상태 검수 —{" "}
-        <Link className="underline" href="/tree?state=empty">
-          나무 · 실천 0건
-        </Link>
-        {" · "}
-        <Link className="underline" href="/tree?state=grown">
-          나무 · 승급 완료
-        </Link>
-        {" · "}
-        <Link className="underline" href="/retro?state=empty">
-          회고 · 큐 빔
-        </Link>
-        {" · "}
-        {/* 「요약 회고와 단건의 구별」이 ③의 판정 대상이다(lite-scope §2.3).
-            기본 시나리오는 1건만 묶여 그 구별을 보여줄 수 없다. */}
-        <Link className="underline" href="/retro?state=backlog">
-          회고 · 밀린 건 요약
-        </Link>
-      </p>
+        {/* 2. 보호자(부모) 사용자 */}
+        <Card className="border-2 border-emerald-500 bg-emerald-50/40 dark:bg-emerald-950/20 hover:border-emerald-600 transition-colors">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <span className="text-2xl">👩‍👧‍👦</span>
+              <Badge className="bg-emerald-600 text-white">보호자 시점</Badge>
+            </div>
+            <CardTitle className="text-xl">부모 화면 시작하기</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-xs text-muted-foreground">
+              아이가 실천한 미션을 승인하고 ⭐ 별과 칭찬을 보내며, 나무 성장 진화 연출과 월간 숲을 확인해요.
+            </p>
+            <Link
+              href="/guardian/home"
+              className="block w-full text-center py-2.5 px-4 rounded-md font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow"
+            >
+              부모 홈 대시보드 &rarr;
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* 전체 화면 직통 링크 디렉터리 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base font-semibold">전체 화면 바로가기</CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+          <div className="space-y-1">
+            <div className="font-semibold text-xs text-amber-700 dark:text-amber-400">👶 아동 화면 (6종)</div>
+            <ul className="space-y-1 text-xs">
+              <li><Link href="/avatar" className="hover:underline font-bold text-amber-600">🎨 마이 아바타 꾸미기 룸 (/avatar)</Link></li>
+              <li><Link href="/wishlist" className="hover:underline text-primary">⭐ 위시리스트 & 별 상점 (/wishlist)</Link></li>
+              <li><Link href="/missions" className="hover:underline text-primary">🎯 미션 목록 (나만의 미션 추가) (/missions)</Link></li>
+              <li><Link href="/history" className="hover:underline text-primary">📜 소비 내역 (오늘 쓴 돈 기록) (/history)</Link></li>
+              <li><Link href="/learn/spend" className="hover:underline text-primary">📚 배워요 & 퀴즈 (/learn/spend)</Link></li>
+              <li><Link href="/plan" className="hover:underline text-primary">💡 소비 계획 미리 적기 (/plan)</Link></li>
+              <li><Link href="/retro" className="hover:underline text-primary">📝 두 갈래 회고 (/retro)</Link></li>
+            </ul>
+          </div>
+          <div className="space-y-1">
+            <div className="font-semibold text-xs text-emerald-700 dark:text-emerald-400">🛡️ 보호자 화면 (3종)</div>
+            <ul className="space-y-1 text-xs">
+              <li><Link href="/guardian/missions" className="hover:underline font-bold text-emerald-700">🛡️ 미션 승인 및 칭찬 룸 (/guardian/missions)</Link></li>
+              <li><Link href="/tree" className="hover:underline text-primary">🌳 성장 나무 (성장 진화 연출) (/tree)</Link></li>
+              <li><Link href="/forest" className="hover:underline text-primary">🌲 월간 숲 (/forest)</Link></li>
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
     </main>
   );
 }
