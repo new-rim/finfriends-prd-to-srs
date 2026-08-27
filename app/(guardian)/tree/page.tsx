@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardMuted, CardTitle } from "@/components/ui/card";
-import { AREAS, EMPTY_STATE } from "@/contracts/areas";
+import { AREA_ORDER, AREAS, EMPTY_STATE } from "@/contracts/areas";
 import { buildNarrative } from "@/contracts/narrative";
 import { STAGE_LABEL, isStalled, remainingConditions } from "@/contracts/tree";
 import { treeDefault, treeNoPractice } from "@/fixtures/tree";
@@ -49,7 +49,10 @@ export default async function TreePage({
 
       {/* 4칸 격자 — 단계 + 실천 근거 기본 노출 */}
       <section className="mb-6 grid grid-cols-2 gap-3">
-        {view.states.map((s) => {
+        {/* 🔴 4칸 순서는 AREA_ORDER가 진다 — 픽스처 배열 순서에 기대면 시나리오를
+            바꿀 때마다 화면 순서가 따라 흔들린다. 벌어요 → 잘 써요 → 모아요 → 늘려요. */}
+        {AREA_ORDER.map((code) => view.states.find((v) => v.area === code)).map((s) => {
+          if (!s) return null;
           const remaining = remainingConditions(s);
           return (
             <Card key={s.area}>

@@ -38,7 +38,14 @@ function walk(dir, out = []) {
 const SRC = [...walk("app"), ...walk("src")].filter((f) => /\.(tsx?|mjs)$/.test(f));
 
 // ── L1 로컬 완결 ────────────────────────────────────────────────
-const http = JSON.parse(read("/tmp/proto-http.json") || "{}");
+// 🔴 캐시가 낡았으면 「미측정」이지 「통과」가 아니다. 신선도를 안 보면 서버가
+// 꺼져 있어도 옛 응답으로 ✅가 난다 — 계측기가 거짓말을 하게 된다(5R EVIDENCE 1).
+const HTTP_CACHE = "/tmp/proto-http.json";
+const cacheAgeSec = existsSync(HTTP_CACHE)
+  ? (Date.now() - statSync(HTTP_CACHE).mtimeMs) / 1000
+  : Infinity;
+const CACHE_MAX_AGE = 120;
+const http = cacheAgeSec <= CACHE_MAX_AGE ? JSON.parse(read(HTTP_CACHE) || "{}") : {};
 const envFiles = readdirSync(ROOT).filter((f) => f.startsWith(".env"));
 const netHits = SRC.filter((f) =>
   /\b(fetch\(|axios|XMLHttpRequest|new WebSocket)/.test(readFileSync(f, "utf8")),
@@ -46,7 +53,19 @@ const netHits = SRC.filter((f) =>
 const codes = Object.entries(http);
 const bad = codes.filter(([, c]) => c !== 200);
 if (envFiles.length === 0 && netHits.length === 0 && codes.length >= 3 && bad.length === 0)
-  pass("L1", "로컬 완결", `.env ${envFiles.length}개 · 외부호출 ${netHits.length}건 · HTTP ${codes.map(([p, c]) => `${p}=${c}`).join(" ")}`);
+  pass(
+    "L1",
+    "로컬 완결",
+    `.env ${envFiles.length}개 · 외부호출 ${netHits.length}건 · HTTP ${codes.map(([p, c]) => `${p}=${c}`).join(" ")} (실측 ${Math.round(cacheAgeSec)}초 전)`,
+  );
+else if (codes.length === 0)
+  fail(
+    "L1",
+    "로컬 완결",
+    cacheAgeSec === Infinity
+      ? "미측정 — HTTP 캐시가 없다. verify_prototype.sh 로 실행하라"
+      : `미측정 — HTTP 캐시가 ${Math.round(cacheAgeSec)}초 전 것이다(상한 ${CACHE_MAX_AGE}초). verify_prototype.sh 로 실행하라`,
+  );
 else
   fail("L1", "로컬 완결", `.env ${envFiles.length}개 · 외부호출 ${netHits.length}건(${netHits}) · 비200 ${JSON.stringify(bad)}`);
 
@@ -57,13 +76,14 @@ const ROUTES = [
   ["app/(child)/retro/page.tsx", "/retro"],
 ];
 const missing = ROUTES.filter(([f]) => !existsSync(f));
-const build = sh("npx next build");
+const skip = (id) => only !== null && only !== id;
+const build = skip("L2") ? { ok: true, out: "(--screen: 건너뜀)" } : sh("npx next build");
 if (build.ok && missing.length === 0)
   pass("L2", "빌드 · 라우트 그룹", `next build exit 0 · 3/3 경로 존재 (${ROUTES.map(([, r]) => r).join(" ")})`);
 else fail("L2", "빌드 · 라우트 그룹", build.ok ? `누락 ${missing.map(([f]) => f)}` : "next build 실패");
 
 // ── L3 스타일 단일 경로 ─────────────────────────────────────────
-const style = sh("node scripts/gates/check-style.mjs");
+const style = skip("L3") ? { ok: true, out: "(--screen: 건너뜀)" } : sh("node scripts/gates/check-style.mjs");
 style.ok
   ? pass("L3", "스타일 단일 경로", "위반 0건 (CSS·CSS-in-JS·인라인 style·색 리터럴)")
   : fail("L3", "스타일 단일 경로", style.out.trim().split("\n").slice(-1)[0]);
@@ -150,7 +170,7 @@ else
   fail("L5", "빈 상태 · 표기 일치", `빈 상태 ${empties.filter(([, o]) => o).length}/3 (${empties.filter(([, o]) => !o).map(([n]) => n)}) · 나무 표기 ${treeLabels.length}/4 · 누출 ${leaked.length}건 ${leaked}`);
 
 // ── L6 시나리오 불변식 ──────────────────────────────────────────
-const test = sh('node --test "src/**/*.test.ts"');
+const test = skip("L6") ? { ok: true, out: "(--screen: 건너뜀)" } : sh('node --test "src/**/*.test.ts"');
 const passCount = /# pass (\d+)/.exec(test.out)?.[1] ?? /pass (\d+)/.exec(test.out)?.[1] ?? "?";
 test.ok
   ? pass("L6", "시나리오 불변식", `단위 테스트 ${passCount}건 통과 — 회고 별 건수 = 나무 「잘 써요」 실천 횟수`)

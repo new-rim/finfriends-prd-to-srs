@@ -37,9 +37,20 @@ export default function Home() {
       </ol>
 
       <p className="mt-6 text-sm text-[var(--text-muted)]">
-        빈 화면 검수 — <Link className="underline" href="/tree?state=empty">나무 · 실천 0건</Link>
+        상태 검수 —{" "}
+        <Link className="underline" href="/tree?state=empty">
+          나무 · 실천 0건
+        </Link>
         {" · "}
-        <Link className="underline" href="/retro?state=empty">회고 · 큐 빔</Link>
+        <Link className="underline" href="/retro?state=empty">
+          회고 · 큐 빔
+        </Link>
+        {" · "}
+        {/* 「요약 회고와 단건의 구별」이 ③의 판정 대상이다(lite-scope §2.3).
+            기본 시나리오는 1건만 묶여 그 구별을 보여줄 수 없다. */}
+        <Link className="underline" href="/retro?state=backlog">
+          회고 · 밀린 건 요약
+        </Link>
       </p>
     </main>
   );

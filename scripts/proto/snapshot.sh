@@ -11,7 +11,11 @@ PORT="${PORT:-3117}"
 mkdir -p "$OUT"
 
 echo "dev 서버 기동 (port $PORT)..."
-npm run dev -- --port "$PORT" >/tmp/proto-dev.log 2>&1 &
+# 🔴 dev 서버가 아니라 production 서버로 띄운다.
+# next dev는 온디맨드 컴파일이라 워밍업 직후 요청이 500을 내는 일이 있고
+# (.next 매니페스트를 읽다 SyntaxError), 그러면 스냅샷이 조용히 빈다.
+npx next build >/tmp/proto-dev.log 2>&1 || { echo "빌드 실패 — /tmp/proto-dev.log 확인"; exit 1; }
+npx next start --port "$PORT" >>/tmp/proto-dev.log 2>&1 &
 DEV_PID=$!
 trap 'kill $DEV_PID 2>/dev/null || true' EXIT
 
