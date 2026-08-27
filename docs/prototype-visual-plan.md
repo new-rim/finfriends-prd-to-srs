@@ -47,7 +47,7 @@ app/(guardian)/tree/page.tsx             ① §5
 app/(child)/layout.tsx                   data-theme="child" · 🔴 동의 판정 없음
 app/(child)/learn/spend/page.tsx         ② §10 · §11
 app/(child)/retro/page.tsx               ③ §7 · §8 · §9
-app/page.tsx                             🔴 §14 진입점 — ②→③→① 링크 3개
+app/page.tsx                             🔴 §14 진입점 — 단계 3 + 검수 4 (§14.2)
 app/(public)/  app/(ops)/                빈 자리
 
 src/components/ui/                       shadcn 5종 — 배정된 자리가 있는 것만

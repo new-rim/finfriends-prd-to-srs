@@ -91,3 +91,17 @@ test("변화 문장의 조사가 3단계·4영역 전부에서 맞다", () => {
     }
   }
 });
+
+/**
+ * 🔴 조사 헬퍼가 buildNarrative 밖에도 적용되는지 — 8R가 정체 문장의 누락을 잡았다.
+ * 4영역 라벨이 전부 「요」로 끝나 지금은 오출력이 없지만, 라벨이 바뀌면 재발한다.
+ */
+test("4영역 라벨 어느 것으로도 조사가 맞다", () => {
+  for (const code of AREA_ORDER) {
+    const label = AREAS[code].label;
+    const sentence = `${label}${particle(label, "이가")} 14일째 그대로예요`;
+    assert.ok(!/무이 |요이 |아이 /.test(sentence), `조사 오류: ${sentence}`);
+  }
+  // 받침 있는 가상 라벨에도 「이」가 붙는다
+  assert.equal(particle("모음", "이가"), "이");
+});

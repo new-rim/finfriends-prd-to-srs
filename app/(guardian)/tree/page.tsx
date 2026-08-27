@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardMuted, CardTitle } from "@/components/ui/card";
 import { TreeFigure } from "@/components/tree-figure";
 import { AREA_ORDER, AREAS, EMPTY_STATE } from "@/contracts/areas";
-import { buildNarrative } from "@/contracts/narrative";
+import { buildNarrative, particle } from "@/contracts/narrative";
 import { STAGE_LABEL, isStalled, remainingConditions } from "@/contracts/tree";
 import { treeDefault, treeGrown, treeNoPractice } from "@/fixtures/tree";
 
@@ -106,7 +106,8 @@ export default async function TreePage({
           className="rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--surface)] p-4"
         >
           <p className="font-semibold text-[var(--text)]">
-            {AREAS[s.area].label}가 {s.daysSinceChange}일째 그대로예요
+            {AREAS[s.area].label}
+            {particle(AREAS[s.area].label, "이가")} {s.daysSinceChange}일째 그대로예요
           </p>
           <ul className="mt-2 space-y-1">
             {remainingConditions(s).map((c) => (
