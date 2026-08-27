@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   유일한 CSS 진입점 — REQ-TEC-012 · C-TEC-018 · 게이트 G5
+   토큰 3축(색 · 크기 · 타이포) — 계획 §6.1
+   🔴 색 리터럴은 이 파일에만 있다. 화면 코드는 변수만 참조한다.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --radius-card: 12px;
+  --ratio-scale: 1.25;
+}
+
+/* ① 나무 화면 — 차분 · 정보 밀도 높음 */
+[data-theme="guardian"] {
+  --touch-min: 40px;
+  --space-unit: 4px;
+  --text-body: 15px;
+  --text-line: 1.5;
+
+  --bg: #f7f7f5;
+  --surface: #ffffff;
+  --border: #e3e3de;
+  --text: #1f2320;        /* on --surface 15.9:1 */
+  --text-muted: #5c625e;  /*              6.2:1  */
+  --accent: #2f6b4f;      /* 나무·성장 신호 6.3:1 */
+}
+
+/* ② 학습·퀴즈 · ③ 회고 — 밝고 대비 높음 */
+[data-theme="child"] {
+  --touch-min: 44px;      /* 🔴 요구값 — 내리지 않는다 */
+  --space-unit: 6px;
+  --text-body: 18px;
+  --text-line: 1.7;
+
+  --bg: #fffdf7;
+  --surface: #ffffff;
+  --border: #ede6d6;
+  --text: #23201a;        /* on --surface 16.2:1 */
+  --text-muted: #5e5849;  /*              7.1:1  */
+  --accent: #a35f00;      /* ⭐ 신호        5.0:1 */
+
+  /* 계획 §8.1 회고 두 카드 — 🔴 둘 다 긍정 계열. 경고색 아님 */
+  --retro-earned: #e8f2e4; /* 별 받음  「잘했어」 카드 */
+  --retro-review: #e6eef5; /* 별 없음  「따져보는」 카드 */
+}
+
+/* (ops) 테마는 정하지 않는다 — 프로토타입에 (ops) 화면이 없다. 계획 §6.3
+   [data-theme="ops"] { ... }  ← UX-008이 올 때 채운다 */
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-size: var(--text-body);
+  line-height: var(--text-line);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 아동 화면 터치 타깃 하한 — 요구값 44px */
+[data-theme="child"] button,
+[data-theme="child"] a,
+[data-theme="child"] label {
+  min-height: var(--touch-min);
+}

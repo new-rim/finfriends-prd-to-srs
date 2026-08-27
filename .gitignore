@@ -10,3 +10,13 @@
 
 # 스크립트가 생성하는 GitHub Node ID 캐시
 scripts/github/project.json
+
+# Next.js 애플리케이션 (프로토타입 T2 — 저장소 루트에 세움)
+node_modules/
+.next/
+out/
+next-env.d.ts
+.env*.local
+
+# TypeScript 증분 빌드 캐시
+tsconfig.tsbuildinfo

@@ -1,0 +1,138 @@
+#!/usr/bin/env node
+/**
+ * 프로토타입 완료 판정 L1~L6 — 런 파일 §2
+ * 각 조건의 실측값을 stdout에 출력하고, 하나라도 위반이면 non-zero로 종료한다.
+ */
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { join, relative } from "node:path";
+
+const ROOT = process.cwd();
+const SNAP = "docs/prototype-visual-plan/render-snapshot";
+const only = process.argv.includes("--screen")
+  ? process.argv[process.argv.indexOf("--screen") + 1]
+  : null;
+
+const results = [];
+const pass = (id, label, detail) => results.push({ id, ok: true, label, detail });
+const fail = (id, label, detail) => results.push({ id, ok: false, label, detail });
+
+const read = (p) => (existsSync(p) ? readFileSync(p, "utf8") : "");
+const sh = (cmd) => {
+  try {
+    return { ok: true, out: execSync(cmd, { encoding: "utf8", stdio: "pipe" }) };
+  } catch (e) {
+    return { ok: false, out: (e.stdout ?? "") + (e.stderr ?? "") };
+  }
+};
+
+function walk(dir, out = []) {
+  if (!existsSync(dir)) return out;
+  for (const n of readdirSync(dir)) {
+    if (n === "node_modules" || n === ".next" || n.startsWith(".")) continue;
+    const f = join(dir, n);
+    statSync(f).isDirectory() ? walk(f, out) : out.push(relative(ROOT, f));
+  }
+  return out;
+}
+const SRC = [...walk("app"), ...walk("src")].filter((f) => /\.(tsx?|mjs)$/.test(f));
+
+// ── L1 로컬 완결 ────────────────────────────────────────────────
+const http = JSON.parse(read("/tmp/proto-http.json") || "{}");
+const envFiles = readdirSync(ROOT).filter((f) => f.startsWith(".env"));
+const netHits = SRC.filter((f) =>
+  /\b(fetch\(|axios|XMLHttpRequest|new WebSocket)/.test(readFileSync(f, "utf8")),
+);
+const codes = Object.entries(http);
+const bad = codes.filter(([, c]) => c !== 200);
+if (envFiles.length === 0 && netHits.length === 0 && codes.length >= 3 && bad.length === 0)
+  pass("L1", "로컬 완결", `.env ${envFiles.length}개 · 외부호출 ${netHits.length}건 · HTTP ${codes.map(([p, c]) => `${p}=${c}`).join(" ")}`);
+else
+  fail("L1", "로컬 완결", `.env ${envFiles.length}개 · 외부호출 ${netHits.length}건(${netHits}) · 비200 ${JSON.stringify(bad)}`);
+
+// ── L2 빌드 · 라우트 그룹 ────────────────────────────────────────
+const ROUTES = [
+  ["app/(guardian)/tree/page.tsx", "/tree"],
+  ["app/(child)/learn/spend/page.tsx", "/learn/spend"],
+  ["app/(child)/retro/page.tsx", "/retro"],
+];
+const missing = ROUTES.filter(([f]) => !existsSync(f));
+const build = sh("npx next build");
+if (build.ok && missing.length === 0)
+  pass("L2", "빌드 · 라우트 그룹", `next build exit 0 · 3/3 경로 존재 (${ROUTES.map(([, r]) => r).join(" ")})`);
+else fail("L2", "빌드 · 라우트 그룹", build.ok ? `누락 ${missing.map(([f]) => f)}` : "next build 실패");
+
+// ── L3 스타일 단일 경로 ─────────────────────────────────────────
+const style = sh("node scripts/gates/check-style.mjs");
+style.ok
+  ? pass("L3", "스타일 단일 경로", "위반 0건 (CSS·CSS-in-JS·인라인 style·색 리터럴)")
+  : fail("L3", "스타일 단일 경로", style.out.trim().split("\n").slice(-1)[0]);
+
+// ── L4 아동 접근성 (터치 44px · 대비 4.5:1) ──────────────────────
+const css = read("app/globals.css");
+const childBlock = /\[data-theme="child"\]\s*\{([\s\S]*?)\}/.exec(css)?.[1] ?? "";
+const touch = Number(/--touch-min:\s*(\d+)px/.exec(childBlock)?.[1] ?? 0);
+const hex = (name) => /^#?([0-9a-f]{6})$/i.exec((new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`).exec(childBlock)?.[1] ?? "").trim())?.[1];
+const lum = (h) => {
+  const c = [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+  const f = (v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  return 0.2126 * f(c[0]) + 0.7152 * f(c[1]) + 0.0722 * f(c[2]);
+};
+const ratio = (a, b) => {
+  const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
+  return (x + 0.05) / (y + 0.05);
+};
+const surface = hex("surface"), text = hex("text"), muted = hex("text-muted"), accent = hex("accent");
+const r1 = ratio(text, surface), r2 = ratio(muted, surface), r3 = ratio(accent, surface);
+const minRatio = Math.min(r1, r2, r3);
+if (touch >= 44 && minRatio >= 4.5)
+  pass("L4", "아동 접근성", `터치 ${touch}px ≥ 44 · 대비 text ${r1.toFixed(1)} · muted ${r2.toFixed(1)} · accent ${r3.toFixed(1)} (최소 ${minRatio.toFixed(1)} ≥ 4.5)`);
+else fail("L4", "아동 접근성", `터치 ${touch}px · 최소 대비 ${minRatio.toFixed(2)}`);
+
+// ── L5 빈 상태 3종 · 4영역 표기 일치 ────────────────────────────
+const areasSrc = read("src/contracts/areas.ts");
+const labels = [...areasSrc.matchAll(/label:\s*"([^"]+)"/g)].map((m) => m[1]);
+const treeSnap = read(`${SNAP}/tree.txt`);
+const learnSnap = read(`${SNAP}/learn.txt`);
+const retroSnap = read(`${SNAP}/retro.txt`);
+const empties = [
+  ["실천 0건", /아직 기록이 없어요[\s\S]*미션 하나만 해내도/.test(treeSnap)],
+  ["곧 열려요", /곧 열려요[\s\S]*지금은 배우기만 할 수 있어요/.test(treeSnap)],
+  ["회고 큐 빔", /지금은 돌아볼 게 없어요[\s\S]*계획을 적고 쓰면/.test(retroSnap)],
+];
+const treeLabels = labels.filter((l) => treeSnap.includes(l));
+const learnLabel = labels.find((l) => learnSnap.includes(l));
+// 🔴 규칙은 "화면에 나오면 안 된다"이지 "소스에 문자열이 없어야 한다"가 아니다.
+// PRD 문서 명칭을 근거로 인용하는 주석(예: P-03「별은 모으기만」)은 정당하다.
+// 그래서 ① 렌더 결과(권위) ② 주석을 걷어낸 소스 — 둘 다 본다.
+const DOC_NAMES = ["벌기", "잘 쓰기", "모으기", "불리기"];
+const stripComments = (t) =>
+  t.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+const leakedSrc = SRC.filter((f) =>
+  DOC_NAMES.some((d) => stripComments(readFileSync(f, "utf8")).includes(d)),
+);
+const leakedRender = ["home", "tree", "learn", "retro"].filter((n) =>
+  DOC_NAMES.some((d) => read(`${SNAP}/${n}.txt`).includes(d)),
+);
+const leaked = [...leakedSrc, ...leakedRender.map((n) => `render:${n}`)];
+const emptyOk = empties.every(([, ok]) => ok);
+if (emptyOk && treeLabels.length === 4 && learnLabel && leaked.length === 0)
+  pass("L5", "빈 상태 · 표기 일치", `빈 상태 3/3 · 나무 표기 4/4 (${treeLabels.join(" ")}) · 학습 "${learnLabel}" 일치 · PRD 문서 명칭 누출 0건 (렌더 4/4 · 소스 주석 제외)`);
+else
+  fail("L5", "빈 상태 · 표기 일치", `빈 상태 ${empties.filter(([, o]) => o).length}/3 (${empties.filter(([, o]) => !o).map(([n]) => n)}) · 나무 표기 ${treeLabels.length}/4 · 누출 ${leaked.length}건 ${leaked}`);
+
+// ── L6 시나리오 불변식 ──────────────────────────────────────────
+const test = sh('node --test "src/**/*.test.ts"');
+const passCount = /# pass (\d+)/.exec(test.out)?.[1] ?? /pass (\d+)/.exec(test.out)?.[1] ?? "?";
+test.ok
+  ? pass("L6", "시나리오 불변식", `단위 테스트 ${passCount}건 통과 — 회고 별 건수 = 나무 「잘 써요」 실천 횟수`)
+  : fail("L6", "시나리오 불변식", test.out.trim().split("\n").slice(-3).join(" "));
+
+// ── 출력 ────────────────────────────────────────────────────────
+const shown = only ? results.filter((r) => r.id === only) : results;
+console.log("\n프로토타입 완료 판정 — L1~L6\n" + "─".repeat(72));
+for (const r of shown) console.log(`  ${r.ok ? "✅" : "❌"} ${r.id}  ${r.label.padEnd(14)} ${r.detail}`);
+const failed = shown.filter((r) => !r.ok);
+console.log("─".repeat(72));
+console.log(`  ${shown.length - failed.length}/${shown.length} 통과`);
+process.exit(failed.length ? 1 : 0);

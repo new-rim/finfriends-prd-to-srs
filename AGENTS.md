@@ -105,4 +105,5 @@ AI SDK import는 **`app/api/ops/**` 아래에서만** 허용된다(게이트 G6)
 | 런타임 경계·라우트 그룹·Server Action 계약 | `.agents/rules/004-runtime-boundaries.md` |
 | 2클라이언트·RLS 2계층·`pii`·마이그레이션 | `.agents/rules/005-data-access-rls.md` |
 | `prebuild` 게이트 G1~G7 | `.agents/rules/006-prebuild-gates.md` |
+| 시각 프로토타입 판정·인용 규약 | `.agents/rules/008-visual-prototype.md` |
 | 절차(스킬) 목록 | `.agents/skills/` — `HARNESS.md` §3 표 참고 |
