@@ -43,7 +43,7 @@ FAILED=0
 
 grab home  "진입점 — ②→③→① 순서"                 "/"
 grab tree  "① 성장 나무 + 정체 원인 (보호자)"      "/tree" "/tree?state=empty"
-grab learn "② 학습·퀴즈 (아동)"                   "/learn/spend"
+grab learn "② 학습·퀴즈 (아동)"                   "/learn/spend" "/learn/spend?picked=b"
 grab retro "③ 두 갈래 회고 (아동)"                "/retro" "/retro?state=empty"
 
 if [ "$FAILED" -ne 0 ]; then echo "스냅샷 실패 — 빈 렌더가 있다"; exit 1; fi

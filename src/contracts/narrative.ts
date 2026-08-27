@@ -9,6 +9,9 @@
 import { AREAS, type AreaCode } from "./areas";
 import { STAGE_LABEL, type AreaState } from "./tree";
 
+/** 주기 표기 — 변화 문장 세 분기가 같은 낱말을 쓴다(rubric ① 비교 시점) */
+const CYCLE = "이번 달";
+
 export type Narrative = {
   /** 변화 문장 — §5.2 */
   change: string;
@@ -40,7 +43,7 @@ export function buildNarrative(states: AreaState[]): Narrative {
     const s = promoted[0];
     const verb = PRACTICE_VERB[s.area];
     return {
-      change: `이번 달, ${AREAS[s.area].label}가 ${STAGE_LABEL[s.stage]}이 됐어요.`,
+      change: `${CYCLE}, ${AREAS[s.area].label}가 ${STAGE_LABEL[s.stage]}이 됐어요.`,
       reason: verb ? verb(s.progress.practice) : null,
       isEmpty: false,
     };
@@ -51,7 +54,7 @@ export function buildNarrative(states: AreaState[]): Narrative {
     const names = promoted.map((s) => AREAS[s.area].label);
     const head = names.slice(0, -1).join(" · ");
     return {
-      change: `이번 달, ${head}와 ${names[names.length - 1]}가 자랐어요.`,
+      change: `${CYCLE}, ${head}와 ${names[names.length - 1]}가 자랐어요.`,
       reason: null,
       isEmpty: false,
     };
@@ -59,7 +62,7 @@ export function buildNarrative(states: AreaState[]): Narrative {
 
   // 분기 3 — 승급 0건 · 실천 1건 이상
   return {
-    change: `이번 달, 실천을 ${totalPractice}번 했어요. 조금만 더 하면 자라요.`,
+    change: `${CYCLE}, 실천을 ${totalPractice}번 했어요. 조금만 더 하면 자라요.`,
     reason: null,
     isEmpty: false,
   };

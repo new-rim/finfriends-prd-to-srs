@@ -1,5 +1,5 @@
 import { Alert } from "@/components/ui/alert";
-import { EMPTY_STATE } from "@/contracts/areas";
+import { AREAS, EMPTY_STATE } from "@/contracts/areas";
 import { RETRO_ENTRIES, RETRO_SINGLE_LIMIT, type RetroEntry } from "@/fixtures/scenario";
 import { RETRO_SENTENCES, RETRO_TITLE } from "@/fixtures/retro-sentences";
 
@@ -27,13 +27,20 @@ function EarnedCard({ e }: { e: RetroEntry }) {
       <p className="text-center text-5xl leading-none" aria-hidden="true">
         ⭐
       </p>
-      <p className="mt-3 text-center text-xl font-bold">{RETRO_TITLE[e.branch]}</p>
+      <p className="mt-3 text-center text-xl font-bold">{RETRO_TITLE.earned}</p>
       <p className="mt-2 text-center text-sm text-[var(--text-muted)]">
         {e.actualPlace} {won(e.actualAmount)}
         {e.branch === "CATEGORY_DIFF" && ` · 적어둔 곳은 ${e.plannedPlace}`}
       </p>
       <p className="mt-4 border-t border-[var(--border)] pt-4">{sentenceFor(e)}</p>
       <p className="mt-2 text-sm font-medium text-[var(--accent)]">⭐ 1개 받았어요</p>
+      {/* 🔴 ③ → ① 연결. PRD US-2 AC1의 실천 트리거 3종에 「소비 회고」가 있고,
+          "⭐ 지급 + 해당 나무 진행도 갱신이 동일 세션 내 반영"을 요구한다.
+          퀴즈(AC-2.1 비담지)에만 나무를 가리키고 정작 담지 화면이 비어 있었다.
+          🔴 갈래 B 카드에는 넣지 않는다 — 별을 못 받은 건은 실천에 가산되지 않는다. */}
+      <p className="text-sm text-[var(--text-muted)]">
+        {AREAS.SPEND.label} 나무의 실천이 하나 늘었어요.
+      </p>
     </Alert>
   );
 }
@@ -43,7 +50,10 @@ function ReviewCard({ e }: { e: RetroEntry }) {
   const diff = e.actualAmount - e.plannedAmount;
   return (
     <Alert tone="review">
-      <p className="text-lg font-bold">{RETRO_TITLE[e.branch]}</p>
+      <p className="text-lg font-bold">
+        <span aria-hidden="true">🔍 </span>
+        {RETRO_TITLE.review}
+      </p>
       <dl className="mt-4 space-y-1">
         <div className="flex items-baseline justify-between">
           <dt className="text-[var(--text-muted)]">적어둔 금액</dt>

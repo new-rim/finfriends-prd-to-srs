@@ -16,8 +16,10 @@ import { AREAS } from "@/contracts/areas";
  *    여기서 흐려지면 AC-1.2가 무너진다.
  * 🔴 실제 지급은 FR-013(grantStar)의 몫이다. 여기서는 화면 반영만 한다.
  */
-export function Quiz() {
-  const [picked, setPicked] = useState<string | null>(null);
+export function Quiz({ initialPicked = null }: { initialPicked?: string | null }) {
+  // initialPicked — 스냅샷이 정답 후 상태를 SSR로 뜰 수 있게 한다(?picked=b).
+  // 이게 없으면 2R TOP_FIX 산출물인 「나무 조건이 채워졌어요」가 평가자에게 안 보인다.
+  const [picked, setPicked] = useState<string | null>(initialPicked);
   const correct = picked === QUIZ.correctId;
 
   return (

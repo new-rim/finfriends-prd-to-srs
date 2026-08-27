@@ -12,7 +12,12 @@ import { Quiz } from "./quiz";
  *    실제 원고 4주제는 콘텐츠 담당의 외부 선행이며 FR-014에서 온다.
  * 🔴 4영역 표기는 src/contracts/areas.ts에서만 온다. 문자열을 여기 쓰지 않는다.
  */
-export default function LearnSpendPage() {
+export default async function LearnSpendPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ picked?: string }>;
+}) {
+  const { picked } = await searchParams;
   const area = AREAS[LEARN_TOPIC.area];
   const need = PROMOTION.SPROUT;
 
@@ -40,7 +45,7 @@ export default function LearnSpendPage() {
         ))}
       </article>
 
-      <Quiz />
+      <Quiz initialPicked={picked ?? null} />
     </main>
   );
 }

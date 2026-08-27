@@ -71,12 +71,20 @@ export default async function TreePage({
                   {s.progress.practice > 0 && (
                     <CardMuted className="text-sm">실천 {s.progress.practice}회</CardMuted>
                   )}
-                  {/* 🔴 남은 조건을 전부 적는다 — 학습·퀴즈가 여기 보여야 ②(학습·퀴즈)가
-                      ①(나무)로 이어진다. 계획 §5.3의 "4칸 격자 안에는 조건으로 표시" */}
-                  {remaining.length > 0 && (
+                  {/* 🔴 남은 조건은 학습·퀴즈가 보여야 ②(학습·퀴즈)가 ①(나무)로 이어진다
+                      (계획 §5.3). 다만 정체 칸은 아래 정체 블록이 같은 목록을 조건 단위로
+                      전부 적으므로(ACE-3.1), 여기서 되풀이하지 않는다 — 한 화면에 같은
+                      세 줄이 두 번 나오면 O2(부모 확인 3분)에 역행한다. */}
+                  {isStalled(s) ? (
                     <CardMuted className="text-sm">
-                      {remaining.map((c) => c.label).join(" · ")}
+                      {s.daysSinceChange}일째 그대로예요
                     </CardMuted>
+                  ) : (
+                    remaining.length > 0 && (
+                      <CardMuted className="text-sm">
+                        {remaining.map((c) => c.label).join(" · ")}
+                      </CardMuted>
+                    )
                   )}
                 </>
               )}

@@ -14,6 +14,7 @@
 
 import type { RetroBranch } from "./scenario";
 
+
 export const RETRO_SENTENCES: Record<RetroBranch, readonly string[]> = {
   // 갈래 A — 계획대로 (⭐1 · plan_met=true · category_met=true)
   KEPT: [
@@ -35,9 +36,12 @@ export const RETRO_SENTENCES: Record<RetroBranch, readonly string[]> = {
   ],
 };
 
-/** 카드 제목 — 갈래별. 시각은 「별 받음 / 별 없음」 2종이고 문장이 3종이다(§7) */
-export const RETRO_TITLE: Record<RetroBranch, string> = {
-  KEPT: "적은 대로 썼어요!",
-  CATEGORY_DIFF: "적은 만큼 썼어요!",
-  OVER: "이번엔 더 썼네요",
+/**
+ * 카드 제목 — 🔴 갈래가 아니라 「별 받음 / 별 없음」 2종으로 키를 잡는다.
+ * 계획 §7이 정한 것이 그것이다 — 시각 2종 · 문장 3종. 「업종 다름」은 별을 받은
+ * 경우라 계획 지킴과 같은 제목을 쓰고, 차이는 문장이 진다(§9.1 A′).
+ */
+export const RETRO_TITLE: Record<"earned" | "review", string> = {
+  earned: "적은 대로 썼어요!",
+  review: "이번엔 더 썼네요",
 };

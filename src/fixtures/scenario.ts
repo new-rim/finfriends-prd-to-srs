@@ -25,8 +25,6 @@ export type RetroEntry = {
   sentenceIndex: number;
 };
 
-export const CHILD = { name: "하율", cycleLabel: "이번 달" } as const;
-
 /** ① 나무 화면의 4영역 상태 */
 export const AREA_STATES: AreaState[] = [
   {
@@ -40,7 +38,8 @@ export const AREA_STATES: AreaState[] = [
   {
     area: "SPEND",
     stage: "SPROUT",
-    progress: { learn: 2, quiz: 4, practice: 3 },
+    // 계획 §14.1 — 「잘 써요」 학습 1편 이수 · 퀴즈 1개 정답 · 실천 3회
+    progress: { learn: 1, quiz: 1, practice: 3 },
     locked: false,
     daysSinceChange: 1,
     promotedThisCycle: true, // ← 변화 문장(§5.2 분기 1)의 대상
