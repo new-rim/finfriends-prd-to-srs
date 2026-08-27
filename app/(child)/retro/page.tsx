@@ -1,6 +1,11 @@
 import { Alert } from "@/components/ui/alert";
 import { AREAS, EMPTY_STATE } from "@/contracts/areas";
-import { RETRO_ENTRIES, RETRO_SINGLE_LIMIT, type RetroEntry } from "@/fixtures/scenario";
+import {
+  RETRO_BACKLOG,
+  RETRO_ENTRIES,
+  RETRO_SINGLE_LIMIT,
+  type RetroEntry,
+} from "@/fixtures/scenario";
 import { RETRO_SENTENCES, RETRO_TITLE } from "@/fixtures/retro-sentences";
 
 /**
@@ -76,7 +81,8 @@ export default async function RetroPage({
   searchParams: Promise<{ state?: string }>;
 }) {
   const { state } = await searchParams;
-  const entries = state === "empty" ? [] : RETRO_ENTRIES;
+  const entries =
+    state === "empty" ? [] : state === "backlog" ? RETRO_BACKLOG : RETRO_ENTRIES;
 
   if (entries.length === 0) {
     return (

@@ -7,7 +7,12 @@ export function RadioGroup({
   className,
   ...props
 }: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {
-  return <RadioGroupPrimitive.Root className={cn("grid gap-3", className)} {...props} />;
+  return (
+    <RadioGroupPrimitive.Root
+      className={cn("grid gap-[calc(var(--space-unit)*3)]", className)}
+      {...props}
+    />
+  );
 }
 
 export function RadioGroupItem({
@@ -20,7 +25,8 @@ export function RadioGroupItem({
     <label
       className={cn(
         "flex cursor-pointer items-center gap-3 rounded-[var(--radius-card)]",
-        "border border-[var(--border)] bg-[var(--surface)] px-4 py-3",
+        "border border-[var(--border)] bg-[var(--surface)]",
+        "px-[calc(var(--space-unit)*4)] py-[calc(var(--space-unit)*3)]",
         className,
       )}
     >

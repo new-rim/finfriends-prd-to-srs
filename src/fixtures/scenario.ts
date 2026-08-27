@@ -118,6 +118,35 @@ export const RETRO_ENTRIES: RetroEntry[] = [
   },
 ];
 
+/**
+ * 밀린 회고가 쌓인 상태 — 요약 회고 검수용 변형(ACE-5.2 · 계획 §8.4).
+ * 🔴 기본 시나리오(RETRO_ENTRIES 4건 · §14.1)를 바꾸지 않는다. 「요약 회고와 단건의
+ *    구별」이 판정 대상인데 기본 상태에서는 1건만 묶여 구별을 보여줄 수 없다.
+ */
+export const RETRO_BACKLOG: RetroEntry[] = [
+  ...RETRO_ENTRIES,
+  {
+    id: "b1",
+    branch: "OVER",
+    plannedPlace: "문구점",
+    actualPlace: "문구점",
+    plannedAmount: 2000,
+    actualAmount: 3500,
+    starGranted: false,
+    sentenceIndex: 1,
+  },
+  {
+    id: "b2",
+    branch: "KEPT",
+    plannedPlace: "빵집",
+    actualPlace: "빵집",
+    plannedAmount: 4000,
+    actualAmount: 3000,
+    starGranted: true,
+    sentenceIndex: 2,
+  },
+];
+
 /** 단건으로 보여줄 최대 건수 — 초과분은 요약 회고로 병합(ACE-5.2 · 계획 §8.4) */
 export const RETRO_SINGLE_LIMIT = 3;
 

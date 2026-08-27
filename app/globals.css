@@ -50,11 +50,19 @@
 
 html,
 body {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* 🔴 배경·타이포는 [data-theme] 자신에게 건다.
+   body에 걸면 var(--bg)가 해석되지 않는다 — CSS 변수는 조상에서 자손으로만
+   상속되는데 [data-theme]은 body의 자손이다. 정의 스코프와 소비 스코프가
+   같아야 한다. verify.mjs의 L4가 이 어긋남을 검사한다. */
+[data-theme] {
+  min-height: 100dvh;
   background: var(--bg);
   color: var(--text);
   font-size: var(--text-body);
   line-height: var(--text-line);
-  -webkit-text-size-adjust: 100%;
 }
 
 /* 아동 화면 터치 타깃 하한 — 요구값 44px */

@@ -13,7 +13,8 @@ export function Alert({
     <div
       role="note"
       className={cn(
-        "rounded-[var(--radius-card)] border border-[var(--border)] p-5",
+        "rounded-[var(--radius-card)] border border-[var(--border)]",
+        "p-[calc(var(--space-unit)*5)]",
         tone === "earned" ? "bg-[var(--retro-earned)]" : "bg-[var(--retro-review)]",
         className,
       )}

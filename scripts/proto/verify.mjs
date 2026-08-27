@@ -85,9 +85,37 @@ const ratio = (a, b) => {
 const surface = hex("surface"), text = hex("text"), muted = hex("text-muted"), accent = hex("accent");
 const r1 = ratio(text, surface), r2 = ratio(muted, surface), r3 = ratio(accent, surface);
 const minRatio = Math.min(r1, r2, r3);
-if (touch >= 44 && minRatio >= 4.5)
-  pass("L4", "아동 접근성", `터치 ${touch}px ≥ 44 · 대비 text ${r1.toFixed(1)} · muted ${r2.toFixed(1)} · accent ${r3.toFixed(1)} (최소 ${minRatio.toFixed(1)} ≥ 4.5)`);
-else fail("L4", "아동 접근성", `터치 ${touch}px · 최소 대비 ${minRatio.toFixed(2)}`);
+// 🔴 토큰이 「정의됐다」와 「화면에 걸린다」는 다르다.
+// CSS 변수는 조상 → 자손으로만 상속되므로, [data-theme] 안에 정의한 변수를
+// body 같은 조상 셀렉터에서 참조하면 해석되지 않는다 — 값은 파일에 있는데
+// 화면에는 안 걸린다. 4R이 이 어긋남을 잡았다. 아래 두 검사가 재발을 막는다.
+const themeVars = new Set([...childBlock.matchAll(/--([\w-]+):/g)].map((m) => m[1]));
+const cssBare = css.replace(/\/\*[\s\S]*?\*\//g, ""); // 주석 안의 문장을 셀렉터로 오인하지 않게
+const scopeErrors = [];
+for (const [, sel, blockBody] of cssBare.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+  const selector = sel.trim();
+  // [data-theme]을 포함하지 않는 셀렉터 = 테마 블록의 조상일 수 있는 자리
+  if (/\[data-theme/.test(selector)) continue;
+  for (const [, v] of blockBody.matchAll(/var\(--([\w-]+)\)/g)) {
+    if (themeVars.has(v)) scopeErrors.push(`${selector} { var(--${v}) }`);
+  }
+}
+const allSrc = SRC.map((f) => readFileSync(f, "utf8")).join("\n") + css;
+const unusedVars = [...themeVars].filter(
+  (v) => (allSrc.match(new RegExp(`var\\(--${v}\\)`, "g")) ?? []).length === 0,
+);
+if (touch >= 44 && minRatio >= 4.5 && scopeErrors.length === 0 && unusedVars.length === 0)
+  pass(
+    "L4",
+    "아동 접근성 · 토큰",
+    `터치 ${touch}px ≥ 44 · 대비 text ${r1.toFixed(1)} · muted ${r2.toFixed(1)} · accent ${r3.toFixed(1)} (최소 ${minRatio.toFixed(1)} ≥ 4.5) · 스코프 이탈 0 · 미소비 토큰 0/${themeVars.size}`,
+  );
+else
+  fail(
+    "L4",
+    "아동 접근성 · 토큰",
+    `터치 ${touch}px · 최소 대비 ${minRatio.toFixed(2)} · 스코프 이탈 ${scopeErrors.length}건 ${scopeErrors} · 미소비 토큰 ${unusedVars.length}건 ${unusedVars.map((v) => "--" + v)}`,
+  );
 
 // ── L5 빈 상태 3종 · 4영역 표기 일치 ────────────────────────────
 const areasSrc = read("src/contracts/areas.ts");
