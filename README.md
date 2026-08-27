@@ -70,18 +70,22 @@ PRD 검토 결과, 예시 SRS의 범위를 넘어서는 것으로 판단되는 �
 
 ---
 
-## 3. 저장소 구성
+## 3. 저장소 구성 및 전체 문서 지도
 
-| 파일 | 역할 |
-|---|---|
-| `finfriends-prd-v1_0.md` | **변환 대상 입력물** — 핀프렌즈 PRD **v1.0** (2026-08-24, 1,234줄). v0.2 대비 **ADR 8건 · 의존성/스프린트 · 원가/보안 임계치**가 추가됐고 F14·F19 삭제가 문서 전체에 전파됨 |
-| `SRS_example_AD-Core-Platform.md` | **포맷 기준선** — 축약형 SRS 예시 사례 (애드테크 플랫폼, 286줄). 내용이 아니라 **형식**을 참조한다 |
-| `README.md` | 본 문서 — 작업 목표 정의 |
+프로젝트 내 다양한 문서와 파일들은 성격에 따라 카테고리별로 관리되고 있습니다.
+전체 문서 목록 및 각 파일의 역할/읽는 순서는 **[`DOCS_INDEX.md`](./DOCS_INDEX.md)**에서 상세히 확인할 수 있습니다.
 
-> **산출물은 §4에 있다** — `SRS_finfriends-v1_0.md`(요구사항)와 그 파생물인 `DESIGN_finfriends-v1_0.md`(기술 설계).
-> 두 문서의 역할 분담: **SRS는 *무엇을 만들어야 하는가*, DESIGN은 *어떻게 만드는가*.** DESIGN은 요구사항을 새로 만들지 않고 SRS의 ID(`REQ-*` · `AC-*` · `ACE-*` · `CON-*` · `KPI-*`)에 전부 귀속시킨다.
+### 핵심 문서 카테고리 구조
 
-**ISO/IEC/IEEE 29148:2018 표준 원문 PDF**는 저작권이 있는 유료 표준 문서이므로 **공개 저장소에 포함하지 않는다**(`.gitignore` 처리). 로컬에서만 참조한다.
+| 카테고리 | 대표 경로 / 파일 | 설명 |
+|---|---|---|
+| 🔴 **기술 & 설계 규격** | `tech-design-docs/` | `[PRD]`, `[SRS]SRS_finfriends-nextjs-v1_0.md`, `[Diagrams]` (구현의 최종 근거) |
+| 🗓️ **마스터 실행 계획** | `execution-plans/` | `FASTTRACK_...md` (56일 압축 일정), `EXECUTION_...md`, `TASKS_...md` |
+| 📑 **깃허브 이슈 & 태스크** | `tasks/` | `tasks/_index.md`, `tasks/stage-0/` ~ `stage-9/` (이슈 #1~#46 명세) |
+| 🔬 **방법론 & 분석 보고서** | `analysis-reports/` | `METHODOLOGY_task-extraction.md`, `ANALYSIS_...md`, `REPORT_...md` |
+| 🤖 **개발 규칙 & 게이트** | Project Root & `.agents/` | `AGENTS.md` (12조 불변 규칙), `HARNESS.md`, `.agents/rules/` |
+| 🎨 **디자인 & 프로토타입** | `docs/` | `prototype-visual-plan.md`, `prototype-suggestion.md` |
+| 🎓 **PM / ENG 학습 자료** | `study/` | `STUDY_SRS-for-PM_finfriends.html`, `GLOSSARY_...html` |
 
 ---
 

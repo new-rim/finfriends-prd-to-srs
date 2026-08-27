@@ -15,7 +15,7 @@
 | `tech-design-docs/[Diagrams]DESIGN_finfriends-v1_0.md` | 유스케이스·시퀀스·클래스·배치 설계 |
 | `tech-design-docs/[PRD]finfriends-prd-v1_0.md` | 제품 요구 원본 |
 | `tasks/stage-N/{FR,UX}-###_*.md` | **한 파일 = GitHub 이슈 1건.** 46건이 `#1`~`#46`으로 등록되어 있다 |
-| `FASTTRACK_finfriends-nextjs-v1_0.md` | 일정·의존·임계 경로 (압축 편성 56 영업일) |
+| `execution-plans/FASTTRACK_finfriends-nextjs-v1_0.md` | 일정·의존·임계 경로 (압축 편성 56 영업일) |
 
 **코드를 쓰기 전에 반드시** 해당 태스크 파일의 `References` 절에 적힌 SRS 절을 읽는다. 태스크 파일은 요약이고, 판단 근거는 SRS에 있다.
 
