@@ -1,5 +1,5 @@
 # ① 성장 나무 + 정체 원인 (보호자)
-생성: 2026-08-27 15:10:33
+생성: 2026-08-27 15:19:13
 
 ════════════════════════════════════════
 URL: /tree
@@ -59,7 +59,7 @@ guardian
 <main> <section> <h1> <section> <section> <h3> <svg role=img stage=SPROUT> <h3> <svg role=img stage=TREE> <h3> <svg role=img stage=SPROUT> <h3> <section> <ul> <li> <li> <li>
 
 ## 렌더 텍스트
-이번 달, 잘 써요가 나무이 됐어요.
+이번 달, 잘 써요가 나무가 됐어요.
 쓰기 전에 3번 적어서 자란 거예요.
 승인 대기
 2

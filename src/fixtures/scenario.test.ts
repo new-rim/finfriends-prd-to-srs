@@ -3,6 +3,9 @@ import assert from "node:assert/strict";
 
 import { AREA_STATES, LEARN_PROGRESS, RETRO_ENTRIES } from "./scenario.ts";
 import { PROMOTION, remainingConditions } from "../contracts/tree.ts";
+import { buildNarrative, particle } from "../contracts/narrative.ts";
+import { AREAS, AREA_ORDER } from "../contracts/areas.ts";
+import { STAGE_LABEL } from "../contracts/tree.ts";
 
 /**
  * 🔴 계획 §14.1의 불변식 — 세 화면이 한 이야기임을 강제한다.
@@ -56,4 +59,35 @@ test("회고 이력이 계획 §14.1과 일치한다", () => {
   assert.equal(RETRO_ENTRIES.filter((r) => r.branch === "KEPT").length, 2);
   assert.equal(RETRO_ENTRIES.filter((r) => r.branch === "CATEGORY_DIFF").length, 1);
   assert.equal(RETRO_ENTRIES.filter((r) => r.branch === "OVER").length, 1);
+});
+
+/**
+ * 🔴 한국어 조사는 앞말 받침으로 갈린다 — 고정하면 「나무이 됐어요」가 나온다.
+ * 「새싹」(받침 있음)만 시연되던 동안 드러나지 않다가 「나무」 단계를 넣고 나타났다.
+ * 3단계 · 4영역 전부를 돌려 재발을 막는다.
+ */
+test("변화 문장의 조사가 3단계·4영역 전부에서 맞다", () => {
+  assert.equal(particle("나무", "이가"), "가");
+  assert.equal(particle("새싹", "이가"), "이");
+  assert.equal(particle("씨앗", "이가"), "이");
+
+  for (const area of AREA_ORDER) {
+    for (const stage of ["SEED", "SPROUT", "TREE"] as const) {
+      const { change } = buildNarrative([
+        {
+          area,
+          stage,
+          progress: { learn: 1, quiz: 1, practice: 2 },
+          locked: false,
+          daysSinceChange: 0,
+          promotedThisCycle: true,
+        },
+      ]);
+      const a = AREAS[area].label;
+      const g = STAGE_LABEL[stage];
+      assert.equal(change, `이번 달, ${a}${particle(a, "이가")} ${g}${particle(g, "이가")} 됐어요.`);
+      // 받침 없는 말에 「이」가 붙는 조합이 없어야 한다
+      assert.ok(!/무이 |요이 /.test(change), `조사 오류: ${change}`);
+    }
+  }
 });

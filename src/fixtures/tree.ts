@@ -1,7 +1,7 @@
 /** ① 나무 화면 픽스처 — 🔴 scenario.ts에서 파생된다. 값을 여기서 지어내지 않는다 */
 
-import type { AreaState } from "@/contracts/tree";
-import { AREA_STATES, PENDING_APPROVALS } from "./scenario";
+import type { AreaState } from "@/contracts/tree.ts";
+import { AREA_STATES, PENDING_APPROVALS } from "./scenario.ts";
 
 export type TreeView = { states: AreaState[]; pendingApprovals: number };
 

@@ -12,7 +12,7 @@
  *    비복원 추출·잔여율 감시는 FR-021 · FR-024의 몫이며 여기서는 인덱스로 고른다.
  */
 
-import type { RetroBranch } from "./scenario";
+import type { RetroBranch } from "./scenario.ts";
 
 
 export const RETRO_SENTENCES: Record<RetroBranch, readonly string[]> = {

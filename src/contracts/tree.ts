@@ -6,7 +6,7 @@
  *    PRD 부록 B를 옮기고 비어 있던 한 칸(씨앗→새싹 실천 N)을 N=1로 채운 값이다.
  */
 
-import type { AreaCode } from "./areas";
+import type { AreaCode } from "./areas.ts";
 
 export type Stage = "SEED" | "SPROUT" | "TREE";
 

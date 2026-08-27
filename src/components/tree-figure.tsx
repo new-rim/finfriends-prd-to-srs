@@ -1,5 +1,5 @@
-import type { Stage } from "@/contracts/tree";
-import { STAGE_LABEL } from "@/contracts/tree";
+import type { Stage } from "@/contracts/tree.ts";
+import { STAGE_LABEL } from "@/contracts/tree.ts";
 
 /**
  * 나무 3단계 도형 — 계획 §5.4

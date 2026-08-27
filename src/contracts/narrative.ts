@@ -6,11 +6,32 @@
  *    문장이 직접 만든다. 하나라도 빠지면 회상이 성립하지 않는다.
  */
 
-import { AREAS, type AreaCode } from "./areas";
-import { STAGE_LABEL, type AreaState } from "./tree";
+import { AREAS, type AreaCode } from "./areas.ts";
+import { STAGE_LABEL, type AreaState } from "./tree.ts";
 
 /** 주기 표기 — 변화 문장 세 분기가 같은 낱말을 쓴다(rubric ① 비교 시점) */
 const CYCLE = "이번 달";
+
+/**
+ * 🔴 한국어 조사는 앞말의 받침으로 갈린다. 고정하면 「나무이 됐어요」가 나온다.
+ *
+ * 이 화면의 문장은 아동·보호자가 읽는 완성문이다. 조사가 틀리면 AC-1.1의
+ * rubric(비교 시점·변화 방향·대상)을 담고도 문장이 어색해 회상을 방해한다.
+ * 「새싹」(받침 ㄱ)만 시연되던 동안 드러나지 않다가 「나무」 단계를 넣고 나타났다.
+ */
+function hasFinalConsonant(word: string): boolean {
+  const last = word.charCodeAt(word.length - 1);
+  if (last < 0xac00 || last > 0xd7a3) return false; // 한글 음절이 아니면 없는 것으로 본다
+  return (last - 0xac00) % 28 !== 0;
+}
+
+/** 이/가 · 은/는 · 와/과 — 앞말에 맞춰 고른다 */
+export function particle(word: string, kind: "이가" | "은는" | "와과"): string {
+  const has = hasFinalConsonant(word);
+  if (kind === "이가") return has ? "이" : "가";
+  if (kind === "은는") return has ? "은" : "는";
+  return has ? "과" : "와";
+}
 
 export type Narrative = {
   /** 변화 문장 — §5.2 */
@@ -42,8 +63,10 @@ export function buildNarrative(states: AreaState[]): Narrative {
   if (promoted.length === 1) {
     const s = promoted[0];
     const verb = PRACTICE_VERB[s.area];
+    const area = AREAS[s.area].label;
+    const stage = STAGE_LABEL[s.stage];
     return {
-      change: `${CYCLE}, ${AREAS[s.area].label}가 ${STAGE_LABEL[s.stage]}이 됐어요.`,
+      change: `${CYCLE}, ${area}${particle(area, "이가")} ${stage}${particle(stage, "이가")} 됐어요.`,
       reason: verb ? verb(s.progress.practice) : null,
       isEmpty: false,
     };
@@ -53,8 +76,9 @@ export function buildNarrative(states: AreaState[]): Narrative {
   if (promoted.length >= 2) {
     const names = promoted.map((s) => AREAS[s.area].label);
     const head = names.slice(0, -1).join(" · ");
+    const last = names[names.length - 1];
     return {
-      change: `${CYCLE}, ${head}와 ${names[names.length - 1]}가 자랐어요.`,
+      change: `${CYCLE}, ${head}${particle(head, "와과")} ${last}${particle(last, "이가")} 자랐어요.`,
       reason: null,
       isEmpty: false,
     };
