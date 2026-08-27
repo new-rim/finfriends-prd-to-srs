@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardMuted, CardTitle } from "@/components/ui/card";
-import { QUIZ } from "@/fixtures/learn";
+import { LEARN_TOPIC, QUIZ } from "@/fixtures/learn";
+import { AREAS } from "@/contracts/areas";
 
 /**
  * ② 퀴즈 — 계획 §11. 1문항 · RadioGroup(단일 선택).
@@ -40,7 +41,11 @@ export function Quiz() {
           {correct ? (
             <>
               <p className="font-semibold text-[var(--accent)]">⭐ 1개를 받았어요!</p>
-              <CardMuted className="text-sm">퀴즈 1개를 맞혔어요.</CardMuted>
+              {/* 🔴 퀴즈가 움직이는 것은 나무의 「퀴즈 조건」뿐이다(PRD 부록 C).
+                  "실천"이라는 낱말을 쓰지 않는다 — AC-1.2가 지키는 구분이다. */}
+              <CardMuted className="text-sm">
+                {AREAS[LEARN_TOPIC.area].label} 나무의 퀴즈 조건이 하나 채워졌어요.
+              </CardMuted>
             </>
           ) : (
             <CardMuted>다시 한 번 생각해 볼까요?</CardMuted>

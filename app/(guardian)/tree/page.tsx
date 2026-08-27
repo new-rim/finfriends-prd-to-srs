@@ -68,11 +68,16 @@ export default async function TreePage({
                   <p className="mt-3 text-lg font-semibold text-[var(--accent)]">
                     {STAGE_LABEL[s.stage]}
                   </p>
-                  <CardMuted className="text-sm">
-                    {s.progress.practice > 0
-                      ? `실천 ${s.progress.practice}회`
-                      : (remaining[0]?.label ?? "")}
-                  </CardMuted>
+                  {s.progress.practice > 0 && (
+                    <CardMuted className="text-sm">실천 {s.progress.practice}회</CardMuted>
+                  )}
+                  {/* 🔴 남은 조건을 전부 적는다 — 학습·퀴즈가 여기 보여야 ②(학습·퀴즈)가
+                      ①(나무)로 이어진다. 계획 §5.3의 "4칸 격자 안에는 조건으로 표시" */}
+                  {remaining.length > 0 && (
+                    <CardMuted className="text-sm">
+                      {remaining.map((c) => c.label).join(" · ")}
+                    </CardMuted>
+                  )}
                 </>
               )}
             </Card>

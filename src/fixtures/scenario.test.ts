@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { AREA_STATES, RETRO_ENTRIES } from "./scenario.ts";
+import { AREA_STATES, LEARN_PROGRESS, RETRO_ENTRIES } from "./scenario.ts";
 import { PROMOTION, remainingConditions } from "../contracts/tree.ts";
 
 /**
@@ -37,4 +37,23 @@ test("모든 칸의 진행도가 자기 단계의 승급 조건 안에 있다", 
       s.progress.practice >= need.practice;
     assert.equal(met, false, `${s.area}는 조건을 다 채웠는데 승급하지 않았다`);
   }
+});
+
+/**
+ * 🔴 ②→① 연결 — 학습 화면이 보여주는 학습·퀴즈가 나무의 「잘 써요」 조건과 같은 값이어야
+ * 두 화면이 한 아이의 이야기로 읽힌다. 갈라지면 ②에서 배운 것이 ①에 안 나타난다.
+ */
+test("L6 — 학습 화면의 진행도 = 나무 「잘 써요」의 학습·퀴즈 조건", () => {
+  const spend = AREA_STATES.find((s) => s.area === "SPEND")!;
+  assert.equal(LEARN_PROGRESS.topicsDone, spend.progress.learn);
+  assert.equal(LEARN_PROGRESS.quizCorrect, spend.progress.quiz);
+});
+
+/** 계획 §14.1이 확정한 회고 구성 — 카드 4장 · 별 받음 3 · 별 없음 1 */
+test("회고 이력이 계획 §14.1과 일치한다", () => {
+  assert.equal(RETRO_ENTRIES.length, 4);
+  assert.equal(RETRO_ENTRIES.filter((r) => r.starGranted).length, 3);
+  assert.equal(RETRO_ENTRIES.filter((r) => r.branch === "KEPT").length, 2);
+  assert.equal(RETRO_ENTRIES.filter((r) => r.branch === "CATEGORY_DIFF").length, 1);
+  assert.equal(RETRO_ENTRIES.filter((r) => r.branch === "OVER").length, 1);
 });

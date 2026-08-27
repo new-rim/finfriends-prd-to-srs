@@ -106,7 +106,7 @@ export const RETRO_ENTRIES: RetroEntry[] = [
     starGranted: false,
     sentenceIndex: 0,
   },
-  // ↓ 아래 3건은 밀려서 요약 회고로 병합된다 (ACE-5.2)
+  // ↓ 밀려서 요약 회고로 병합된다 (ACE-5.2)
   {
     id: "r4",
     branch: "KEPT",
@@ -117,30 +117,18 @@ export const RETRO_ENTRIES: RetroEntry[] = [
     starGranted: true,
     sentenceIndex: 1,
   },
-  {
-    id: "r5",
-    branch: "OVER",
-    plannedPlace: "문구점",
-    actualPlace: "문구점",
-    plannedAmount: 2000,
-    actualAmount: 3500,
-    starGranted: false,
-    sentenceIndex: 1,
-  },
-  {
-    id: "r6",
-    branch: "OVER",
-    plannedPlace: "분식집",
-    actualPlace: "분식집",
-    plannedAmount: 4000,
-    actualAmount: 6000,
-    starGranted: false,
-    sentenceIndex: 2,
-  },
 ];
 
 /** 단건으로 보여줄 최대 건수 — 초과분은 요약 회고로 병합(ACE-5.2 · 계획 §8.4) */
 export const RETRO_SINGLE_LIMIT = 3;
 
-/** ② 학습 진행 — 「잘 써요」 한 편 이수 · 퀴즈 1개 정답 */
-export const LEARN_PROGRESS = { topicsDone: 1, quizCorrect: 1 } as const;
+/**
+ * ② 학습 진행 — 🔴 AREA_STATES의 SPEND에서 파생한다. 값을 여기서 따로 적지 않는다.
+ *    ②가 보여주는 학습·퀴즈가 ①의 나무 조건과 같은 값이어야 두 화면이 이어진다.
+ *    scenario.test.ts가 강제한다.
+ */
+const SPEND_STATE = AREA_STATES.find((s) => s.area === "SPEND")!;
+export const LEARN_PROGRESS = {
+  topicsDone: SPEND_STATE.progress.learn,
+  quizCorrect: SPEND_STATE.progress.quiz,
+} as const;
